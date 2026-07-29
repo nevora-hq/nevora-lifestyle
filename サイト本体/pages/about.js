@@ -74,6 +74,31 @@ export default function About() {
           個人情報の取り扱いについては<a href="/privacy-policy">プライバシーポリシー</a>をご確認ください。
         </p>
 
+        <h2>運営サイト一覧</h2>
+        <p>当運営者は、以下のサイトも運営しています。</p>
+        <ul>
+          <li>
+            <a href="https://nevora-beauty.vercel.app/" target="_blank" rel="noopener noreferrer">
+              美容の総合ガイド｜NEVORA
+            </a>
+          </li>
+          <li>
+            <a href="https://nevora-ai.vercel.app/" target="_blank" rel="noopener noreferrer">
+              AI活用の総合ガイド｜NEVORA
+            </a>
+          </li>
+          <li>
+            <a href="https://nevora-money.vercel.app/" target="_blank" rel="noopener noreferrer">
+              お金の総合ガイド｜NEVORA
+            </a>
+          </li>
+          <li>
+            <a href="https://nevora-job.vercel.app/" target="_blank" rel="noopener noreferrer">
+              副業・在宅ワークの総合ガイド｜NEVORA
+            </a>
+          </li>
+        </ul>
+
         <h2>お問い合わせについて</h2>
         <p>
           記事内容の訂正依頼・ご意見・掲載に関するお問い合わせは、
