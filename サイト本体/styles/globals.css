@@ -720,6 +720,31 @@ img {
   right: 14px;
 }
 
+.category-summary-card-soon {
+  opacity: 0.82;
+}
+
+.category-summary-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--cat-color, var(--color-primary));
+  border-radius: 999px;
+  z-index: 1;
+}
+
+.category-summary-posts-empty {
+  margin: 0 0 16px;
+  padding: 10px 0 0;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.84rem;
+  color: var(--color-text-faint);
+}
+
 .home-section-heading-with-mascot {
   display: flex;
   align-items: flex-start;

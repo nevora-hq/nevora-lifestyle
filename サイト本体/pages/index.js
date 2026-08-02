@@ -5,7 +5,7 @@ import HeroBanner from "../components/HeroBanner";
 import ImageSlider from "../components/ImageSlider";
 import Sidebar from "../components/Sidebar";
 import { getAllPostsMeta, getAllCategories, getPostsByCategory } from "../lib/posts";
-import { getCategoryMeta } from "../lib/categoryMeta";
+import { getCategoryMeta, getAllCategoryNames } from "../lib/categoryMeta";
 import { getCategoryMascot } from "../lib/categoryMascot";
 import Mascot from "../components/Mascot";
 import Link from "next/link";
@@ -15,11 +15,23 @@ export async function getStaticProps() {
   const categories = getAllCategories();
   const sliderPosts = posts.filter((p) => p.thumbnail).slice(0, 5);
 
-  const categorySummaries = categories.map((c) => ({
-    ...c,
-    ...getCategoryMeta(c.name),
-    posts: getPostsByCategory(c.name).slice(0, 3),
-  }));
+  // 記事が1件もない大カテゴリも「準備中」としてホームページに常時表示する
+  // (記事があるカテゴリのみに絞り込むと、立ち上げ初期はほとんどのカテゴリが
+  // ユーザーの目に触れないままになってしまうため)。
+  const postCountByCategory = new Map(categories.map((c) => [c.name, c.count]));
+  const allCategoryNames = Array.from(
+    new Set([...getAllCategoryNames(), ...categories.map((c) => c.name)])
+  );
+  const categorySummaries = allCategoryNames.map((name) => {
+    const count = postCountByCategory.get(name) || 0;
+    return {
+      name,
+      count,
+      ...getCategoryMeta(name),
+      posts: count > 0 ? getPostsByCategory(name).slice(0, 3) : [],
+      comingSoon: count === 0,
+    };
+  });
 
   return {
     props: {
@@ -85,9 +97,12 @@ export default function Home({
                   {categorySummaries.map((cat) => (
                     <div
                       key={cat.name}
-                      className="category-summary-card"
+                      className={`category-summary-card${cat.comingSoon ? " category-summary-card-soon" : ""}`}
                       style={{ "--cat-color": cat.color, "--cat-soft": cat.soft }}
                     >
+                      {cat.comingSoon && (
+                        <span className="category-summary-badge">準備中</span>
+                      )}
                       {getCategoryMascot(cat.name) && (
                         <div className="category-summary-mascot">
                           <Mascot mascot={getCategoryMascot(cat.name)} />
@@ -99,11 +114,13 @@ export default function Home({
                         </span>
                         <div>
                           <h3 className="category-summary-name">{cat.name}</h3>
-                          <span className="category-summary-count">{cat.count}件の記事</span>
+                          <span className="category-summary-count">
+                            {cat.comingSoon ? "準備中" : `${cat.count}件の記事`}
+                          </span>
                         </div>
                       </div>
                       <p className="category-summary-desc">{cat.description}</p>
-                      {cat.posts.length > 0 && (
+                      {cat.posts.length > 0 ? (
                         <ul className="category-summary-posts">
                           {cat.posts.map((p) => (
                             <li key={p.slug}>
@@ -116,12 +133,16 @@ export default function Home({
                             </li>
                           ))}
                         </ul>
+                      ) : (
+                        <p className="category-summary-posts-empty">
+                          近日公開予定です。お楽しみに。
+                        </p>
                       )}
                       <Link
                         href={`/category/${encodeURIComponent(cat.name)}`}
                         className="category-summary-more"
                       >
-                        {cat.name}の記事をすべて見る →
+                        {cat.comingSoon ? "準備中(近日公開予定)" : `${cat.name}の記事をすべて見る →`}
                       </Link>
                     </div>
                   ))}

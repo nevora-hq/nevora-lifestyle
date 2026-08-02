@@ -1,13 +1,17 @@
 import Layout from "../../components/Layout";
 import PostCard from "../../components/PostCard";
 import { getAllCategories, getPostsByCategory } from "../../lib/posts";
-import { getCategoryMeta } from "../../lib/categoryMeta";
+import { getCategoryMeta, getAllCategoryNames } from "../../lib/categoryMeta";
 import { getCategoryMascot } from "../../lib/categoryMascot";
 
 export async function getStaticPaths() {
-  const categories = getAllCategories();
+  // 記事が0件の大カテゴリも「準備中」ページとして事前生成しておく
+  const names = new Set([
+    ...getAllCategoryNames(),
+    ...getAllCategories().map((c) => c.name),
+  ]);
   return {
-    paths: categories.map((c) => ({ params: { name: c.name } })),
+    paths: Array.from(names).map((name) => ({ params: { name } })),
     fallback: "blocking",
   };
 }
@@ -81,7 +85,9 @@ export default function CategoryPage({ posts, category, description }) {
         </div>
       )}
       {posts.length === 0 ? (
-        <p>このカテゴリの記事はまだありません。</p>
+        <p className="category-empty-notice">
+          このカテゴリは現在準備中です。記事を近日公開予定ですので、しばらくお待ちください。
+        </p>
       ) : (
         <div className="post-list">
           {posts.map((post) => (

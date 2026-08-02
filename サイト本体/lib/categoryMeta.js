@@ -80,3 +80,9 @@ const DEFAULT_META = {
 export function getCategoryMeta(name) {
   return CATEGORY_META[name] || DEFAULT_META;
 }
+
+// 大カテゴリの一覧(記事がまだ0件のカテゴリもホームページ・カテゴリページに
+// 「準備中」として表示するために使う)。
+export function getAllCategoryNames() {
+  return Object.keys(CATEGORY_META);
+}
