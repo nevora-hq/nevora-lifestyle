@@ -25,7 +25,7 @@ function buildWebsiteJsonLd(siteUrl) {
 export default function Layout({
   children,
   title = SITE_NAME,
-  description = "暮らしの工夫・便利グッズ・時短家事など、日々の生活を豊かにする情報をわかりやすく解説します。",
+  description = "暮らし・住まい・健康・食・趣味など、日々の生活を豊かにする情報をわかりやすく解説します。",
   ogImage = "",
   categories = [],
   hero = null,

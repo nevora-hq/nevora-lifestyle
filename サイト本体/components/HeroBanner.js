@@ -12,7 +12,7 @@ export default function HeroBanner() {
           <p className="hero-banner-eyebrow">WEB MAGAZINE</p>
           <h1 className="hero-banner-title">暮らしを豊かにする総合ガイド｜NEVORA</h1>
           <p className="hero-banner-lead">
-            暮らしの工夫・便利グッズ・時短家事など、日々の生活を豊かにする情報をわかりやすく解説します。
+            暮らし・住まい・健康・食・趣味など、日々の生活を豊かにする情報をわかりやすく解説します。
           </p>
         </div>
       </div>

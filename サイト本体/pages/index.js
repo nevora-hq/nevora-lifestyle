@@ -43,7 +43,7 @@ export default function Home({
 }) {
   return (
     <Layout
-      title="暮らしを豊かにする総合ガイド｜NEVORA｜暮らしの工夫・便利グッズ・時短家事の情報"
+      title="暮らしを豊かにする総合ガイド｜NEVORA｜暮らし・住まい・健康・食・趣味の情報"
       categories={categories}
       canonicalPath="/"
       hero={
