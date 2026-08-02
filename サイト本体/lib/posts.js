@@ -98,6 +98,9 @@ function renderMascotCommentHtml(mascot) {
 // 途中にマスコットが挟まる不具合が過去にあったため、必ず記事の大きな
 // セクション区切りであるH2見出しの直前にのみ挿入する。
 // H2が少ない(短文)記事では不自然になるため2つ未満の場合は挿入しない。
+// これはライターが本文中に:::mascot:::ブロックを1つも置かなかった記事向けの
+// 後方互換フォールバックで、下のextractMascotBlocks/embedMascotBlocksによる
+// 複数箇所への手動配置が使われている場合はこちらは呼ばれない(二重登場を防ぐため)。
 function insertMascotComment(html, mascot) {
   if (!mascot) return html;
 
@@ -111,6 +114,50 @@ function insertMascotComment(html, mascot) {
 
   const insertAt = headingPositions[Math.floor(headingPositions.length / 2)];
   return html.slice(0, insertAt) + renderMascotCommentHtml(mascot) + html.slice(insertAt);
+}
+
+// ライターが本文Markdown中に明示的に置ける複数箇所マスコット登場の記法。
+// 導入・難しい内容の補足・重要ポイント整理・注意事項・まとめなど、記事内の
+// 任意の場所に次の形式で書くと、その場にマスコットの吹き出しが挿入される。
+//
+//   :::mascot
+//   ここにマスコットのセリフを書く(1〜3文程度)。
+//   :::
+//
+// remarkにMarkdownとして処理させる前に、本関数でプレースホルダー段落
+// (MASCOT_COMMENT_PLACEHOLDER_n)に置き換えてセリフ本文を抜き出しておき、
+// HTML変換後にembedMascotBlocksで実際のマスコットHTMLへ差し替える
+// (remarkに独自記法をそのまま読ませると崩れるため、Markdown処理の前後で
+// 挟み込む2段階構成にしている)。前後に空行を入れ、他の段落・リスト・
+// 引用ブロックの内側には書かないこと(ブロック単位の判定が崩れるため)。
+function extractMascotBlocks(content) {
+  const comments = [];
+  const newContent = content.replace(
+    /:::mascot[ \t]*\n([\s\S]*?)\n:::/g,
+    (_, inner) => {
+      const comment = inner.trim();
+      if (!comment) return "";
+      comments.push(comment);
+      return `MASCOT_COMMENT_PLACEHOLDER_${comments.length - 1}`;
+    }
+  );
+  return { content: newContent, comments };
+}
+
+// extractMascotBlocksが残したプレースホルダー段落を、実際のマスコット
+// 吹き出しHTMLに差し替える。charts・アフィリエイトバナー埋め込みなど
+// 他のブロック単位処理が全て終わった後の最終段階で呼ぶこと
+// (mascot-comment-bubble内部の<p>がブロック分割の正規表現に誤反応するのを防ぐため)。
+function embedMascotBlocks(html, comments, mascot) {
+  if (!mascot || comments.length === 0) return html;
+  return html.replace(
+    /<p>MASCOT_COMMENT_PLACEHOLDER_(\d+)<\/p>/g,
+    (full, idx) => {
+      const comment = comments[Number(idx)];
+      if (comment === undefined) return "";
+      return renderMascotCommentHtml({ ...mascot, comment });
+    }
+  );
 }
 
 // 本文HTML(remarkで生成済み)を段落・リスト等のブロック単位で分割し、
@@ -523,6 +570,9 @@ function estimateReadTimeMinutes(html) {
 // 一覧用の抜粋(excerpt)・検索用の全文インデックス(searchText)の両方で使う共通処理。
 function buildPlainText(content) {
   return stripHtmlComments(content)
+    // :::mascot:::ブロックはフェンス記法だけ除去し、セリフ本文は
+    // カード抜粋・検索対象のテキストとして残す。
+    .replace(/:::mascot[ \t]*\n([\s\S]*?)\n:::/g, "$1")
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/[#*`>\-\[\]!]/g, "")
     .trim();
@@ -603,10 +653,13 @@ export async function getPostBySlug(slug) {
   const { data, content } = matter(fileContents);
   const meta = normalizeFrontmatter(data, slug);
 
+  const { content: contentForRemark, comments: mascotComments } =
+    extractMascotBlocks(stripHtmlComments(content));
+
   const processedContent = await remark()
     .use(remarkGfm)
     .use(remarkHtml)
-    .process(stripHtmlComments(content));
+    .process(contentForRemark);
   const rawHtml = applyInlineMarkup(processedContent.toString());
   // 目次(TOC)表示・アンカーリンクのため、H2/H3見出しにid属性を付与する。
   // charts/アフィリエイトバナーの挿入(段落単位の分割・再結合)より前に行う
@@ -620,7 +673,12 @@ export async function getPostBySlug(slug) {
     meta.affiliateLinks
   );
   const mascot = getCategoryMascot(meta.category, slug, meta.mascotComment);
-  const contentHtml = insertMascotComment(htmlWithAffiliateBanners, mascot);
+  // 本文中に:::mascot:::ブロックが1つでもあれば、そちらを優先して複数箇所に
+  // 差し込む。無ければ従来通りH2中間への自動1箇所挿入にフォールバックする。
+  const contentHtml =
+    mascotComments.length > 0
+      ? embedMascotBlocks(htmlWithAffiliateBanners, mascotComments, mascot)
+      : insertMascotComment(htmlWithAffiliateBanners, mascot);
 
   return {
     slug,
