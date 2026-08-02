@@ -1,0 +1,13 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="マスコットキャラクター コツコツちゃん">
+  <ellipse cx="120" cy="215" rx="55" ry="10" fill="#0ca678" opacity="0.08"/>
+  <path d="M55 55 H185 L150 120 H90 Z M55 205 H185 L150 140 H90 Z" fill="#e3fcf3" stroke="#0ca678" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="90" cy="150" r="10" fill="#0ca678" opacity="0.3"/>
+  <circle cx="150" cy="150" r="10" fill="#0ca678" opacity="0.3"/>
+  <circle cx="100" cy="132" r="7" fill="#24242b"/>
+  <circle cx="140" cy="132" r="7" fill="#24242b"/>
+  <circle cx="102.5" cy="129" r="2.2" fill="#fff"/>
+  <circle cx="142.5" cy="129" r="2.2" fill="#fff"/>
+  <path d="M108 172 Q120 182 132 172" stroke="#08805e" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M62 205 q-16 4 -20 18" stroke="#0ca678" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M178 205 q16 4 20 18" stroke="#0ca678" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

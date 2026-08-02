@@ -720,6 +720,18 @@ img {
   right: 14px;
 }
 
+.home-section-heading-with-mascot {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.home-section-heading-with-mascot .home-section-title,
+.home-section-heading-with-mascot .home-section-lead {
+  margin: 0;
+}
+
 .category-summary-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-hover);
@@ -1589,6 +1601,49 @@ h1.page-title {
 
 .mascot-comment-inline {
   margin: 28px 0;
+}
+
+.category-mascot-intro {
+  margin: 16px 0 28px;
+}
+
+.character-intro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 16px 0 28px;
+}
+
+.character-intro-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border, #e9ecef);
+  border-radius: 12px;
+  background: #fff;
+}
+
+.character-intro-card img {
+  flex-shrink: 0;
+}
+
+.character-intro-main {
+  background: #fff8ea;
+  border-color: #f0b429;
+}
+
+.character-intro-name {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text, #24242b);
+}
+
+.character-intro-role {
+  margin: 2px 0 0;
+  font-size: 0.72rem;
+  color: var(--color-text-faint);
 }
 
 /* ---- 「次の記事」ボタン ---- */

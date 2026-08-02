@@ -1,0 +1,15 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="メインマスコットキャラクター ノヴァちゃん">
+  <ellipse cx="120" cy="215" rx="60" ry="10" fill="#f0b429" opacity="0.08"/>
+  <circle cx="120" cy="128" r="98" fill="#f0b429" opacity="0.06"/>
+  <path d="M120 26 l11 26 l28 4 l-20 20 l5 29 l-24 -15 l-24 15 l5 -29 l-20 -20 l28 -4 Z" fill="#f0b429"/>
+  <path d="M62 98 h116 a13 13 0 0 1 13 13 v82 a13 13 0 0 1 -13 13 H62 a13 13 0 0 1 -13 -13 v-82 a13 13 0 0 1 13 -13 Z" fill="#fff8ea" stroke="#f0b429" stroke-width="6"/>
+  <circle cx="92" cy="155" r="11" fill="#f0b429" opacity="0.3"/>
+  <circle cx="148" cy="155" r="11" fill="#f0b429" opacity="0.3"/>
+  <circle cx="101" cy="138" r="7.5" fill="#24242b"/>
+  <circle cx="139" cy="138" r="7.5" fill="#24242b"/>
+  <circle cx="103.5" cy="135" r="2.3" fill="#fff"/>
+  <circle cx="141.5" cy="135" r="2.3" fill="#fff"/>
+  <path d="M107 164 Q120 174 133 164" stroke="#c8860a" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M58 196 q-18 5 -22 20" stroke="#f0b429" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M182 196 q18 5 22 20" stroke="#f0b429" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>

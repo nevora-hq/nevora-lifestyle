@@ -2,6 +2,7 @@ import Layout from "../../components/Layout";
 import PostCard from "../../components/PostCard";
 import { getAllCategories, getPostsByCategory } from "../../lib/posts";
 import { getCategoryMeta } from "../../lib/categoryMeta";
+import { getCategoryMascot } from "../../lib/categoryMascot";
 
 export async function getStaticPaths() {
   const categories = getAllCategories();
@@ -48,6 +49,7 @@ function buildCategoryJsonLd(category, posts, siteUrl) {
 
 export default function CategoryPage({ posts, category, description }) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+  const mascot = getCategoryMascot(category);
 
   return (
     <Layout
@@ -62,6 +64,22 @@ export default function CategoryPage({ posts, category, description }) {
         <span className="current">{category}</span>
       </nav>
       <h1 className="page-title">カテゴリ: {category}</h1>
+      {mascot && (
+        <div className="mascot-comment category-mascot-intro">
+          <img
+            src={mascot.researchImage}
+            alt={mascot.name}
+            width="56"
+            height="56"
+            className="mascot-comment-img"
+            loading="lazy"
+          />
+          <div className="mascot-comment-bubble">
+            <span className="mascot-comment-name">{mascot.name}({mascot.role})</span>
+            <p className="mascot-comment-text">{mascot.comment}</p>
+          </div>
+        </div>
+      )}
       {posts.length === 0 ? (
         <p>このカテゴリの記事はまだありません。</p>
       ) : (

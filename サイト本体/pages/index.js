@@ -66,10 +66,21 @@ export default function Home({
           <div className="home-main">
             {categorySummaries.length > 0 && (
               <section className="category-summary-section">
-                <h2 className="home-section-title">カテゴリで探す</h2>
-                <p className="home-section-lead">
-                  気になるテーマから、関連記事をまとめてチェックできます。
-                </p>
+                <div className="home-section-heading-with-mascot">
+                  <img
+                    src="/images/mascot/nova-normal.svg"
+                    alt="ノヴァちゃん"
+                    width="48"
+                    height="48"
+                    loading="lazy"
+                  />
+                  <div>
+                    <h2 className="home-section-title">カテゴリで探す</h2>
+                    <p className="home-section-lead">
+                      気になるテーマから、関連記事をまとめてチェックできます。各カテゴリには案内キャラクターがいるよ。
+                    </p>
+                  </div>
+                </div>
                 <div className="category-summary-grid">
                   {categorySummaries.map((cat) => (
                     <div

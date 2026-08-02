@@ -1,6 +1,9 @@
 import Layout from "../components/Layout";
+import { getAllCategoryMascots } from "../lib/categoryMascot";
 
 export default function About() {
+  const characters = getAllCategoryMascots();
+
   return (
     <Layout
       title="運営者情報 | 暮らしを豊かにする総合ガイド｜NEVORA"
@@ -73,6 +76,30 @@ export default function About() {
         <p>
           個人情報の取り扱いについては<a href="/privacy-policy">プライバシーポリシー</a>をご確認ください。
         </p>
+
+        <h2>公式案内キャラクターについて</h2>
+        <p>
+          当サイトでは、記事の案内・要点の補足のために、サイト独自の公式ブランドキャラクター「NEVORAのなかまたち」が登場します。
+          実在の専門家・資格保有者を表すものではなく、読者の皆様に各カテゴリの内容を親しみやすく紹介するための案内役です。
+        </p>
+        <div className="character-intro-grid">
+          <div className="character-intro-card character-intro-main">
+            <img src="/images/mascot/nova-normal.svg" alt="ノヴァちゃん" width="72" height="72" loading="lazy" />
+            <div>
+              <p className="character-intro-name">ノヴァちゃん</p>
+              <p className="character-intro-role">メインナビゲーター</p>
+            </div>
+          </div>
+          {characters.map((c) => (
+            <div className="character-intro-card" key={c.category}>
+              <img src={c.normalImage} alt={c.name} width="56" height="56" loading="lazy" />
+              <div>
+                <p className="character-intro-name">{c.name}</p>
+                <p className="character-intro-role">{c.role}</p>
+              </div>
+            </div>
+          ))}
+        </div>
 
         <h2>運営サイト一覧</h2>
         <p>当運営者は、以下のサイトも運営しています。</p>

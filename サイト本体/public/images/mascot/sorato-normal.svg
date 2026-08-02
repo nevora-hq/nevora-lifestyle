@@ -1,0 +1,15 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="マスコットキャラクター ソラトくん">
+  <ellipse cx="120" cy="215" rx="55" ry="10" fill="#1c7ed6" opacity="0.08"/>
+  <path d="M120 52 l9 15 h-18 Z" fill="#1c7ed6"/>
+  <circle cx="120" cy="130" r="70" fill="#e7f5ff" stroke="#1c7ed6" stroke-width="6"/>
+  <path d="M120 80 L128 128 L120 176 L112 128 Z" fill="#1c7ed6" opacity="0.22"/>
+  <circle cx="90" cy="150" r="10" fill="#1c7ed6" opacity="0.3"/>
+  <circle cx="150" cy="150" r="10" fill="#1c7ed6" opacity="0.3"/>
+  <circle cx="100" cy="132" r="7" fill="#24242b"/>
+  <circle cx="140" cy="132" r="7" fill="#24242b"/>
+  <circle cx="102.5" cy="129" r="2.2" fill="#fff"/>
+  <circle cx="142.5" cy="129" r="2.2" fill="#fff"/>
+  <path d="M108 158 Q120 168 132 158" stroke="#1564ad" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M62 188 q-16 4 -20 18" stroke="#1c7ed6" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M178 188 q16 4 20 18" stroke="#1c7ed6" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>
