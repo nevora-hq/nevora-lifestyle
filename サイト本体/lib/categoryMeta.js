@@ -9,6 +9,7 @@ const CATEGORY_META = {
     icon: "🧹",
     color: "#4d9a7a",
     soft: "#eafaf0",
+    image: "/images/category/kurashi.png",
     description:
       "家事・時短生活・収納・整理整頓など、日々の暮らしを楽にする工夫をまとめています。",
   },
@@ -16,6 +17,7 @@ const CATEGORY_META = {
     icon: "🛋️",
     color: "#e8590c",
     soft: "#ffe8d9",
+    image: "/images/category/sumai.png",
     description:
       "一人暮らし・インテリア・家電・引っ越しなど、住まいを心地よく整えるヒントを紹介します。",
   },
@@ -23,6 +25,7 @@ const CATEGORY_META = {
     icon: "💪",
     color: "#e64980",
     soft: "#ffe3ee",
+    image: "/images/category/kenko.png",
     description:
       "睡眠・運動・食生活・健康習慣など、心身を健やかに保つための情報をまとめています。",
   },
@@ -30,6 +33,7 @@ const CATEGORY_META = {
     icon: "🍳",
     color: "#f08c00",
     soft: "#fff3d6",
+    image: "/images/category/shoku.png",
     description:
       "簡単レシピ・食材の保存方法・キッチングッズなど、毎日の食を豊かにする情報を紹介します。",
   },
@@ -37,6 +41,7 @@ const CATEGORY_META = {
     icon: "🎨",
     color: "#7048e8",
     soft: "#ede6fd",
+    image: "/images/category/shumi.png",
     description:
       "インドア・アウトドアを問わず、日常に彩りを添える趣味の情報をまとめています。",
   },
@@ -44,6 +49,7 @@ const CATEGORY_META = {
     icon: "🧳",
     color: "#1c7ed6",
     soft: "#e7f5ff",
+    image: "/images/category/ryoko.png",
     description:
       "国内旅行・日帰り旅行・一人旅など、お出かけをもっと楽しむための情報を紹介します。",
   },
@@ -51,6 +57,7 @@ const CATEGORY_META = {
     icon: "⏱️",
     color: "#0ca678",
     soft: "#e3fcf3",
+    image: "/images/category/jikan-shukan.png",
     description:
       "時間管理・習慣化・集中力・生活効率化など、日々をより良く過ごすコツをまとめています。",
   },
@@ -58,6 +65,7 @@ const CATEGORY_META = {
     icon: "🤝",
     color: "#f76707",
     soft: "#ffe9d6",
+    image: "/images/category/ningenkankei.png",
     description:
       "コミュニケーション・友人関係・恋愛・自分時間など、人とのつながりに関する情報を紹介します。",
   },
@@ -65,6 +73,7 @@ const CATEGORY_META = {
     icon: "🏠",
     color: "#495057",
     soft: "#f1f3f5",
+    image: "/images/category/lifestyle.png",
     description:
       "ミニマル生活・丁寧な暮らし・自己成長・人生設計など、生き方そのものを見つめ直す情報をまとめています。",
   },

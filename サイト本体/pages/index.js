@@ -13,7 +13,6 @@ import Link from "next/link";
 export async function getStaticProps() {
   const posts = getAllPostsMeta();
   const categories = getAllCategories();
-  const sliderPosts = posts.filter((p) => p.thumbnail).slice(0, 5);
 
   // 記事が1件もない大カテゴリも「準備中」としてホームページに常時表示する
   // (記事があるカテゴリのみに絞り込むと、立ち上げ初期はほとんどのカテゴリが
@@ -33,6 +32,15 @@ export async function getStaticProps() {
     };
   });
 
+  const categorySlides = categorySummaries
+    .filter((c) => c.image)
+    .map((c) => ({
+      name: c.name,
+      image: c.image,
+      color: c.color,
+      href: `/category/${encodeURIComponent(c.name)}`,
+    }));
+
   return {
     props: {
       newPosts: posts.slice(0, 6),
@@ -40,7 +48,7 @@ export async function getStaticProps() {
       popularPosts: posts.slice(0, 5),
       categories,
       categorySummaries,
-      sliderPosts,
+      categorySlides,
     },
   };
 }
@@ -51,7 +59,7 @@ export default function Home({
   popularPosts,
   categories,
   categorySummaries,
-  sliderPosts,
+  categorySlides,
 }) {
   return (
     <Layout
@@ -61,7 +69,7 @@ export default function Home({
       hero={
         <>
           <HeroBanner />
-          <ImageSlider slides={sliderPosts} />
+          <ImageSlider slides={categorySlides} />
         </>
       }
     >
@@ -94,58 +102,52 @@ export default function Home({
                   </div>
                 </div>
                 <div className="category-summary-grid">
-                  {categorySummaries.map((cat) => (
-                    <div
-                      key={cat.name}
-                      className={`category-summary-card${cat.comingSoon ? " category-summary-card-soon" : ""}`}
-                      style={{ "--cat-color": cat.color, "--cat-soft": cat.soft }}
-                    >
-                      {cat.comingSoon && (
-                        <span className="category-summary-badge">準備中</span>
-                      )}
-                      {getCategoryMascot(cat.name) && (
-                        <div className="category-summary-mascot">
-                          <Mascot mascot={getCategoryMascot(cat.name)} />
-                        </div>
-                      )}
-                      <div className="category-summary-head">
-                        <span className="category-summary-icon" aria-hidden="true">
-                          {cat.icon}
-                        </span>
-                        <div>
-                          <h3 className="category-summary-name">{cat.name}</h3>
-                          <span className="category-summary-count">
-                            {cat.comingSoon ? "準備中" : `${cat.count}件の記事`}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="category-summary-desc">{cat.description}</p>
-                      {cat.posts.length > 0 ? (
-                        <ul className="category-summary-posts">
-                          {cat.posts.map((p) => (
-                            <li key={p.slug}>
-                              <Link href={`/posts/${p.slug}`} className="category-summary-post-link">
-                                {p.thumbnail && (
-                                  <img src={p.thumbnail} alt="" loading="lazy" />
-                                )}
-                                <span>{p.title}</span>
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="category-summary-posts-empty">
-                          近日公開予定です。お楽しみに。
-                        </p>
-                      )}
-                      <Link
-                        href={`/category/${encodeURIComponent(cat.name)}`}
-                        className="category-summary-more"
+                  {categorySummaries.map((cat) => {
+                    const mascot = getCategoryMascot(cat.name);
+                    const categoryHref = `/category/${encodeURIComponent(cat.name)}`;
+                    return (
+                      <div
+                        key={cat.name}
+                        className={`category-summary-card${cat.comingSoon ? " category-summary-card-soon" : ""}`}
+                        style={{ "--cat-color": cat.color, "--cat-soft": cat.soft }}
                       >
-                        {cat.comingSoon ? "準備中(近日公開予定)" : `${cat.name}の記事をすべて見る →`}
-                      </Link>
-                    </div>
-                  ))}
+                        <Link
+                          href={categoryHref}
+                          className="category-summary-image-link"
+                          aria-label={`${cat.name}の記事一覧を見る`}
+                        >
+                          {cat.image && (
+                            <img
+                              src={cat.image}
+                              alt={cat.name}
+                              loading="lazy"
+                              className="category-summary-image"
+                            />
+                          )}
+                          {cat.comingSoon && (
+                            <span className="category-summary-badge">準備中</span>
+                          )}
+                          <span className="category-summary-image-overlay">
+                            <span className="category-summary-image-icon" aria-hidden="true">
+                              {cat.icon}
+                            </span>
+                            <span className="category-summary-image-name">{cat.name}</span>
+                          </span>
+                        </Link>
+
+                        {mascot && (
+                          <div className="category-summary-mascot-row">
+                            <Mascot mascot={mascot} size={48} />
+                            <p className="category-summary-intro">{mascot.homeIntro}</p>
+                          </div>
+                        )}
+
+                        <p className="category-summary-cta">
+                          気になる方は、上の画像をクリックして記事をチェックしてみてね。
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
               </section>
             )}

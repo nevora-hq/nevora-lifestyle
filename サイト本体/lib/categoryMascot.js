@@ -10,6 +10,8 @@ const CATEGORY_MASCOTS = {
     role: "暮らし担当",
     normalImage: "/images/mascot/mebae-normal.svg",
     researchImage: "/images/mascot/mebae-research.svg",
+    homeIntro:
+      "家事の時短ワザや収納・整理整頓のコツをまとめているよ。毎日の家事をちょっとでも楽にしたい人にぴったりだよ。",
     comments: [
       "小さな工夫の積み重ねが、暮らしの快適さを大きく変えるよ。",
       "無理に完璧を目指さず、続けられるやり方を見つけるのがコツだよ。",
@@ -21,6 +23,8 @@ const CATEGORY_MASCOTS = {
     role: "住まい担当",
     normalImage: "/images/mascot/madoka-normal.svg",
     researchImage: "/images/mascot/madoka-research.svg",
+    homeIntro:
+      "一人暮らしの部屋づくりや家電・引っ越しのヒントを紹介しているよ。住まいをもっと心地よくしたい人におすすめだよ。",
     comments: [
       "部屋は、自分がいちばんくつろげる形にしていいんだよ。",
       "模様替えは小さな一歩からでOK。まずは配置から見直してみよっか。",
@@ -32,6 +36,8 @@ const CATEGORY_MASCOTS = {
     role: "健康担当",
     normalImage: "/images/mascot/rizumu-normal.svg",
     researchImage: "/images/mascot/rizumu-research.svg",
+    homeIntro:
+      "睡眠・運動・食生活など、心と体を整える習慣をまとめているよ。無理なく健康を保ちたい人にぴったりだよ。",
     comments: [
       "頑張りすぎず、自分の体のリズムを大切にしてね。",
       "小さな習慣の見直しが、体調の変化につながることもあるよ。",
@@ -43,6 +49,8 @@ const CATEGORY_MASCOTS = {
     role: "食担当",
     normalImage: "/images/mascot/hokahoka-normal.svg",
     researchImage: "/images/mascot/hokahoka-research.svg",
+    homeIntro:
+      "簡単レシピやキッチングッズ、食材保存のコツを紹介しているよ。毎日の食事をもっと楽しみたい人におすすめだよ。",
     comments: [
       "毎日の食事、たまには手を抜いても大丈夫だよ。",
       "ちょっとした工夫で、食卓がぐっと楽しくなるよ。",
@@ -54,6 +62,8 @@ const CATEGORY_MASCOTS = {
     role: "趣味担当",
     normalImage: "/images/mascot/iroha-normal.svg",
     researchImage: "/images/mascot/iroha-research.svg",
+    homeIntro:
+      "インドア・アウトドアを問わず、暮らしを彩る趣味の情報をまとめているよ。新しい楽しみを見つけたい人にぴったりだよ。",
     comments: [
       "好きなことに没頭する時間は、暮らしの彩りになるよ。",
       "上手じゃなくても、楽しめたらそれでいいんだよ。",
@@ -65,6 +75,8 @@ const CATEGORY_MASCOTS = {
     role: "旅行・お出かけ担当",
     normalImage: "/images/mascot/sorato-normal.svg",
     researchImage: "/images/mascot/sorato-research.svg",
+    homeIntro:
+      "国内旅行や日帰りお出かけの情報を紹介しているよ。次の休みの予定を考えたい人におすすめだよ。",
     comments: [
       "近場のお出かけでも、新しい発見はたくさんあるよ。",
       "計画をしっかり立てておくと、当日をもっと楽しめるよ。",
@@ -76,6 +88,8 @@ const CATEGORY_MASCOTS = {
     role: "時間・習慣担当",
     normalImage: "/images/mascot/kotsukotsu-normal.svg",
     researchImage: "/images/mascot/kotsukotsu-research.svg",
+    homeIntro:
+      "時間管理や習慣化、集中力アップのコツをまとめているよ。日々をより良く過ごしたい人にぴったりだよ。",
     comments: [
       "今日の一歩が、明日を少しずつ変えていくよ。",
       "完璧じゃなくていいから、まずは続けることを大事にしようね。",
@@ -87,6 +101,8 @@ const CATEGORY_MASCOTS = {
     role: "人間関係担当",
     normalImage: "/images/mascot/musubi-normal.svg",
     researchImage: "/images/mascot/musubi-research.svg",
+    homeIntro:
+      "友人関係や恋愛、自分時間など人とのつながりに関する情報を紹介しているよ。人間関係の悩みを軽くしたい人におすすめだよ。",
     comments: [
       "その気持ち、わかるよ。無理に合わせすぎなくて大丈夫。",
       "自分の気持ちを大切にすることも、良い関係づくりの一歩だよ。",
@@ -98,6 +114,8 @@ const CATEGORY_MASCOTS = {
     role: "ライフスタイル担当",
     normalImage: "/images/mascot/michiru-normal.svg",
     researchImage: "/images/mascot/michiru-research.svg",
+    homeIntro:
+      "ミニマル生活や丁寧な暮らし、自分らしい生き方のヒントをまとめているよ。生き方を見つめ直したい人にぴったりだよ。",
     comments: [
       "自分のペースでいいんだよ。人と比べなくて大丈夫。",
       "「自分らしさ」は、少しずつ育てていくものだよ。",
@@ -116,7 +134,11 @@ function pickComment(mascot, seed) {
 export function getCategoryMascot(categoryName, seed = categoryName, overrideComment = "") {
   const mascot = CATEGORY_MASCOTS[categoryName];
   if (!mascot) return null;
-  return { ...mascot, comment: overrideComment || pickComment(mascot, seed) };
+  return {
+    ...mascot,
+    comment: overrideComment || pickComment(mascot, seed),
+    homeIntro: mascot.homeIntro || pickComment(mascot, seed),
+  };
 }
 
 export function getAllCategoryMascots() {
