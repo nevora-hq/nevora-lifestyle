@@ -7,7 +7,6 @@ import Sidebar from "../components/Sidebar";
 import { getAllPostsMeta, getAllCategories, getPostsByCategory } from "../lib/posts";
 import { getCategoryMeta, getAllCategoryNames } from "../lib/categoryMeta";
 import { getCategoryMascot } from "../lib/categoryMascot";
-import Mascot from "../components/Mascot";
 import Link from "next/link";
 
 export async function getStaticProps() {
@@ -136,9 +135,19 @@ export default function Home({
                         </Link>
 
                         {mascot && (
-                          <div className="category-summary-mascot-row">
-                            <Mascot mascot={mascot} size={48} />
-                            <p className="category-summary-intro">{mascot.homeIntro}</p>
+                          <div className="mascot-comment category-summary-mascot-comment">
+                            <img
+                              src={mascot.normalImage}
+                              alt={mascot.name}
+                              width={64}
+                              height={64}
+                              className="mascot-comment-img"
+                              loading="lazy"
+                            />
+                            <div className="mascot-comment-bubble">
+                              <span className="mascot-comment-name">{mascot.name}</span>
+                              <p className="mascot-comment-text">{mascot.homeIntro}</p>
+                            </div>
                           </div>
                         )}
 
