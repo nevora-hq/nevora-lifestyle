@@ -43,8 +43,8 @@ export async function getStaticProps() {
 
   return {
     props: {
-      newPosts: posts.slice(0, 6),
-      featuredPosts: posts.slice(0, 3),
+      newPosts: posts.slice(0, 2),
+      featuredPosts: posts.slice(0, 2),
       popularPosts: posts.slice(0, 5),
       categories,
       categorySummaries,
@@ -159,7 +159,7 @@ export default function Home({
               ) : (
                 <div className="post-list">
                   {featuredPosts.map((post) => (
-                    <PostCard key={post.slug} post={post} />
+                    <PostCard key={post.slug} post={post} variant="compact" />
                   ))}
                 </div>
               )}
@@ -169,7 +169,7 @@ export default function Home({
               <h2 className="home-section-title">新着記事</h2>
               <div className="post-list">
                 {newPosts.map((post) => (
-                  <PostCard key={post.slug} post={post} />
+                  <PostCard key={post.slug} post={post} variant="compact" />
                 ))}
               </div>
             </section>

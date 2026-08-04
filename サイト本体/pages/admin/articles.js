@@ -14,6 +14,7 @@ export default function AdminArticles({ posts }) {
           記事データは Markdown(サイト運営/記事データ/確定稿)を元に自動生成されています。
           公開・非公開の切替や編集は、現時点ではMarkdownファイル側(ライター・編集長・配信者の作業)で行います。
           将来データベース化した際に、この画面から直接操作できるようにする予定です。
+          最終更新日は、内容を確認・修正した記事のfrontmatterに <code>updatedDate: YYYY-MM-DD</code> を追記すると反映されます(全記事一括設定はしないでください)。
         </p>
         <table className="admin-table">
           <thead>
@@ -22,6 +23,7 @@ export default function AdminArticles({ posts }) {
               <th>カテゴリ</th>
               <th>タグ</th>
               <th>公開日</th>
+              <th>最終更新日</th>
               <th>状態</th>
             </tr>
           </thead>
@@ -34,6 +36,7 @@ export default function AdminArticles({ posts }) {
                 <td>{post.category}</td>
                 <td>{post.tags.join(", ")}</td>
                 <td>{post.date || "-"}</td>
+                <td>{post.updatedDate || "-"}</td>
                 <td>
                   <span className="status-badge published">公開中</span>
                 </td>

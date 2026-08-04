@@ -120,6 +120,19 @@ export default function PostPage({ post, related, nextPost }) {
           />
         )}
 
+        {post.toc?.some((item) => item.level === 2) && (
+          <div className="article-summary-box">
+            <p className="article-summary-heading">この記事で分かること</p>
+            <ul className="article-summary-list">
+              {post.toc
+                .filter((item) => item.level === 2)
+                .map((item) => (
+                  <li key={item.id}>{item.text}</li>
+                ))}
+            </ul>
+          </div>
+        )}
+
         <ArticleToc items={post.toc} />
 
         {post.affiliateLinks?.length > 0 && (
