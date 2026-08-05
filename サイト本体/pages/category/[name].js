@@ -89,9 +89,9 @@ export default function CategoryPage({ posts, category, description }) {
           このカテゴリは現在準備中です。記事を近日公開予定ですので、しばらくお待ちください。
         </p>
       ) : (
-        <div className="post-list">
+        <div className="post-list post-list-rows">
           {posts.map((post) => (
-            <PostCard key={post.slug} post={post} />
+            <PostCard key={post.slug} post={post} variant="list" />
           ))}
         </div>
       )}

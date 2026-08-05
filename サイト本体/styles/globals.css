@@ -982,6 +982,56 @@ h1.page-title {
   color: var(--color-text-faint);
 }
 
+/* ---- Card: list variant(カテゴリページ・検索結果一覧用) ----
+   左にサムネイル、右にカテゴリバッジ+タイトル+サマリーのみを表示する
+   横並びカード。カード全体が<a>タグになるため、リンクの下線・文字色の
+   リセットのみ追加する。 */
+.post-list-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-card-list {
+  flex-direction: row;
+  align-items: stretch;
+  color: inherit;
+  text-decoration: none;
+  gap: 0;
+}
+
+.post-card-list .post-card-thumb {
+  width: 200px;
+  height: 100%;
+  aspect-ratio: 16 / 9;
+  flex-shrink: 0;
+}
+
+.post-card-list .post-card-body {
+  padding: 16px 18px;
+  justify-content: center;
+}
+
+.post-card-list h2 {
+  color: var(--color-text);
+}
+
+.post-card-list:hover h2 {
+  color: var(--color-primary);
+}
+
+@media (max-width: 480px) {
+  .post-card-list {
+    flex-direction: row;
+  }
+  .post-card-list .post-card-thumb {
+    width: 120px;
+  }
+  .post-card-list .excerpt {
+    -webkit-line-clamp: 2;
+  }
+}
+
 /* ---- Card: compact variant(ホームの新着/注目記事用) ----
    カード全体が<a>タグになるため、既存.post-cardの見た目(背景・角丸・影・
    ホバー)はそのまま活かしつつ、リンクの下線・文字色のリセットのみ追加する。 */

@@ -23,6 +23,29 @@ export default function PostCard({ post, variant }) {
     );
   }
 
+  if (variant === "list") {
+    // カテゴリページ・検索結果一覧向け: 左にサムネイル、右にカテゴリバッジ+
+    // タイトル+サマリーのみを表示する横並びカード。タグ(ハッシュタグ)や
+    // アフィリエイトを想起させる情報は表示しない。
+    return (
+      <Link href={`/posts/${post.slug}`} className="post-card post-card-list">
+        {post.thumbnail && (
+          <img
+            src={post.thumbnail}
+            alt={post.title}
+            loading="lazy"
+            className="post-card-thumb"
+          />
+        )}
+        <div className="post-card-body">
+          <span className="category-badge">{post.category}</span>
+          <h2>{post.title}</h2>
+          <p className="excerpt">{post.excerpt}</p>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <div className="post-card">
       {post.thumbnail && (

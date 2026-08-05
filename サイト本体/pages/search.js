@@ -85,9 +85,9 @@ export default function SearchPage({ posts }) {
         />
       </div>
       <p className="result-count">{results.length}件見つかりました</p>
-      <div className="post-list">
+      <div className="post-list post-list-rows">
         {results.map((post) => (
-          <PostCard key={post.slug} post={post} />
+          <PostCard key={post.slug} post={post} variant="list" />
         ))}
       </div>
     </Layout>
