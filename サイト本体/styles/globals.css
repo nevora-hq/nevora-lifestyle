@@ -690,6 +690,65 @@ img {
   font-size: 0.9rem;
 }
 
+/* ---- 悩みから探すセクション ---- */
+.worry-section {
+  position: relative;
+  margin-bottom: 40px;
+  padding: clamp(20px, 4vw, 36px);
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px) saturate(140%);
+  -webkit-backdrop-filter: blur(6px) saturate(140%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.worry-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 18px;
+}
+
+.worry-group-title {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.worry-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.worry-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 18px;
+  border-radius: 999px;
+  background: var(--color-primary-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-primary-dark);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.worry-chip:hover,
+.worry-chip:focus-visible {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.worry-chip:active {
+  transform: translateY(0);
+}
+
 /* ---- カテゴリまとめセクション ---- */
 .category-summary-section {
   position: relative;
@@ -783,6 +842,47 @@ img {
   background: var(--cat-color, var(--color-primary));
   border-radius: 999px;
   z-index: 1;
+}
+
+/* ---- カテゴリまとめのアコーディオン(人気3カテゴリー以外) ----
+   全カテゴリーのリンクは常に初期HTMLに存在させ、開閉はmax-height/opacityの
+   CSSトランジションとaria-hiddenのみで行う(display:noneやJSでのDOM生成はしない)。 */
+.category-summary-extra {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  transition: grid-template-rows 320ms ease, opacity 260ms ease;
+  margin-top: 0;
+}
+
+.category-summary-extra-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  margin-top: 20px;
+}
+
+.category-summary-extra > .category-summary-grid-extra {
+  min-height: 0;
+}
+
+.category-summary-toggle {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 22px;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.category-summary-toggle:hover,
+.category-summary-toggle:focus-visible {
+  background: var(--color-primary-surface);
 }
 
 .category-summary-mascot-comment {
