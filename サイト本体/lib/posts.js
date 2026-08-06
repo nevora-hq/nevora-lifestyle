@@ -57,6 +57,81 @@ function applyInlineMarkup(html) {
     .replace(/%%([^%\n]+?)%%/g, '<span class="article-note">$1</span>');
 }
 
+// ライターが本文中に置ける「視認性向上ボックス」記法。remarkに渡す前に
+// プレースホルダー段落へ置き換え、HTML変換後に実際のボックスHTMLへ差し替える
+// (:::mascotと同じ2段階構成)。対応する記法:
+//   :::tip ... :::       → 💡 ポイント(補足Tips)
+//   :::warning ... :::   → ⚠️ 注意(誤解されやすい情報への注記)
+//   :::conclusion ... := 🔍 結論だけ知りたい人へ(比較記事のリード直後用)
+//   :::accordion タイトル
+//   本文
+//   :::                  → 折りたたみ(体験談等の長い読み物パート用)
+// 前後に空行を入れ、他の段落・リスト・引用ブロックの内側には書かないこと。
+const CALLOUT_TYPES = {
+  tip: { label: "💡 ポイント", cls: "callout-tip" },
+  warning: { label: "⚠️ 注意", cls: "callout-warning" },
+  conclusion: { label: "🔍 結論だけ知りたい人へ", cls: "callout-conclusion" },
+};
+
+function extractCalloutBlocks(content) {
+  const blocks = [];
+
+  let newContent = content.replace(
+    /:::(tip|warning|conclusion)[ \t]*\n([\s\S]*?)\n:::/g,
+    (_, type, inner) => {
+      const body = inner.trim();
+      if (!body) return "";
+      blocks.push({ kind: "callout", type, body });
+      return `CALLOUT_BLOCK_PLACEHOLDER_${blocks.length - 1}`;
+    }
+  );
+
+  newContent = newContent.replace(
+    /:::accordion[ \t]+([^\n]+)\n([\s\S]*?)\n:::/g,
+    (_, title, inner) => {
+      const body = inner.trim();
+      if (!body) return "";
+      blocks.push({ kind: "accordion", title: title.trim(), body });
+      return `CALLOUT_BLOCK_PLACEHOLDER_${blocks.length - 1}`;
+    }
+  );
+
+  return { content: newContent, blocks };
+}
+
+async function renderCalloutBlockHtml(block) {
+  if (block.kind === "accordion") {
+    const inner = await remark()
+      .use(remarkGfm)
+      .use(remarkHtml)
+      .process(block.body);
+    return `<details class="article-accordion"><summary>${escapeHtmlText(
+      block.title
+    )}</summary><div class="article-accordion-body">${applyInlineMarkup(
+      inner.toString()
+    )}</div></details>`;
+  }
+
+  const meta = CALLOUT_TYPES[block.type];
+  const inner = await remark().use(remarkGfm).use(remarkHtml).process(block.body);
+  return `<div class="article-callout ${meta.cls}"><p class="article-callout-label">${meta.label}</p><div class="article-callout-body">${applyInlineMarkup(
+    inner.toString()
+  )}</div></div>`;
+}
+
+async function embedCalloutBlocks(html, blocks) {
+  if (blocks.length === 0) return html;
+  let result = html;
+  for (let i = 0; i < blocks.length; i += 1) {
+    const rendered = await renderCalloutBlockHtml(blocks[i]);
+    result = result.replace(
+      new RegExp(`<p>CALLOUT_BLOCK_PLACEHOLDER_${i}<\\/p>`),
+      rendered
+    );
+  }
+  return result;
+}
+
 function escapeHtmlText(text) {
   return String(text || "")
     .replace(/&/g, "&amp;")
@@ -174,7 +249,7 @@ function escapeRegExp(text) {
 // アフィリエイトバナー・グラフの挿入箇所判定の両方で使う。
 function splitHtmlBlocks(html) {
   return html.split(
-    /(?<=<\/(?:p|ul|ol|blockquote|h1|h2|h3|h4|h5|h6|pre|table)>)\n*(?=<)/
+    /(?<=<\/(?:p|ul|ol|blockquote|h1|h2|h3|h4|h5|h6|pre|table)>|<hr ?\/?>)\n*(?=<)/
   );
 }
 
@@ -573,6 +648,8 @@ function buildPlainText(content) {
     // :::mascot:::ブロックはフェンス記法だけ除去し、セリフ本文は
     // カード抜粋・検索対象のテキストとして残す。
     .replace(/:::mascot[ \t]*\n([\s\S]*?)\n:::/g, "$1")
+    .replace(/:::(tip|warning|conclusion)[ \t]*\n([\s\S]*?)\n:::/g, "$2")
+    .replace(/:::accordion[ \t]+([^\n]+)\n([\s\S]*?)\n:::/g, "$1 $2")
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/[#*`>\-\[\]!]/g, "")
     .trim();
@@ -653,14 +730,20 @@ export async function getPostBySlug(slug) {
   const { data, content } = matter(fileContents);
   const meta = normalizeFrontmatter(data, slug);
 
+  const { content: contentAfterCallouts, blocks: calloutBlocks } =
+    extractCalloutBlocks(stripHtmlComments(content));
   const { content: contentForRemark, comments: mascotComments } =
-    extractMascotBlocks(stripHtmlComments(content));
+    extractMascotBlocks(contentAfterCallouts);
 
   const processedContent = await remark()
     .use(remarkGfm)
     .use(remarkHtml)
     .process(contentForRemark);
-  const rawHtml = applyInlineMarkup(processedContent.toString());
+  const htmlWithCallouts = await embedCalloutBlocks(
+    processedContent.toString(),
+    calloutBlocks
+  );
+  const rawHtml = applyInlineMarkup(htmlWithCallouts);
   // 目次(TOC)表示・アンカーリンクのため、H2/H3見出しにid属性を付与する。
   // charts/アフィリエイトバナーの挿入(段落単位の分割・再結合)より前に行う
   // (挿入処理は開始タグの属性追加に影響されず、見出しブロック判定の

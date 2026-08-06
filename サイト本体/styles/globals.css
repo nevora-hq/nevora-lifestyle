@@ -1289,6 +1289,90 @@ h1.page-title {
   color: #55606b;
 }
 
+/* ---- 視認性向上ボックス(:::tip / :::warning / :::conclusion) ----
+   本文の該当箇所の直前・直後に配置する短い補足ボックス。3種とも見た目の
+   骨格は共通にし、左ボーダー色とラベルだけで種類を区別する。 */
+.article-callout {
+  margin: 1.4em 0;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  border-left-width: 4px;
+  background: var(--color-surface);
+}
+
+.article-callout-label {
+  margin: 0 0 6px;
+  font-weight: 700;
+}
+
+.article-callout-body {
+  color: var(--color-text-muted);
+}
+
+.article-callout-body > *:first-child {
+  margin-top: 0;
+}
+
+.article-callout-body > *:last-child {
+  margin-bottom: 0;
+}
+
+.callout-tip {
+  border-left-color: #2a78d6;
+}
+
+.callout-tip .article-callout-label {
+  color: #2a78d6;
+}
+
+.callout-warning {
+  border-left-color: #eda100;
+}
+
+.callout-warning .article-callout-label {
+  color: #a15c00;
+}
+
+.callout-conclusion {
+  border-left-color: #1baf7a;
+  background: rgba(27, 175, 122, 0.06);
+}
+
+.callout-conclusion .article-callout-label {
+  color: #1baf7a;
+}
+
+/* ---- 折りたたみ(:::accordion タイトル) ----
+   体験談・失敗談など「読み物として長いが本筋の答えではない」パートを
+   格納する。閉じた状態でもタイトルだけで内容の見当がつくようにする。 */
+.article-accordion {
+  margin: 1.4em 0;
+  padding: 12px 18px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.article-accordion summary {
+  cursor: pointer;
+  font-weight: 700;
+  padding: 4px 0;
+}
+
+.article-accordion-body {
+  margin-top: 10px;
+  color: var(--color-text-muted);
+}
+
+.article-accordion-body > *:first-child {
+  margin-top: 0;
+}
+
+.article-accordion-body > *:last-child {
+  margin-bottom: 0;
+}
+
 .article-chart {
   margin: 2em 0;
   padding: 20px;
