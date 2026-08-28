@@ -1,0 +1,9626 @@
+:root {
+  --color-primary: #d6336c;
+  --color-primary-dark: #b32657;
+  --color-primary-light: #ffe3ec;
+  --color-primary-surface: #fff5f8;
+  /* 汎用4type(steps/checklist/summaryCard/compareCards)+セクション交互化の既定色。
+     記事側で独自テーマ(.asemo-article等)を持つ場合は、そのスコープ内でこの4変数だけ
+     再定義すれば、クラス自体をコピーしなくても配色を変えられる(2026-08-08追加)。 */
+  --chart-accent: var(--color-primary);
+  --chart-accent-dark: var(--color-primary-dark);
+  --chart-tint-bg: var(--color-primary-surface);
+  --chart-card-border: var(--color-primary-light);
+  --color-bg: #faf9fb;
+  --color-surface: #fff;
+  --color-border: #ececec;
+  --color-text: #24242b;
+  --color-text-muted: #6b7280;
+  --color-text-faint: #9ca3af;
+  /* 断面/構造図型・深さ比較型(chart type: crossSection/depthComparison)の
+     既定色。記事側でpart.fill等を明示指定すればここを上書きできる(2026-08-13追加)。 */
+  --diagram-skin: #f4e4d0;
+  --diagram-skin-2: #e9d1b4;
+  --diagram-line: #4a3f33;
+  /* 書体(2026-08-27): 見出し=明朝、本文=Zen Kaku Gothic New。
+     いずれも未読込時は従来のヒラギノ系へフォールバックする。 */
+  --font-serif: "Shippori Mincho", "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif;
+  --font-sans: "Zen Kaku Gothic New", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.05);
+  --shadow-md: 0 6px 20px rgba(20, 20, 30, 0.07);
+  --shadow-hover: 0 10px 28px rgba(214, 51, 108, 0.14);
+  --transition: 180ms ease;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 2;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* トップページの雑誌型レイアウト用のワイドコンテナ(2026-08-17)。
+   .hero-banner-inner と同じ 1180px / 左右24px を使うことで、
+   ヒーローのタイトル左端と本文カラムの左端が一直線に揃う。
+   記事ページ等は可読性のため既定の960pxのまま。 */
+.container--wide {
+  max-width: 1180px;
+}
+
+@media (min-width: 768px) {
+  .container--wide {
+    padding: 0 24px;
+  }
+}
+
+/* ---- 全ページ共通の最背面グラデーション背景 ----
+   Layout.jsから全ページで描画される。position: fixedでヘッダー/フッターの
+   背後にも回り込むため、各ページ・各コンポーネントは個別に背景色を持たない。 */
+.site-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(160deg, #fdf1f4 0%, #f7f2fb 35%, #eef6fb 65%, #e9f2fb 100%);
+}
+
+/* ---- Header ----
+   同系色の水色グラデーション+ごく薄い水玉模様を全ページ共通で敷く。 */
+.site-header {
+  background-image: radial-gradient(rgba(56, 163, 217, 0.14) 1px, transparent 1.6px),
+    linear-gradient(120deg, rgba(255, 241, 244, 0.92), rgba(234, 244, 251, 0.92));
+  background-size: 16px 16px, 100% 100%;
+  background-repeat: repeat, no-repeat;
+  backdrop-filter: saturate(180%) blur(8px);
+  -webkit-backdrop-filter: saturate(180%) blur(8px);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+/* ロゴはマスコット(ネヴォミン)のアイコン+テキストの組み。
+   アイコンは装飾のためalt=""とし、読み上げはテキスト側に任せる。 */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--color-primary);
+  letter-spacing: 0.14em;
+}
+
+.logo-mark {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  display: block;
+}
+
+@media (max-width: 480px) {
+  .logo {
+    font-size: 1rem;
+    gap: 7px;
+  }
+
+  .logo-mark {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.logo:hover {
+  text-decoration: none;
+  opacity: 0.85;
+}
+
+.main-nav {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.main-nav-link {
+  color: var(--color-primary-dark);
+  background: var(--color-primary-surface);
+  font-size: 0.95rem;
+  font-weight: 600;
+  position: relative;
+  padding: 8px 14px;
+  border-radius: 999px;
+  transition: background var(--transition), color var(--transition);
+}
+
+.main-nav-link:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  text-decoration: none;
+}
+
+.main-nav-link[aria-current="page"] {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-toggle-bar,
+.nav-toggle-bar::before,
+.nav-toggle-bar::after {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--color-text);
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.nav-toggle-bar {
+  position: relative;
+}
+
+.nav-toggle-bar::before,
+.nav-toggle-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.nav-toggle-bar::before {
+  top: -7px;
+}
+
+.nav-toggle-bar::after {
+  top: 7px;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar {
+  background: transparent;
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar::before {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.nav-toggle[aria-expanded="true"] .nav-toggle-bar::after {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* ---- Header nav: category dropdown ---- */
+.nav-dropdown {
+  position: relative;
+}
+
+.nav-dropdown-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  color: var(--color-primary-dark);
+  background: var(--color-primary-surface);
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+}
+
+.nav-dropdown-label:hover {
+  background: var(--color-primary-light);
+}
+
+.nav-dropdown.open .nav-dropdown-label,
+.nav-dropdown:focus-within .nav-dropdown-label {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.nav-dropdown-arrow {
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform var(--transition);
+}
+
+.nav-dropdown.open .nav-dropdown-arrow {
+  transform: rotate(-135deg);
+}
+
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  padding: 8px;
+  margin-top: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  z-index: 30;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu,
+.nav-dropdown:focus-within .nav-dropdown-menu,
+.nav-dropdown.open .nav-dropdown-menu {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-dropdown-menu a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.nav-dropdown-menu a:hover {
+  background: var(--color-primary-surface);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.nav-dropdown-count {
+  color: var(--color-text-faint);
+  font-size: 0.78rem;
+}
+
+/* ---- Footer ----
+   ヘッダーと同系色のグラデーション+水玉模様を全ページ共通で敷く。 */
+/* 帯構成のページ(トップ)は最後の帯を下端まで続かせ、
+   フッターとの間に地の背景が64px覗かないようにする */
+.main--full + .site-footer {
+  margin-top: 0;
+}
+
+.site-footer {
+  margin-top: 64px;
+  padding: 32px 0;
+  text-align: center;
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--color-border);
+  background-image: radial-gradient(rgba(56, 163, 217, 0.12) 1px, transparent 1.6px),
+    linear-gradient(160deg, rgba(238, 246, 251, 1), rgba(253, 241, 244, 1));
+  background-size: 18px 18px, 100% 100%;
+  background-repeat: repeat, no-repeat;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 20px;
+  margin: 14px 0;
+}
+
+.footer-nav a {
+  color: var(--color-text-muted);
+}
+
+.footer-sites {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  margin: 4px 0 14px;
+  font-size: 0.7rem;
+}
+
+.footer-sites a {
+  color: var(--color-text-faint);
+}
+
+.footer-ad-notice {
+  max-width: 640px;
+  margin: 8px auto 0;
+  font-size: 0.75rem;
+  line-height: 1.7;
+  color: var(--color-text-faint);
+}
+
+/* ---- Hero banner(トップページのみ) ----
+   雑誌型ファーストビュー(2026-08-17 リデザインStep1)。写真をfull-bleedで敷き、
+   左側にスクリム(暗いグラデーション)を重ねてタイトル・キャッチをオーバーレイする。
+   スマホ(〜767px)は従来の高さ・余白・文字サイズをそのまま維持し、
+   PC(768px〜)でのみ高さとコピー幅を引き上げてレイアウトを変える。
+
+   レイヤー構成(下から順に):
+     .hero-banner-img   … 写真本体(object-fitでトリミング)
+     .hero-banner-warm  … 暖色ウォッシュ(クール系の写真をブランドのピンク寄りに寄せる)
+     .hero-banner-scrim … 左側スクリム+下端/右下の落とし込み(文字とマスコットの可読性)
+     .hero-banner-overlay(.hero-banner-inner) … テキスト
+     .hero-banner-mascot … マスコット */
+.hero-banner {
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  /* .hero-banner-warmのmix-blend-modeをヒーロー内部に閉じ込める */
+  isolation: isolate;
+}
+
+.hero-banner-img {
+  display: block;
+  width: 100%;
+  height: clamp(220px, 34vw, 420px);
+  object-fit: cover;
+  /* 縦方向は強く上寄せする。ヒーローの枠は元画像(縦横比1.87)より横長になるため
+     cover時に切られるのは上下のみで、ワイドになるほど上下の切り取り量が増える。
+     基準を12%まで上げることで、超ワイド表示(2560px以上)やブラウザ縮小時でも
+     額〜目のラインが残る(0%にすると今度は化粧品が全て切れるため12%が上限)。
+     横方向は、枠が縦長寄りになるスマホでのみ効く(PCでは全幅が表示される)。 */
+  object-position: 45% 0%;
+  margin: 0;
+}
+
+.hero-banner-warm {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 176, 196, 0.18) 0%,
+    rgba(255, 214, 196, 0.12) 55%,
+    rgba(255, 244, 236, 0.06) 100%
+  );
+  mix-blend-mode: multiply;
+}
+
+/* 左側スクリム。停止位置を画面中央基準のcalc()で指定することで、
+   ビューポート幅が変わってもコピー(最大幅640px・コンテンツ幅1180pxの左端起点)の
+   右端が必ず濃い側に収まり、白文字のコントラストを保てる。
+
+   濃度(α0.74)は下げられない: この写真はテキスト範囲にも白飛び寸前の明部
+   (肌のハイライト・窓の光、実測rgb 250前後)が入るため、6:1を満たすには
+   α0.62〜0.73が必要(scratchpadの実測による)。
+   そのため「濃さ」ではなく「暗くする範囲」を絞ることで明るさを取り戻す:
+     - 右方向のフェード終端を50%+420px → 50%+300pxに手前倒し
+     - 上下方向はmask-imageでスクリム自体を薄める(下記@media 768px〜) */
+.hero-banner-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      rgba(48, 16, 30, 0.78) 0%,
+      rgba(48, 16, 30, 0.74) calc(50% + 60px),
+      rgba(56, 22, 38, 0.34) calc(50% + 200px),
+      rgba(60, 26, 44, 0) calc(50% + 330px)
+    ),
+    /* 右下: マスコットを明るい写真の上でも見えるようにわずかに落とす */
+      radial-gradient(220px 140px at 93% 88%, rgba(40, 14, 26, 0.3), transparent 72%),
+    /* 下端: 直下のスライダーとの境目をなじませる */
+      linear-gradient(to top, rgba(40, 14, 26, 0.2) 0%, rgba(40, 14, 26, 0) 38%);
+}
+
+/* スマホは写真の右側(化粧品ボトル・窓)が明るく、左側スクリムだけでは
+   本文右端のコントラストが不足するため、ほぼ均一の濃さに切り替える。
+   右端でもα0.72 → 白文字で約6.1:1を確保する。 */
+@media (max-width: 767px) {
+  .hero-banner-scrim {
+    background:
+      linear-gradient(100deg, rgba(45, 16, 28, 0.82) 0%, rgba(52, 20, 34, 0.72) 100%),
+      radial-gradient(160px 110px at 90% 86%, rgba(40, 14, 26, 0.3), transparent 72%),
+      linear-gradient(to top, rgba(40, 14, 26, 0.3) 0%, rgba(40, 14, 26, 0) 46%);
+  }
+}
+
+/* タブレット〜小型PC(768〜1179px)はコンテンツ幅1180pxに達しておらず
+   コピーが画面左端16pxから始まるため、中央基準(calc(50%±))の停止位置では
+   コピー右端が薄い側に掛かる。この幅帯だけ%指定の停止位置に差し替える。 */
+@media (min-width: 768px) and (max-width: 1179px) {
+  .hero-banner-scrim {
+    background:
+      linear-gradient(
+        90deg,
+        rgba(48, 16, 30, 0.86) 0px,
+        rgba(48, 16, 30, 0.74) 520px,
+        rgba(56, 22, 38, 0.34) 760px,
+        rgba(60, 26, 44, 0) 920px
+      ),
+      radial-gradient(220px 140px at 93% 88%, rgba(40, 14, 26, 0.4), transparent 72%),
+      linear-gradient(to top, rgba(40, 14, 26, 0.32) 0%, rgba(40, 14, 26, 0) 42%);
+  }
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+}
+
+/* コンテンツ幅。Step2以降で本文カラムを1100〜1200pxに広げる際、
+   ここと同じ値に揃えるとヒーローのタイトル左端が本文と一直線になる。 */
+.hero-banner-inner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.hero-banner-copy {
+  max-width: 520px;
+}
+
+.hero-banner-eyebrow {
+  margin: 0 0 10px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #ffe3ec;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
+}
+
+.hero-banner-title {
+  margin: 0 0 12px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: clamp(1.45rem, 1.05rem + 2vw, 2.35rem);
+  line-height: 1.6;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7), 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+.hero-banner-lead {
+  margin: 0;
+  font-size: clamp(0.85rem, 0.8rem + 0.3vw, 0.98rem);
+  line-height: 1.7;
+  color: #f5eef1;
+  max-width: 460px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* PC(768px〜)のみ、ファーストビューを大きく取る */
+@media (min-width: 768px) {
+  .hero-banner-img {
+    height: clamp(320px, 40vw, 600px);
+  }
+
+  /* スクリムを上下方向にマスクし、テキストが乗る中央帯(22〜78%)だけ
+     元の濃度を保ったまま、写真の上端・下端を明るく見せる。
+     22/78という範囲は、最小高さ320px(768px幅)でもコピー全体が
+     中央帯に収まることを実測で確認した値。スマホは高さ220pxに対して
+     コピーがほぼ全高を占めるためマスクを掛けない。 */
+  .hero-banner-scrim {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.55) 0%,
+      #000 22%,
+      #000 78%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.55) 0%,
+      #000 22%,
+      #000 78%,
+      rgba(0, 0, 0, 0.55) 100%
+    );
+  }
+
+  /* タイトル(最大48px時に約594px)が1行に収まる幅。リード文はmax-width:480pxの
+     ままなので、広げた分を実際に使うのはタイトルのみ。
+     スクリムの停止位置も中央基準のため、どの画面幅でもタイトル右端のαは
+     ほぼ一定(≒0.575)になり、写真の最も明るい箇所でも白文字で約6.6:1。 */
+  .hero-banner-copy {
+    max-width: 640px;
+  }
+
+  .hero-banner-eyebrow {
+    margin-bottom: 14px;
+    font-size: 0.8rem;
+    letter-spacing: 0.22em;
+  }
+
+  .hero-banner-title {
+    margin-bottom: 16px;
+    font-size: clamp(2rem, 1.1rem + 2.4vw, 3rem);
+  }
+
+  /* キャッチコピー(26文字)が最大サイズでも1行に収まる幅 */
+  .hero-banner-lead {
+    font-size: clamp(0.98rem, 0.85rem + 0.35vw, 1.12rem);
+    max-width: 540px;
+  }
+
+  .hero-banner-inner {
+    padding: 0 24px;
+  }
+}
+
+/* スマホは右下のマスコットと本文が重ならないよう逃げ幅を持たせる。
+   マスコットはヒーロー下端にありタイトルの高さとは重ならないため、
+   逃げ幅はリード文だけに付ける(コピー全体に付けるとタイトルが折り返す)。 */
+@media (max-width: 767px) {
+  .hero-banner-lead {
+    padding-right: 62px;
+  }
+}
+
+/* スマホの左右余白は .container--wide(≤480pxで16px)と揃え、
+   ヒーローのタイトル左端と各セクションの左端を一致させる */
+@media (max-width: 480px) {
+  .hero-banner-inner {
+    padding: 0 16px;
+  }
+}
+
+.hero-banner-mascot {
+  display: flex;
+  position: absolute;
+  right: clamp(12px, 4vw, 28px);
+  bottom: clamp(10px, 3vw, 18px);
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  z-index: 1;
+}
+
+/* 写真ヒーローでは上質感を優先し、PCでもマスコットは控えめなサイズに留める
+   (従来の最大88px → 72px)。 */
+.hero-banner-mascot img {
+  display: block;
+  width: clamp(52px, 9vw, 72px);
+  height: auto;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.3));
+}
+
+.hero-banner-mascot-name {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ---- Hero下部の記事スライド ---- */
+/* スライダーの帯。従来は不透明の白(--color-surface)だったため、
+   ワイド画面でスライダー(1180px)の左右が空白に見えていた。
+   .home-stripe と同じ半透明ティントに変更し、隣の帯と色が交互になるようにする
+   (スライダー=薄ベージュ → イントロ=グラデーション → 悩み=薄ピンク →
+    カテゴリ=薄ベージュ → 記事=薄ピンク)。2026-08-17 Step5追補 */
+.hero-slider {
+  background: rgba(255, 248, 236, 0.88);
+  border-bottom: 1px solid var(--color-border);
+  padding: 22px 0;
+}
+
+.hero-slider-viewport {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.hero-slider-track {
+  display: flex;
+  transition: transform 500ms ease;
+}
+
+.hero-slider-slide {
+  position: relative;
+  flex: 0 0 100%;
+  aspect-ratio: 21 / 9;
+  color: inherit;
+}
+
+/* PCでは幅1132pxに対して21:9だと485pxとファーストビューが縦に長くなるため、
+   高さの上限を設けて横長比率(実質3.8:1程度)に寄せる(2026-08-17 Step5) */
+@media (min-width: 768px) {
+  .hero-slider-slide {
+    max-height: 300px;
+  }
+}
+
+.hero-slider-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  margin: 0;
+  border-radius: 0;
+}
+
+.hero-slider-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 28px clamp(16px, 4vw, 32px) 18px;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
+}
+
+.hero-slider-caption-name {
+  display: inline-block;
+  margin: 0;
+  color: #fff;
+  font-weight: 700;
+  font-size: clamp(1rem, 0.9rem + 0.6vw, 1.3rem);
+  line-height: 1.4;
+  padding: 4px 16px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--color-text);
+  font-size: 1.4rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: background var(--transition);
+}
+
+.hero-slider-arrow:hover {
+  background: #fff;
+}
+
+.hero-slider-arrow-prev {
+  left: 12px;
+}
+
+.hero-slider-arrow-next {
+  right: 12px;
+}
+
+.hero-slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.hero-slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  background: var(--color-border);
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.hero-slider-dot.active {
+  background: var(--color-primary);
+  transform: scale(1.2);
+}
+
+/* ---- ホームレイアウト(メイン + サイドバー) ---- */
+.home-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 40px;
+  align-items: start;
+}
+
+.home-main {
+  min-width: 0;
+}
+
+.home-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 80px;
+}
+
+.sidebar-widget {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sidebar-widget-title {
+  margin: 0 0 16px;
+  font-size: 1rem;
+  padding-left: 10px;
+  border-left: 4px solid var(--color-primary);
+}
+
+.sidebar-post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sidebar-post {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar-post-rank {
+  flex-shrink: 0;
+  font-weight: 800;
+  font-size: 1.1rem;
+  color: var(--color-primary-light);
+  min-width: 20px;
+}
+
+.sidebar-post-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text);
+  min-width: 0;
+}
+
+.sidebar-post-link:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.sidebar-post-thumb {
+  flex-shrink: 0;
+  width: 56px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.sidebar-post-title {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.sidebar-category-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sidebar-category-list a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.sidebar-category-list a:hover {
+  background: var(--color-primary-surface);
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.sidebar-category-count {
+  color: var(--color-text-faint);
+  font-size: 0.78rem;
+}
+
+/* ---- トップページ専用の装飾・レイアウト ----
+   HeroBanner/ImageSlider同様トップページのみで使うため、
+   他ページの共通クラス(.post-card, .page-title等)には手を入れず
+   home-系 / category-summary-系 の専用クラスで完結させている。
+   最背面の固定背景(.site-bg)・ヘッダー/フッターの装飾はLayout.js/
+   globals.cssの共通ルールとして全ページに適用済み。 */
+.home-page {
+  position: relative;
+}
+
+/* fullWidth指定のページ(トップ)ではmainが上下paddingを持たず、
+   各stripeが自前で余白を持つ。 */
+.main--full {
+  padding: 0;
+}
+
+/* ---- トップページの帯(2026-08-17 Step5) ----
+   main直下に置くため、幅指定なしで画面幅いっぱいになる。中身は各帯の中の
+   .container--wide(1180px)に収める。これにより、ワイド画面でも左右の余白が
+   「空白の白」ではなく帯の背景色として見える。
+   背景は不透明色ではなく半透明のティントにして、全ページ共通の
+   グラデーション背景(.site-bg)が透けるようにしている。 */
+.home-stripe {
+  position: relative;
+  padding: clamp(26px, 3.2vw, 48px) 0;
+}
+
+/* イントロ(マスコット挨拶+診断バナー)。無地のままだと2560px幅で
+   左右319pxぶんがほぼ白(実測rgb 250,249,251)に見えるため、ここもティントを敷く。
+   スライダー(薄ベージュ)の次なので薄ピンク側にする。 */
+.home-stripe--intro {
+  padding-top: clamp(18px, 2.2vw, 30px);
+  background: rgba(255, 241, 246, 0.72);
+}
+
+/* 薄ピンク(悩みから探す / 記事セクション) */
+.home-stripe--tint {
+  background: rgba(255, 241, 246, 0.72);
+}
+
+/* 薄ベージュ(カテゴリで探す)。ティントを交互に置いて帯の切り替わりを作る */
+.home-stripe--cream {
+  background: rgba(255, 251, 243, 0.82);
+}
+
+/* ---- 記事/ランキング/比較/検索ページ共通パネル ----
+   トップページの「カテゴリで探す」等と同じ、半透明+ぼかしの
+   ガラス風パネルで.site-bgの上にコンテンツを乗せる。 */
+.page-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(6px) saturate(140%);
+  -webkit-backdrop-filter: blur(6px) saturate(140%);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: clamp(20px, 4vw, 36px);
+  margin: 28px 0 56px;
+}
+
+@media (max-width: 720px) {
+  .page-panel {
+    padding: 14px;
+    margin: 14px 0 32px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 4px;
+  }
+
+  /* 記事ページ(.container)は図表の幅を稼ぐため4pxだが、
+     トップページ・ヘッダー・フッター(.container--wide)は
+     読み物としての左右余白を優先して16pxを保つ。 */
+  .container--wide {
+    padding: 0 16px;
+  }
+
+  .page-panel {
+    padding: 5px;
+    border-radius: var(--radius-md);
+  }
+
+  .article-body {
+    padding: 16px 5px;
+  }
+}
+
+.home-section-title {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 1.1rem + 1.2vw, 1.85rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin: 0 0 6px;
+  color: var(--color-primary-dark);
+  background: linear-gradient(120deg, var(--color-primary), #ff8fab 65%, #ffb199);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.home-section-lead {
+  margin: 0 0 22px;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* ---- カテゴリまとめセクション ---- */
+/* Step5: 帯(.home-stripe--cream)側が背景・余白を持つため、
+   セクション自身のカード装飾は外す。 */
+.category-summary-section {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.category-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.category-summary-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 4px solid var(--cat-color, var(--color-primary));
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.category-summary-image-link {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-md, 12px);
+  overflow: hidden;
+  margin: -20px -20px 16px;
+  outline-offset: -3px;
+}
+
+.category-summary-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px 5px 5px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.category-summary-badge-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.category-summary-image-link:focus-visible {
+  outline: 3px solid var(--cat-color, var(--color-primary));
+}
+
+.category-summary-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  transition: transform var(--transition);
+}
+
+/* 人気カテゴリーの控えめな印。カードサイズは他と同一に保つ(2026-08-17 Step5) */
+.category-summary-pin {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--cat-color, var(--color-primary));
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 1px 4px rgba(20, 20, 30, 0.18);
+}
+
+.category-summary-image-link:hover .category-summary-image {
+  transform: scale(1.04);
+}
+
+.category-summary-mascot-comment {
+  margin: 0 0 16px;
+}
+
+.category-summary-mascot-comment .mascot-comment-bubble {
+  border-color: var(--cat-color, var(--color-primary-light));
+}
+
+.category-summary-mascot-comment .mascot-comment-bubble::before {
+  border-right-color: var(--cat-color, var(--color-primary-light));
+}
+
+.category-summary-cta {
+  margin-top: 6px;
+  font-weight: 600;
+  color: var(--cat-color, var(--color-primary));
+}
+
+.category-summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.category-summary-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  background: var(--cat-soft, var(--color-primary-light));
+  border-radius: 50%;
+}
+
+.category-summary-desc {
+  margin: 0 0 14px;
+  font-size: 0.87rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.category-summary-posts {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 10px 0 0;
+  border-top: 1px dashed var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.category-summary-post-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-text);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
+.category-summary-post-link:hover {
+  color: var(--cat-color, var(--color-primary));
+  text-decoration: none;
+}
+
+.category-summary-post-link img {
+  flex-shrink: 0;
+  width: 46px;
+  height: 34px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.category-summary-post-link span {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.category-summary-more {
+  margin-top: auto;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--cat-color, var(--color-primary));
+}
+
+.category-summary-card--empty {
+  opacity: 0.72;
+}
+
+.category-summary-more--empty {
+  color: var(--color-text-faint);
+  cursor: default;
+}
+
+/* ---- カテゴリで探す: 人気カテゴリー表示ラベル・アコーディオン開閉 ---- */
+.category-summary-pinned-label {
+  margin: 0 0 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.category-summary-grid--more {
+  margin-top: 20px;
+}
+
+
+/* 初期状態では非表示にするが、HTML自体は常に出力しクロール・SEOに影響しないようにする */
+.category-summary-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  opacity: 0;
+  transition: grid-template-rows 320ms ease, opacity 280ms ease;
+}
+
+.category-summary-collapsible > * {
+  min-height: 0;
+}
+
+.category-summary-collapsible.is-expanded {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .category-summary-collapsible {
+    transition: none;
+  }
+}
+
+.category-summary-toggle {
+  display: block;
+  width: fit-content;
+  margin: 24px auto 0;
+  padding: 11px 28px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 999px;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: center;
+  transition: background var(--transition), color var(--transition), box-shadow var(--transition);
+}
+
+/* A2: 折りたたみ中の軽量カード。画像・マスコットコメントを持たず、
+   カテゴリ名+1行説明のみの横並び行として、詳細版より縦に短く表示する。 */
+/* 2026-08-17: 折りたたみ中の軽量カード(.category-summary-card--light /
+   .category-summary-light-*)は、全12カテゴリの写真が揃い写真カードに統一したため廃止。 */
+
+/* /category(全カテゴリ一覧ページ)の一覧スタイル。 */
+.category-index-list {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.category-index-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.category-index-link:hover {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-2px);
+}
+
+.category-index-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  background: var(--color-primary-light);
+  border-radius: 50%;
+}
+
+.category-index-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.category-index-name {
+  font-weight: 700;
+}
+
+.category-index-summary {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+.category-summary-toggle:hover {
+  background: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.category-summary-toggle:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ---- PC(1024px〜)のカテゴリグリッド(2026-08-17 リデザインStep3) ----
+   12カテゴリすべてを写真カードで常時表示する。アコーディオンはJSの開閉状態に
+   関わらず常に開いた状態に固定し、トグルと「人気カテゴリー」ラベルを隠すことで、
+   人気3カテゴリのグリッドと残り9カテゴリのグリッドが
+   1つの3カラムグリッド(4行)に見えるようにする。
+   1024px未満は従来どおりアコーディオンとして機能する。
+   ※ .category-summary-collapsible / .category-summary-toggle の既定値は
+     この上流に定義されているため、このブロックは必ずそれらより後ろに置くこと
+     (メディアクエリは詳細度を上げないため、前に置くと上書きされない)。 */
+@media (min-width: 1024px) {
+  /* 人気3件のグリッドとアコーディオン内9件のグリッドを display:contents で
+     透過させ、12枚すべてを .category-summary-grids 一枚のグリッド要素にする。
+     これにより行ごとにカード高さが揃い、12枚が同一ルールのグリッドに見える。 */
+  .category-summary-grids {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .category-summary-grid,
+  .category-summary-collapsible,
+  .category-summary-grid--more {
+    display: contents;
+  }
+
+  .category-summary-toggle,
+  .category-summary-pinned-label {
+    display: none;
+  }
+
+  /* カード内の吹き出しを詰め、説明文は3行に固定して全カードの高さを揃える
+     (min-heightで短い文でも3行分の高さを確保する) */
+  .category-summary-mascot-comment .mascot-comment-img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .category-summary-mascot-comment .mascot-comment-text {
+    font-size: 0.8rem;
+    line-height: 1.7;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(3 * 1.7em);
+  }
+
+  /* 折り返して矢印だけ2行目に落ちるのを防ぐ。margin-top:autoは既定値側で
+     指定済みなので、カード下端に固定されたまま1行に収まる。 */
+  .category-summary-more {
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  .category-summary-more-cat {
+    display: none;
+  }
+}
+
+/* 1180pxを超えたら4カラム。1カラム約260pxで、吹き出し3行が収まる */
+@media (min-width: 1280px) {
+  .category-summary-grids {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* ---- あなたの美容の悩みから探す ---- */
+/* ---- セクション区切りのfull-bleed画像バンド(Step4で追加・Step5でfull-bleed化) ----
+   全面背景画像を敷く代わりに、画面幅いっぱいの帯状の写真でページにリズムを作る。
+   main直下に置かれるため幅指定は不要。見出しは中の.container--wideに入るので
+   1180pxグリッドの左端(=ヒーローのタイトル左端)に揃う。 */
+.section-band {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.section-band-img {
+  display: block;
+  width: 100%;
+  height: clamp(180px, 19vw, 360px);
+  object-fit: cover;
+  margin: 0;
+}
+
+/* 見出しを重ねる側のスクリム。band-01は左側が白壁のため、
+   スクリムが無いと白文字が完全に読めない。
+   停止位置はヒーローと同じく画面中央基準のcalc()で指定し、
+   1180pxグリッド左端に置いた見出し(最大約350px幅)が
+   どの画面幅でも濃い側に収まるようにする。 */
+.section-band-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(48, 16, 30, 0.84) 0%,
+    rgba(48, 16, 30, 0.76) calc(50% - 180px),
+    rgba(56, 22, 38, 0.3) calc(50% + 60px),
+    rgba(60, 26, 44, 0) calc(50% + 220px)
+  );
+}
+
+/* 画面幅が1180px未満だと見出しが写真の明るい側(人物・窓)まで届き、
+   左寄せスクリムではコントラストが足りない(実測1.08:1)。
+   この幅帯だけほぼ均一の濃さにする。
+   α0.76で最明部rgb(250,250,250)に対しても6.2:1以上を確保する。 */
+@media (max-width: 1179px) {
+  .section-band-scrim {
+    background: linear-gradient(
+      100deg,
+      rgba(48, 16, 30, 0.86) 0%,
+      rgba(52, 20, 34, 0.76) 100%
+    );
+  }
+}
+
+.section-band-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* flexアイテムに margin:0 auto が付くと、stretchされずに内容幅まで縮んでしまう
+   (=見出しが1180pxグリッドの左端に揃わない)。width:100%で明示的に伸ばす。 */
+.section-band-overlay > .container {
+  width: 100%;
+}
+
+.section-band-title {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  font-size: clamp(1.2rem, 0.95rem + 1vw, 1.6rem);
+  line-height: 1.4;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.section-band-lead {
+  margin: 0;
+  max-width: 24em;
+  font-size: clamp(0.8rem, 0.76rem + 0.2vw, 0.9rem);
+  line-height: 1.7;
+  color: #f5eef1;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Step5: 帯(.home-stripe)側が背景・余白を持つようになったため、
+   セクション自身のカード装飾(半透明白・枠線・角丸)は外している。
+   カード表現は中のカテゴリカード・記事カード側に残す。 */
+.worry-finder-section {
+  position: relative;
+}
+
+.worry-finder-all-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.worry-finder-all-link:hover {
+  color: var(--color-primary);
+}
+
+/* A4: トップページから運営・編集体制(/about)への唯一の導線。 */
+.home-about-link {
+  display: inline-block;
+  margin: 4px 0 20px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.home-about-link:hover {
+  color: var(--color-primary-dark);
+}
+
+.worry-finder-group {
+  margin-top: 18px;
+}
+
+.worry-finder-group:first-of-type {
+  margin-top: 4px;
+}
+
+.worry-finder-group-title {
+  margin: 0 0 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+}
+
+.worry-finder-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.worry-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 9px 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-primary-light);
+  color: var(--color-primary-dark);
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: 999px;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.worry-chip:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.worry-chip:active {
+  transform: translateY(0);
+}
+
+.worry-chip:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+  .worry-chip {
+    padding: 8px 16px;
+    font-size: 0.82rem;
+  }
+}
+
+/* ---- 注目記事/新着記事セクション ---- */
+/* Step5: 帯側が背景・余白を持つため、セクション自身のカード装飾は外す */
+.home-featured-section {
+  margin-bottom: 44px;
+}
+
+.home-new-section {
+  padding: 0;
+}
+
+/* ---- Sections ---- */
+main {
+  min-height: 60vh;
+  padding: 32px 0 60px;
+}
+
+h1.page-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  font-size: clamp(1.5rem, 1.15rem + 1.3vw, 2rem);
+  line-height: 1.5;
+  margin: 0 0 24px;
+  border-left: 6px solid var(--color-primary);
+  padding-left: 14px;
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+  margin-bottom: 20px;
+}
+
+.breadcrumb a {
+  color: var(--color-text-muted);
+}
+
+.breadcrumb .sep {
+  color: var(--color-text-faint);
+}
+
+.breadcrumb .current {
+  color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 60vw;
+}
+
+/* ---- Card / list ---- */
+.post-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.post-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.post-card-thumb-link {
+  display: block;
+  line-height: 0;
+  flex: 0 0 120px;
+}
+
+.post-card-thumb {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+.post-card-thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  background: var(--color-primary-light);
+}
+
+.post-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-primary-light);
+}
+
+.post-card .category-badge {
+  display: inline-block;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.post-card h2 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  margin: 0;
+}
+
+.post-card h2 a {
+  color: var(--color-text);
+}
+
+.post-card h2 a:hover {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.post-card .excerpt {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+@media (max-width: 480px) {
+  .post-card-thumb-link {
+    flex-basis: 96px;
+  }
+}
+
+/* シンプル版カード(ホームの新着記事・注目記事): サムネイル・カテゴリ・
+   タイトルのみ表示し、カード全体を1つのリンクにする */
+.post-card--simple {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.post-card--simple .post-card-thumb-link {
+  margin: -1px -1px 0;
+}
+
+.post-card--simple .post-card-thumb-fallback {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: var(--color-primary-light);
+}
+
+.post-card--simple .post-card-body {
+  padding: 14px 16px 16px;
+}
+
+.post-card--simple .post-card-title {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  color: var(--color-text);
+  margin: 4px 0 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-card--simple:hover .post-card-title {
+  color: var(--color-primary);
+}
+
+.post-list--simple {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+@media (max-width: 600px) {
+  .post-list--simple {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 新着記事の横スクロールカルーセル(A1/A3、2026-08-10)。overflow-xによる
+   ネイティブスクロールが土台のため、JS無効でもタッチ・トラックパッドで操作できる。
+   矢印ボタンはPCでの操作性向上のためのエンハンスメント。 */
+.new-posts-carousel {
+  position: relative;
+}
+
+.new-posts-carousel-track {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+}
+
+.new-posts-carousel-item {
+  flex: 0 0 220px;
+  scroll-snap-align: start;
+}
+
+.new-posts-carousel-arrow {
+  position: absolute;
+  top: 40%;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  font-size: 1.3rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.new-posts-carousel-arrow-prev {
+  left: -6px;
+}
+
+.new-posts-carousel-arrow-next {
+  right: -6px;
+}
+
+@media (max-width: 600px) {
+  .new-posts-carousel-arrow {
+    display: none;
+  }
+}
+
+/* ---- PC(1024px〜)の雑誌型カードグリッド(2026-08-17 リデザインStep2) ----
+   注目記事・新着記事を3カラムのカードグリッドにし、カード自体も
+   「サムネイル上・テキスト下」の縦型に切り替えてサムネイルを大きく見せる。
+   1024px未満(スマホ・タブレット)は従来のまま:
+     - 注目記事 … 横並びカードの縦積み
+     - 新着記事 … 横スクロールカルーセル(縦の長さが増えない)
+   サイドバー(280px)と併存するため、1180px幅では1カラム約257pxになる。 */
+@media (min-width: 1024px) {
+  .post-list--simple,
+  .new-posts-carousel-track {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  /* カルーセルの横スクロール挙動をグリッドでは無効化する */
+  .new-posts-carousel-track {
+    overflow: visible;
+    scroll-snap-type: none;
+    padding-bottom: 0;
+  }
+
+  .new-posts-carousel-item {
+    flex: none;
+  }
+
+  .new-posts-carousel-arrow {
+    display: none;
+  }
+
+  /* シンプルカードを縦型(サムネイル16:9)に切り替える */
+  .post-card--simple {
+    flex-direction: column;
+  }
+
+  .post-card--simple .post-card-thumb-link {
+    flex: none;
+    width: auto;
+  }
+
+  .post-card--simple .post-card-thumb {
+    height: auto;
+    aspect-ratio: 16 / 9;
+  }
+
+  .post-card--simple .post-card-title {
+    font-size: 0.98rem;
+  }
+}
+
+.home-new-more-link {
+  display: inline-block;
+  margin-top: 14px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+/* ---- Article ---- */
+.article-header {
+  margin-bottom: 24px;
+}
+
+.article-header h1 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: clamp(1.55rem, 1.15rem + 1.7vw, 2.15rem);
+  line-height: 1.6;
+  margin: 10px 0 12px;
+}
+
+.category-badge {
+  display: inline-block;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.article-meta {
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+.article-summary-box {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.article-summary-block ul {
+  margin: 6px 0 0;
+  padding-left: 1.2em;
+}
+
+.article-summary-heading {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.article-summary-conclusion-link {
+  align-self: flex-start;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.article-hero-image {
+  display: block;
+  width: 100%;
+  max-width: 720px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  margin: 0 auto 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.article-body {
+  background: var(--color-surface);
+  padding: clamp(20px, 4vw, 40px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  font-size: 1.02rem;
+  line-height: 2;
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.article-body > *:first-child {
+  margin-top: 0;
+}
+
+.article-body h2 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-size: 1.35rem;
+  line-height: 1.7;
+  margin: 2.4em 0 1em;
+  padding: 0.6em 0.9em;
+  background: linear-gradient(120deg, var(--color-primary-light), #fff6f9 75%);
+  border-left: 6px solid var(--color-primary);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--color-text);
+}
+
+.article-body h2:first-child {
+  margin-top: 0;
+}
+
+.article-body h3 {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 1.14rem;
+  margin: 1.8em 0 0.7em;
+  padding-left: 0.6em;
+  border-left: 4px solid var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.article-body p {
+  margin: 0 0 1.3em;
+}
+
+.article-body ul,
+.article-body ol {
+  margin: 0 0 1.3em;
+  padding-left: 1.4em;
+}
+
+.article-body li {
+  margin-bottom: 0.5em;
+}
+
+/* 記事本文リンクの既定色。以前は--color-primary(#d6336c)のままで白背景上
+   4.61:1しかなく、tint背景(#fff5f8)では4.62:1とAA(4.5:1)ぎりぎりだった。
+   閾値ちょうどはマージン不足で「背景と同化して見える」報告が繰り返し発生した
+   ため(2026-08-09)、同色相のまま暗くし白・tint双方で7:1前後を確保する。 */
+.article-body a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  color: #a01f4c;
+}
+
+.article-body strong {
+  color: var(--color-primary-dark);
+}
+
+.article-body mark.hl {
+  background: #ffe9a8;
+  color: inherit;
+  padding: 0.05em 0.3em;
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.article-body u.u-accent {
+  text-decoration: underline;
+  text-decoration-color: var(--color-primary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* 感情の変化・気づきを表す一文を強調する装飾(^^text^^)。
+   本文中のハイライト(mark.hl)・下線(u.u-accent)とは違う目的で使うため、
+   文字サイズと色の両方を変えて視線を止める。 */
+.article-body .emotion-emphasis {
+  font-size: 1.15em;
+  font-weight: 700;
+  color: #1864ab;
+}
+
+.article-body del {
+  color: var(--color-text-faint);
+}
+
+/* 出典の信頼性注記など「補足・留意点」を示す小さめ・控えめな色の注記(%%text%%)。
+   景品表示法の打消し表示規制に配慮し、視認性を保てる範囲(0.88em・
+   コントラスト比4.5:1以上を確保した色)に留め、読めなくなるほどは縮小・
+   淡色化しない。 */
+.article-body .article-note {
+  display: block;
+  font-size: 0.88em;
+  color: #55606b;
+  /* 直後の本文段落と密着して文中に紛れて見えないよう、独立した
+     ブロックとして視認できる余白を確保する(2026-08-11、実機確認で
+     判明した可読性問題への対応)。 */
+  margin: 1em 0;
+}
+
+.article-chart {
+  margin: 2em 0;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.chart-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  margin-bottom: 14px;
+}
+
+.chart-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.chart-cat-label {
+  font-size: 13px;
+  fill: var(--color-text-muted);
+}
+
+.chart-value-label {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--color-text);
+}
+
+.chart-bar {
+  fill: var(--color-primary);
+}
+
+.chart-table-toggle {
+  margin-top: 14px;
+  font-size: 0.85rem;
+}
+
+.chart-table-toggle summary {
+  cursor: pointer;
+  color: var(--color-text-muted);
+}
+
+.chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.85rem;
+}
+
+.chart-table th,
+.chart-table td {
+  border: 1px solid var(--color-border);
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.chart-source {
+  margin-top: 12px;
+  font-size: 0.75rem;
+  color: var(--color-text-faint);
+}
+
+.article-stat-tile {
+  margin: 2em 0;
+  padding: 28px 24px;
+  background: var(--color-primary-surface);
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.stat-tile-value {
+  font-size: 2.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.stat-tile-unit {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-left: 2px;
+}
+
+.stat-tile-label {
+  margin: 10px 0 0;
+  font-size: 0.95rem;
+  color: var(--color-text);
+}
+
+.article-stat-tile .chart-source {
+  margin-top: 12px;
+}
+
+/* ---- Donut chart(内訳・構成比) ---- */
+.donut-chart-layout {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.donut-svg {
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.donut-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 160px;
+}
+
+.donut-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+}
+
+.donut-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.donut-legend-label {
+  color: var(--color-text);
+  flex: 1;
+}
+
+.donut-legend-value {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ---- メリット/デメリット比較ブロック ---- */
+.pros-cons-block {
+  margin: 2em 0;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.pros-cons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.pros-cons-col {
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+
+.pros-cons-pros {
+  background: #eefaf1;
+  border: 1px solid #b7e4c7;
+}
+
+.pros-cons-cons {
+  background: #fdf0ee;
+  border: 1px solid #f3c2ba;
+}
+
+.pros-cons-head {
+  margin: 0 0 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.pros-cons-pros .pros-cons-head {
+  color: #2b8a3e;
+}
+
+.pros-cons-cons .pros-cons-head {
+  color: #c92a2a;
+}
+
+.pros-cons-col ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 0.9rem;
+}
+
+.pros-cons-col li {
+  margin-bottom: 6px;
+}
+
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.6em 0;
+  font-size: 0.92rem;
+  /* 幅の狭い画面で表がはみ出す場合、横スクロール可能であることが
+     視覚的にわかるよう、常時表示の細いスクロールバーを付ける
+     (2026-08-11、実機確認で「スクロールできると気づかない」と判明したため)。 */
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-faint) transparent;
+}
+
+.article-body table::-webkit-scrollbar {
+  height: 6px;
+}
+
+.article-body table::-webkit-scrollbar-thumb {
+  background: var(--color-text-faint);
+  border-radius: 3px;
+}
+
+.article-body th,
+.article-body td {
+  border: 1px solid var(--color-border);
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.article-body th {
+  background: var(--color-primary-surface);
+  font-weight: 600;
+}
+
+.quadrant-svg {
+  width: 100%;
+  max-width: 340px;
+  display: block;
+  margin: 0 auto;
+}
+
+.quadrant-axis {
+  stroke: var(--color-border);
+  stroke-width: 1.5;
+}
+
+.quadrant-axis-label {
+  font-size: 10px;
+  fill: var(--color-text-muted);
+}
+
+.quadrant-point-label {
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--color-text);
+}
+
+.article-accordion {
+  margin: 1.5em 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg);
+}
+
+.article-accordion-summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  background: var(--color-primary-surface);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.article-accordion-summary::-webkit-details-marker {
+  display: none;
+}
+
+.article-accordion-summary::after {
+  content: "▼";
+  font-size: 0.7em;
+  color: var(--color-primary);
+  transition: transform var(--transition);
+  flex-shrink: 0;
+}
+
+.article-accordion[open] .article-accordion-summary::after {
+  transform: rotate(180deg);
+}
+
+.article-accordion-body {
+  padding: 4px 18px 16px;
+}
+
+.article-accordion-body > *:first-child {
+  margin-top: 12px;
+}
+
+.article-body blockquote {
+  margin: 1.5em 0;
+  padding: 12px 18px;
+  border-left: 4px solid var(--color-primary-light);
+  background: var(--color-primary-surface);
+  color: var(--color-text-muted);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* 「🔍 結論だけ知りたい人へ」冒頭の結論早見ボックス。通常のblockquoteより
+   彩度の高いピンクで視線を集める。enhanceAnnotationBlockquotes()により
+   Markdownの引用記法(> 🔍 結論だけ知りたい人へ)から自動変換される。 */
+.quick-conclusion-box {
+  margin: 1.5em 0;
+  padding: 14px 18px;
+  border: 1px solid var(--color-primary-light);
+  border-left: 4px solid var(--color-primary);
+  background: var(--color-primary-light);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.quick-conclusion-label {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.quick-conclusion-body {
+  margin: 0;
+  color: var(--color-text);
+}
+
+.article-body img {
+  border-radius: var(--radius-md);
+  margin: 1em 0;
+}
+
+.article-body hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 2.4em 0;
+}
+
+.ad-notice {
+  background: #fff8e1;
+  border: 2px solid #ffb300;
+  color: #8a6d00;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.6875rem;
+  margin: 16px auto;
+  max-width: 720px;
+}
+
+/* /aboutの制作プロセス開示用ステップ表示。番号バッジの配色は
+   article-sources-item--editorialと同じ検証済みペア(6.45:1)を再利用する。 */
+.about-process-steps {
+  list-style: none;
+  margin: 1.4em 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-process-steps li {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  column-gap: 12px;
+  align-items: start;
+}
+
+.about-process-num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #ffe3ec;
+  color: #9c1f49;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.about-process-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: 4px;
+}
+
+.about-process-label {
+  font-weight: 700;
+}
+
+.about-process-note {
+  color: var(--color-text-muted);
+  font-size: 0.875rem;
+}
+
+/* frontmatterのsourcesから描画される出典セクション(docs/citation-format.md参照)。
+   バッジの配色はCLAUDE.mdのコントラスト基準(新規配色は6:1以上)を満たすよう
+   文字色を検証済み(primary 6.70:1 / secondary 7.64:1 / editorial 6.45:1)。 */
+.article-sources {
+  margin: 1.8em 0 0;
+}
+
+.article-sources h2 {
+  font-size: 1.05rem;
+  margin: 0 0 10px;
+}
+
+.article-sources-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.article-sources-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.article-sources-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+}
+
+.article-sources-item--primary .article-sources-badge {
+  background: #e3f5ea;
+  color: #14603a;
+}
+
+.article-sources-item--secondary .article-sources-badge {
+  background: #e6eefa;
+  color: #204a80;
+}
+
+.article-sources-item--editorial .article-sources-badge {
+  background: #ffe3ec;
+  color: #9c1f49;
+}
+
+.article-sources-meta {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+}
+
+/* 記事末尾の参考情報の明記。直後に続く.warning-box(医療注記)と
+   視覚的に区別できるよう、枠や背景を持たない控えめなテキストのみとする。 */
+.article-reference-note {
+  color: var(--color-text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.7;
+  margin: 1.6em 0 0;
+}
+
+.affiliate-box {
+  margin: 32px auto 0;
+  padding: 20px;
+  max-width: 720px;
+  background: var(--color-primary-surface);
+  border-radius: var(--radius-md);
+}
+
+.affiliate-box h3 {
+  margin-top: 0;
+}
+
+.affiliate-box ul {
+  list-style: none;
+  padding: 0;
+}
+
+.affiliate-box li {
+  margin-bottom: 8px;
+}
+
+.affiliate-link-btn {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff !important;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  text-decoration: none !important;
+  font-weight: 600;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.affiliate-link-btn:hover {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+/* ---- 本文中埋め込み型アフィリエイトバナー ----
+   AdSenseの広告枠と見た目が混同されないよう、
+   PRバッジ・枠線・余白でコンテンツ本文および広告枠の双方から
+   視覚的に区別できるようにしている。 */
+.affiliate-inline-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  padding: 16px;
+  background: #fff9fb;
+  border: 1px dashed #f3b6cd;
+  border-radius: var(--radius-md);
+}
+
+.pr-badge {
+  flex-shrink: 0;
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.affiliate-banner-link {
+  display: inline-block;
+  line-height: 0;
+}
+
+.affiliate-banner-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-sm);
+}
+
+/* ---- 記事ページ専用: スクロール進捗バー ----
+   ヘッダー(.site-header, sticky・高さ64px)の直下に固定表示し、
+   ヘッダーと同系色(水色〜ピンク)のグラデーションでトーンを合わせる。
+   components/ScrollProgressBar.js から記事ページでのみ描画される。 */
+.article-scroll-progress {
+  position: fixed;
+  top: 64px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 15; /* ヘッダー(z-index:20)より下、本文コンテンツより上 */
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.article-scroll-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #38a3d9, var(--color-primary));
+}
+
+/* ---- 目次(TOC) ----
+   本文中のH2/H3見出しへのアンカーリンク一覧(components/ArticleToc.js)。
+   スマホでも本文への到達を妨げないよう開閉トグル付きにしている。 */
+.article-toc {
+  max-width: 720px;
+  margin: 0 auto 24px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.article-toc-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  background: linear-gradient(120deg, var(--color-primary-light), #fff6f9 75%);
+  border: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.article-toc-toggle-icon {
+  font-size: 0.7rem;
+  color: var(--color-primary);
+}
+
+.article-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 14px 20px 16px;
+  counter-reset: toc-counter;
+}
+
+.article-toc-item {
+  margin: 0 0 8px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.article-toc-item a {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.article-toc-item a:hover {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.article-toc-item.level-2 {
+  counter-increment: toc-counter;
+}
+
+.article-toc-item.level-2::before {
+  content: counter(toc-counter) ". ";
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.article-toc-item.level-3 {
+  margin-left: 1.2em;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.article-toc-item.level-3::before {
+  content: "– ";
+  color: var(--color-text-faint);
+}
+
+/* ---- マスコットキャラクター ---- */
+.mascot-compact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 56px;
+}
+
+.mascot-compact-img {
+  display: block;
+}
+
+.mascot-compact-name {
+  font-size: 0.62rem;
+  line-height: 1.2;
+  color: var(--color-text-faint);
+  text-align: center;
+}
+
+.mascot-comment {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 24px 0 0;
+}
+
+.mascot-comment-img {
+  flex-shrink: 0;
+}
+
+.mascot-comment-bubble {
+  position: relative;
+  flex: 1;
+  background: #fff;
+  border: 1px solid var(--color-primary-light);
+  border-radius: 16px;
+  padding: 10px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.mascot-comment-bubble::before,
+.mascot-comment-bubble::after {
+  content: "";
+  position: absolute;
+  top: 22px;
+  width: 0;
+  height: 0;
+  border-top: 9px solid transparent;
+  border-bottom: 9px solid transparent;
+}
+
+.mascot-comment-bubble::before {
+  left: -10px;
+  border-right: 10px solid var(--color-primary-light);
+}
+
+.mascot-comment-bubble::after {
+  left: -8px;
+  border-right: 9px solid #fff;
+}
+
+.mascot-comment-name {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  margin-bottom: 2px;
+}
+
+.mascot-comment-text {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+.mascot-comment-inline {
+  margin: 28px 0;
+}
+
+.mascot-comment-matome {
+  border-top: 1px dashed var(--color-border);
+  padding-top: 24px;
+}
+
+.mascot-comment-category {
+  max-width: 720px;
+  margin: 16px 0 24px;
+}
+
+.mascot-comment-home {
+  margin: 0 0 28px;
+}
+
+/* ---- 「次の記事」ボタン ---- */
+.article-next-post {
+  margin: 40px auto 0;
+  max-width: 720px;
+}
+
+.article-next-post-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.article-next-post-link:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-primary-light);
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.article-next-post-thumb {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+}
+
+.article-next-post-thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  background: var(--color-primary-surface);
+}
+
+.article-next-post-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.article-next-post-eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.article-next-post-title {
+  font-size: 1rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.related-posts {
+  margin: 48px auto 0;
+  max-width: 720px;
+}
+
+/* 「関連記事」見出し。角の丸みを不均一にして雲(ブロブ)のような
+   柔らかい輪郭にし、通常の見出しと区別がつく装飾にしている。 */
+.related-posts-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 10px 26px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  background: linear-gradient(135deg, var(--color-primary), #ff9fc2);
+  border-radius: 45% 55% 60% 40% / 60% 45% 55% 40%;
+  box-shadow: var(--shadow-sm);
+}
+
+.related-posts-icon {
+  font-size: 1.1rem;
+}
+
+.related-posts-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.related-post-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.related-post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-primary-light);
+}
+
+.related-post-link {
+  display: flex;
+  flex-direction: column;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.related-post-link:hover {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.related-post-thumb {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.related-post-thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary-surface);
+  font-size: 2rem;
+}
+
+.related-post-title {
+  padding: 12px 14px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+/* ---- Category chips ---- */
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+.category-chip {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text);
+  padding: 7px 16px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+
+.category-chip:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary-light);
+  color: var(--color-primary-dark);
+  text-decoration: none;
+}
+
+/* ---- Ranking ---- */
+.ranking-list {
+  list-style: none;
+  padding: 0;
+}
+
+.ranking-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.ranking-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.ranking-item h2 {
+  margin: 4px 0;
+  font-size: 1.05rem;
+}
+
+.ranking-thumb-link {
+  flex-shrink: 0;
+  line-height: 0;
+}
+
+.ranking-thumb {
+  width: 96px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
+.rank-number {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: var(--color-primary);
+  min-width: 40px;
+}
+
+/* ---- Page note (補足・注記テキスト) ---- */
+.page-note {
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+.result-count {
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+  margin: 0 0 16px;
+}
+
+/* ---- Form ---- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 480px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.form-field input,
+.form-field textarea {
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--color-text);
+  transition: border-color var(--transition);
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.form-submit {
+  border: none;
+  cursor: pointer;
+  width: fit-content;
+}
+
+/* ---- 404 ---- */
+.not-found {
+  text-align: center;
+  padding: 40px 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.not-found .not-found-code {
+  font-size: 3rem;
+  font-weight: bold;
+  color: var(--color-primary-light);
+  margin: 0;
+}
+
+.not-found-section {
+  text-align: left;
+  margin-top: 24px;
+}
+
+.not-found-section h2 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.not-found-link-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+/* ---- Compare table ---- */
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.compare-table th,
+.compare-table td {
+  border: 1px solid var(--color-border);
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.compare-table th {
+  background: var(--color-primary-surface);
+  font-weight: 600;
+}
+
+/* ---- Compare filter ---- */
+.compare-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.compare-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.compare-filter-field select {
+  padding: 9px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--color-text);
+  background: #fff;
+  min-width: 180px;
+  transition: border-color var(--transition);
+}
+
+.compare-filter-field select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.compare-filter-reset {
+  padding: 9px 16px;
+  border: 1px solid var(--color-primary-light);
+  background: transparent;
+  color: var(--color-primary-dark);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+}
+
+.compare-filter-reset:hover {
+  background: var(--color-primary-light);
+  border-color: var(--color-primary);
+}
+
+.compare-empty-note {
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+/* ---- Search ---- */
+.search-box {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.search-box input {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: border-color var(--transition);
+}
+
+.search-box input:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.search-box button {
+  padding: 10px 22px;
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 600;
+  transition: background var(--transition);
+}
+
+.search-box button:hover {
+  background: var(--color-primary-dark);
+}
+
+/* ---- Admin ---- */
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.admin-sidebar {
+  width: 220px;
+  background: #1f2430;
+  color: #fff;
+  padding: 24px 0;
+  flex-shrink: 0;
+}
+
+.admin-sidebar a {
+  display: block;
+  color: #cfd3dc;
+  padding: 10px 24px;
+}
+
+.admin-sidebar a:hover,
+.admin-sidebar a.active {
+  background: #2c3244;
+  color: #fff;
+  text-decoration: none;
+}
+
+.admin-main {
+  flex: 1;
+  padding: 32px;
+  background: #f5f6fa;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-number {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--color-primary);
+}
+
+.status-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.status-badge.published {
+  background: #e3f8e9;
+  color: #1b8a4a;
+}
+
+.status-badge.draft {
+  background: #f0f0f0;
+  color: #666;
+}
+
+table.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.admin-table th,
+table.admin-table td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 720px) {
+  .main-nav {
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    padding: 8px 0;
+    box-shadow: var(--shadow-md);
+    transform: translateY(-8px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition), transform var(--transition);
+  }
+
+  .main-nav.open {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .main-nav-link {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .main-nav-link:hover {
+    background: var(--color-primary-surface);
+  }
+
+  .main-nav-link[aria-current="page"] {
+    background: var(--color-primary-surface);
+    color: var(--color-primary-dark);
+    border-left: 4px solid var(--color-primary);
+    padding-left: 16px;
+  }
+
+  .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-dropdown {
+    width: 100%;
+  }
+
+  .nav-dropdown-label {
+    width: 100%;
+    justify-content: space-between;
+    padding: 14px 20px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: normal;
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-primary-dark);
+  }
+
+  .nav-dropdown-label:hover {
+    background: var(--color-primary-surface);
+  }
+
+  .nav-dropdown.open .nav-dropdown-label,
+  .nav-dropdown:focus-within .nav-dropdown-label {
+    background: var(--color-primary-surface);
+    color: var(--color-primary-dark);
+  }
+
+  .nav-dropdown-menu {
+    display: none !important;
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    background: var(--color-bg);
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 10px 10px;
+    margin-top: 0;
+  }
+
+  .nav-dropdown.open .nav-dropdown-menu {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .nav-dropdown-menu a {
+    padding: 12px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .nav-dropdown-menu a:active {
+    background: var(--color-primary-surface);
+  }
+
+  .nav-dropdown-count {
+    min-width: 22px;
+    padding: 1px 6px;
+    border-radius: 999px;
+    background: var(--color-bg-subtle, rgba(0, 0, 0, 0.05));
+    text-align: center;
+    font-size: 0.75rem;
+  }
+
+  .home-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .home-sidebar {
+    position: static;
+  }
+
+  .category-summary-section {
+    padding: 18px;
+  }
+
+  .category-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-slider-slide {
+    aspect-ratio: 4 / 3;
+  }
+
+  .hero-slider-arrow {
+    top: 38%;
+    width: 32px;
+    height: 32px;
+    font-size: 1.2rem;
+  }
+
+  .hero-slider-caption-name {
+    font-size: 0.9rem;
+    padding: 3px 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+
+  .article-body {
+    padding: 20px 16px;
+    border-radius: var(--radius-md);
+    font-size: 0.94rem;
+    line-height: 1.9;
+  }
+
+  .article-body h2 {
+    font-size: 1.12rem;
+    padding: 0.6em 0.7em;
+  }
+
+  .article-body h3 {
+    font-size: 0.98rem;
+  }
+
+  .article-chart,
+  .pros-cons-block,
+  .affiliate-box {
+    padding: 14px;
+  }
+
+  .article-stat-tile {
+    padding: 20px 14px;
+  }
+
+  .pros-cons-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pros-cons-col {
+    padding: 12px 14px;
+  }
+
+  .article-body blockquote {
+    padding: 10px 14px;
+  }
+
+  .article-body th,
+  .article-body td {
+    padding: 8px 10px;
+  }
+
+  .compare-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .article-body table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .post-list {
+    grid-template-columns: 1fr;
+  }
+
+  .search-box {
+    flex-direction: column;
+  }
+
+  .ranking-thumb {
+    width: 64px;
+    height: 64px;
+  }
+
+  .pros-cons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .donut-chart-layout {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .related-posts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .diagnosis-banner {
+    padding: 14px 16px;
+  }
+
+  .diagnosis-banner-icon {
+    font-size: 1.5rem;
+  }
+
+  .skin-quiz-choices {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- ホーム: 肌タイプ診断への控えめな誘導バナー ----
+   カテゴリ一覧セクションの直前に配置する独立機能への導線。
+   home-系専用クラス(トップページのみで使用)。 */
+.diagnosis-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding: 18px 24px;
+  background: linear-gradient(120deg, #ffd3e2, #ffeef4);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 6px 16px rgba(214, 51, 108, 0.28);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.diagnosis-banner:hover {
+  box-shadow: 0 12px 30px rgba(214, 51, 108, 0.38);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.diagnosis-banner-icon {
+  flex-shrink: 0;
+  font-size: 1.8rem;
+}
+
+.diagnosis-banner-mascot {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.diagnosis-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.diagnosis-banner-title {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-primary-dark);
+  font-size: 1.05rem;
+}
+
+.diagnosis-banner-desc {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.diagnosis-banner-arrow {
+  flex-shrink: 0;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* ---- 肌タイプ診断ページ: SkinTypeQuiz ---- */
+.skin-quiz {
+  max-width: 640px;
+}
+
+.skin-quiz-progress {
+  color: var(--color-text-faint);
+  font-size: 0.85rem;
+  margin: 0 0 8px;
+}
+
+.skin-quiz-question {
+  font-size: 1.15rem;
+  color: var(--color-primary-dark);
+  margin: 0 0 20px;
+}
+
+.skin-quiz-choices {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.skin-quiz-choice {
+  text-align: left;
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background var(--transition), border-color var(--transition), transform var(--transition);
+}
+
+.skin-quiz-choice:hover {
+  background: var(--color-primary-surface);
+  border-color: var(--color-primary-light);
+  transform: translateY(-1px);
+}
+
+.skin-quiz-result {
+  max-width: 640px;
+  text-align: center;
+}
+
+.skin-quiz-result-emoji {
+  font-size: 2.4rem;
+  margin: 0 0 8px;
+}
+
+.skin-quiz-result-title {
+  color: var(--color-primary-dark);
+  font-size: 1.3rem;
+  margin: 0 0 12px;
+}
+
+.skin-quiz-result-desc {
+  color: var(--color-text);
+  line-height: 1.8;
+  margin: 0 0 16px;
+}
+
+.skin-quiz-note {
+  color: var(--color-text-faint);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+.skin-quiz-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.skin-quiz-cta {
+  display: inline-block;
+  padding: 12px 28px;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 999px;
+  transition: background var(--transition), transform var(--transition);
+}
+
+.skin-quiz-cta:hover {
+  background: var(--color-primary-dark);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* 診断結果から悩みページへの誘導リンク。記事へのメインCTAとは
+   視覚的な優先度を分けるため、塗りではなく輪郭のみのスタイルにする。 */
+.skin-quiz-cta-secondary {
+  background: transparent;
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary-dark);
+  padding: 10px 26px;
+}
+
+.skin-quiz-cta-secondary:hover {
+  background: var(--color-primary-light);
+  color: var(--color-primary-dark);
+}
+
+.skin-quiz-restart {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   肌タイプ基本記事ページ: 関連記事エリア(skin-type-*)
+   スキンケア肌タイプ診断(SkinTypeQuiz)からの遷移先である基本情報記事にのみ
+   表示する専用ブロック。既存の.related-post-card等とは名前空間を分けている。
+   ========================================================================== */
+
+.skin-type-related {
+  margin: 28px 0 32px;
+}
+
+.skin-type-related-heading {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 14px;
+  color: var(--color-text);
+}
+
+/* --- カルーセル(横スライド。ネイティブスクロール+scroll-snap) --- */
+
+.skin-type-carousel {
+  margin-bottom: 20px;
+}
+
+.skin-type-carousel-track {
+  list-style: none;
+  margin: 0;
+  padding: 4px 4px 12px;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.skin-type-carousel-slide {
+  flex: 0 0 auto;
+  width: 78%;
+  scroll-snap-align: start;
+}
+
+.skin-type-carousel-link {
+  position: relative;
+  display: block;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-hover);
+  text-decoration: none;
+  color: inherit;
+}
+
+.skin-type-carousel-img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.skin-type-carousel-img-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  background: var(--color-surface-alt, #f4f4f4);
+}
+
+.skin-type-carousel-caption {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 12px 20px;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0));
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 480px) {
+  .skin-type-carousel-slide {
+    width: 62%;
+  }
+}
+
+@media (min-width: 768px) {
+  .skin-type-carousel-slide {
+    width: 30%;
+  }
+}
+
+@media (min-width: 1080px) {
+  .skin-type-carousel-slide {
+    width: 22%;
+  }
+}
+
+/* --- カード一覧(縦list。左サムネイル+右テキスト) --- */
+
+.skin-type-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skin-type-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+
+.skin-type-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-primary-light);
+}
+
+.skin-type-card-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  text-decoration: none;
+  color: var(--color-text);
+}
+
+.skin-type-card-link:hover {
+  text-decoration: none;
+  color: var(--color-primary);
+}
+
+.skin-type-card-thumb {
+  flex: 0 0 auto;
+  width: 84px;
+  height: 84px;
+  border-radius: var(--radius-sm, 8px);
+  object-fit: cover;
+}
+
+.skin-type-card-thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  background: var(--color-surface-alt, #f4f4f4);
+}
+
+.skin-type-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.skin-type-card-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.skin-type-card-desc {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (min-width: 768px) {
+  .skin-type-card-thumb {
+    width: 110px;
+    height: 110px;
+  }
+
+  .skin-type-card-title {
+    font-size: 1rem;
+  }
+
+  .skin-type-card-desc {
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================================================================
+   汎用4type(steps/checklist/summaryCard/compareCards)+セクション交互化の共通CSS
+   (2026-08-08追加)。記事専用プレフィックス(asemo-/pc-/kss-等)を持たない、
+   どの記事からでも使える .chart- 系および .article-section- 系クラス群。色は :root で定義した
+   --chart-accent/--chart-accent-dark/--chart-tint-bg/--chart-card-border の4変数で
+   制御し、記事が独自テーマを持つ場合はそのスコープ内でこの4変数だけ再定義すればよい。
+   既存12記事の .asemo-checklist 等の専用クラスはここでは一切変更していない。
+   ========================================================================= */
+
+.chart-checklist {
+  background: var(--color-surface);
+  border: 1px solid var(--chart-card-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin: 1.6em 0;
+}
+
+.chart-checklist-title {
+  color: var(--chart-accent-dark);
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.chart-checklist ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.chart-checklist-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 8px 0 0;
+}
+
+/* checklistのitemsに{question, resultLabel, resultColor}形式(診断用)を渡した場合の
+   一覧レイアウト。複数の項目に同時に「はい」が当てはまってもよいセルフチェック
+   (2026-08-09、旧flowchart型のflowchart-selfcheck-*から汎用領域へ移設・改名)。 */
+.chart-checklist-list-diagnostic {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.chart-checklist-diagnostic-item {
+  background: var(--chart-tint-bg);
+  border: 1px solid var(--chart-card-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.chart-checklist-diagnostic-question {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 6px;
+}
+
+.chart-checklist-diagnostic-result {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.chart-checklist-diagnostic-badge {
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+/* readMoreHeadingが指定された診断itemの「詳しく見る」リンク。背景が
+   --chart-tint-bg(明るいトーン)前提のため、既存の.chart-checklist-titleと
+   同じ--chart-accent-darkの組み合わせを踏襲する(新規の配色決定ではなく
+   既存パターンの再利用)。2026-08-09、型改修で追加。 */
+.chart-checklist-diagnostic-readmore {
+  color: var(--chart-accent-dark);
+  font-weight: 700;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.chart-summary-card {
+  background: linear-gradient(135deg, var(--chart-accent-dark), var(--chart-accent));
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 2em 0;
+}
+
+.chart-summary-card h3 {
+  color: #fff;
+  border-left: none;
+  padding-left: 0;
+  margin-top: 0.6em;
+}
+
+/* セレクタを.article-section .chart-summary-card aにしていたが、sectionAlternate:
+   trueをfrontmatterで指定した記事だけがwrapArticleSections()で.article-sectionに
+   包まれる仕様(lib/posts.js)のため、指定のない記事(フケ皮膚科受診目安 等)では
+   .article-section祖先が存在せず、このルール自体が一切適用されずリンクが既定の
+   a{color:var(--color-primary)}(#d6336c)のままグラデーション背景に埋もれて読めなく
+   なっていた(2026-08-09報告で発覚)。祖先要素の有無に左右されないよう、リンク自身に
+   専用クラス(chart-summary-card-link、renderGenericSummaryCardHtml側で付与)を付け、
+   .chart-summary-card単体をセレクタにする。specificityは(0,2,1)となり、後方定義の
+   .article-section-tint a(0,1,1)より確実に勝つため、sectionAlternate: trueの記事に
+   包まれた場合でも同じ事故は再発しない。 */
+.chart-summary-card a.chart-summary-card-link {
+  /* 白文字+下線のみ(2026-08-08対応)では、グラデーションの明るい端で
+     4.62:1とAA(4.5:1)ぎりぎりのマージンしかなく、実画面で背景と同化して
+     見えると複数回報告された(2026-08-09)。グラデーション位置に左右され
+     ない設計にするため、リンクの実効背景を半透明の黒で固定する
+     (濃い端で約12.6:1、明るい端で約10.5:1、両端とも大きな余裕を持ってAA
+     を満たす)。 */
+  color: #ffffff;
+  text-decoration: underline;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.05em 0.4em;
+  border-radius: 4px;
+}
+
+.chart-steps-figure {
+  margin: 2em 0;
+}
+
+.chart-steps-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.chart-step-circle {
+  fill: var(--chart-accent);
+}
+
+.chart-step-num {
+  font-size: 13px;
+  fill: #fff;
+  font-weight: 800;
+}
+
+.chart-step-text {
+  font-size: 13px;
+  fill: var(--color-text);
+  font-weight: 700;
+}
+
+.chart-step-note {
+  font-size: 12px;
+  fill: var(--chart-accent-dark);
+}
+
+.chart-scroll-hint {
+  font-size: 0.8rem;
+  color: var(--chart-accent-dark);
+  margin: 0 0 8px;
+}
+
+.chart-compare-cards-figure {
+  margin: 2em 0;
+}
+
+.chart-compare-cards-wrap {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.chart-compare-card {
+  flex: 0 0 78%;
+  max-width: 260px;
+  background: var(--chart-tint-bg);
+  border: 1px solid var(--chart-card-border);
+  border-top: 4px solid var(--chart-accent);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.chart-compare-card-title {
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+
+.chart-compare-card-list {
+  margin: 0;
+}
+
+.chart-compare-card-list dt {
+  font-size: 0.75rem;
+  /* 背景--chart-tint-bg(既定#fff5f8)上で--color-text-muted(#6b7280)は4.53:1と
+     僅差のため、同色相のまま少し暗くした値に上書き(2026-08-08、4.53:1→4.65:1)。 */
+  color: #6a707e;
+  margin-top: 8px;
+}
+
+.chart-compare-card-list dd {
+  margin: 2px 0 0;
+  font-size: 0.92rem;
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .chart-compare-card {
+    flex: 1 1 0;
+  }
+}
+
+/* セルフ診断ウィザード(chart type: "diagnosis")。JS無効時は全質問・全選択肢・
+   全結果タイプ一覧が常に表示される静的HTMLとして読める。JS有効時は
+   components/diagnosisWidget.js が1問ずつ進めるウィザードUIに書き換える
+   (2026-08-09、記事専用React実装DrySkinSelfCheck.jsを置き換えて新設)。 */
+.chart-diagnosis {
+  background: var(--chart-tint-bg);
+  border: 1px solid var(--chart-card-border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 1.6em 0;
+  text-align: center;
+}
+
+.chart-diagnosis .chart-title {
+  margin: 0 0 12px;
+}
+
+.chart-diagnosis-progress {
+  font-size: 0.8rem;
+  color: var(--chart-accent-dark);
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.chart-diagnosis-question:not(:first-child) {
+  margin-top: 20px;
+}
+
+.chart-diagnosis-question-text {
+  font-size: 1.05rem;
+  margin: 0 0 16px;
+  color: var(--color-text);
+}
+
+.chart-diagnosis-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chart-diagnosis-choice {
+  min-height: 44px;
+  border-radius: 999px;
+  border: 2px solid var(--chart-accent);
+  background: var(--color-surface);
+  color: var(--chart-accent-dark);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.chart-diagnosis-choice:hover,
+.chart-diagnosis-choice:focus-visible {
+  background: var(--chart-accent);
+  color: #fff;
+}
+
+.chart-diagnosis-result-badge {
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin: 4px 0;
+}
+
+.chart-diagnosis-result-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--color-text);
+  margin: 8px 0 12px;
+}
+
+.chart-diagnosis-restart {
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--chart-accent);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chart-diagnosis-outcomes {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--chart-card-border);
+  text-align: left;
+}
+
+.chart-diagnosis-outcomes-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0 0 8px;
+}
+
+.chart-diagnosis-outcomes-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+
+.chart-diagnosis-outcome-item {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+
+.chart-diagnosis-outcome-badge {
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.chart-diagnosis-outcome-desc {
+  color: var(--color-text-muted);
+}
+
+.chart-diagnosis-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 14px 0 0;
+}
+
+.chart-quadrant-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 10px 0 0;
+}
+
+/* 断面/構造図型・深さ比較型(chart type: crossSection/depthComparison、2026-08-13追加) */
+.article-diagram-chart {
+  margin: 2em 0;
+}
+
+.chart-diagram-svg {
+  display: block;
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.chart-diagram-caption {
+  font-size: 11px;
+  fill: var(--color-text-muted);
+}
+
+.chart-diagram-label {
+  font-size: 11.5px;
+  fill: var(--color-text);
+}
+
+.chart-diagram-label-strong {
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--color-text);
+}
+
+.chart-diagram-leader {
+  stroke: var(--chart-accent);
+  stroke-width: 1.3;
+  fill: none;
+}
+
+.chart-diagram-leader-dot {
+  fill: var(--chart-accent);
+}
+
+.chart-diagram-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 10px 0 0;
+}
+
+.article-section {
+  margin: 0 0 32px;
+  padding: 16px 14px;
+  border-radius: var(--radius-lg);
+}
+
+.article-section-plain {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.article-section-tint {
+  background: var(--chart-tint-bg);
+}
+
+/* tint背景(既定#fff5f8)上でも.article-body aと同じ暗色(#a01f4c、約7:1)に統一する
+   (2026-08-09。旧#d22a65は4.62:1でAAぎりぎりのマージン不足だったため)。
+   hoverはより詳しいセレクタで既定のhover色を維持する。 */
+.article-section-tint a {
+  color: #a01f4c;
+}
+
+.article-section-tint a:hover {
+  color: var(--color-primary-dark);
+}
+
+.article-section-card {
+  background: var(--color-surface);
+  border: 1px solid var(--chart-card-border);
+}
+
+.article-section h2 {
+  margin-top: 0;
+}
+
+/* ---- 悩みページ(/worry/[slug]): よくある原因・今日からできる対策 ----
+   既存トークン(--color-border/--radius-md/--color-surface/--color-primary-dark/
+   --color-primary/--color-text)のみを使い、新規クラスとして最小限追加する。 */
+.worry-cause-list,
+.worry-steps-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.worry-cause-item,
+.worry-steps-item {
+  padding: 14px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.worry-steps-item {
+  position: relative;
+  padding-left: 48px;
+  counter-increment: worry-step;
+}
+
+.worry-steps-list {
+  counter-reset: worry-step;
+}
+
+.worry-steps-item::before {
+  content: counter(worry-step);
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.worry-cause-title,
+.worry-steps-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.worry-cause-body,
+.worry-steps-body {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+/* ---- 悩みハブページ(/worry) ----
+   既存トークンのみを使い、悩みカードをグリッド表示する。 */
+.worry-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.worry-hub-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.worry-hub-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.worry-hub-card-label {
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  font-size: 1rem;
+}
+
+.worry-hub-card-summary {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+.worry-hub-card-count {
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+/* =========================================================================
+   「乾燥肌とは？」記事(content/articles/2026-08-05_乾燥肌とは_基本情報.md)専用
+   スタイル(2026-08-07 スマホ可読性リニューアル)。すべて .dryskin- プレフィックス
+   または .dryskin-theme スコープ配下に閉じており、他記事(.article-body)の
+   デフォルトスタイルには影響しない。テーマカラー: アイスブルー#4A90D9 +
+   ミント#7FD1C4 + ペールグレー#F2F6FA。
+   ========================================================================= */
+
+.dryskin-theme {
+  --dry-blue: #4a90d9;
+  /* 白背景上でのコントラスト比が5.19:1(プロジェクト基準の6:1未達、閾値ぎりぎり)
+     だったため2026-08-10に濃色化。#1f5490は白背景上で約7.7:1(WCAG AA
+     4.5:1は当然クリアし、プロジェクト目標の6:1にも十分な余裕を確保)。 */
+  --dry-blue-dark: #1f5490;
+  --dry-mint: #7fd1c4;
+  --dry-pale: #f2f6fa;
+  --dry-warn: #e0554a;
+  /* 汎用4type+diagnosisの共通カラー変数をこのスコープ内だけ再定義し、
+     クラス自体はコピーせずに乾燥肌記事のブルー系配色に揃える(2026-08-09)。 */
+  --chart-accent: var(--dry-blue);
+  --chart-accent-dark: var(--dry-blue-dark);
+  --chart-tint-bg: var(--dry-pale);
+  --chart-card-border: #cfe3f2;
+}
+
+/* H2:アイコン付きの帯。奇数/偶数で背景を白⇔淡色に交互化する */
+.dryskin-theme h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--dry-pale);
+  border-left: 6px solid var(--dry-blue);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: #1c3a54;
+}
+
+.dryskin-theme > h2:nth-of-type(even),
+.dryskin-theme > div > h2:nth-of-type(even) {
+  background: #fff;
+  border-left-color: var(--dry-mint);
+}
+
+/* H3:左4pxアクセントバー+やや細め */
+.dryskin-theme h3 {
+  font-weight: 600;
+  border-left: 4px solid var(--dry-mint);
+  color: var(--dry-blue-dark);
+}
+
+.dryskin-theme p {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.dryskin-theme > h2,
+.dryskin-theme > h3 {
+  margin-top: 2.2em;
+  margin-bottom: 0.9em;
+}
+
+.dryskin-theme .article-chart,
+.dryskin-theme .article-accordion,
+.dryskin-theme .dryskin-matrix,
+.dryskin-theme .dryskin-timeline-figure,
+.dryskin-theme .dryskin-check,
+.dryskin-theme blockquote {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+/* 数字・スペックはやや大きめ+等幅数字 */
+.dryskin-theme .dryskin-diagram-caption,
+.dryskin-theme .dryskin-timeline-time {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 引用(結論だけ知りたい人へ/注意/NEVORAポイント)を種類ごとに帯色を変える。
+   本文中の絵文字プレフィックスで簡易判定する。 */
+.dryskin-theme blockquote {
+  border: 1px solid #d8e6f2;
+  border-left: 5px solid var(--dry-blue);
+  border-radius: var(--radius-md);
+  background: #fff;
+  padding: 14px 16px;
+}
+
+.dryskin-theme blockquote p:first-child {
+  font-weight: 700;
+  color: var(--dry-blue-dark);
+}
+
+/* 「・」区切りテキストから変換した本物のリスト。チェックリストと視覚トーンを
+   揃えるため、丸ではなく色付きの✓アイコンを疑似要素で置く。 */
+.dryskin-theme ul.dryskin-inline-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.dryskin-theme ul.dryskin-inline-list li {
+  position: relative;
+  padding: 4px 0 4px 26px;
+  line-height: 1.7;
+}
+
+.dryskin-theme ul.dryskin-inline-list li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: 4px;
+  color: var(--dry-blue);
+  font-weight: 700;
+}
+
+.dryskin-theme ul.dryskin-audience-list li::before {
+  content: "●";
+  font-size: 0.5em;
+  top: 11px;
+  color: var(--dry-mint);
+}
+
+.dryskin-theme p.dryskin-inline-list-label {
+  margin: 18px 0 2px;
+}
+
+/* 📝体験メモ:個人の感想であることが一目で分かるよう、本文と区別して
+   薄ミント背景+破線枠の吹き出し風ボックスにする。 */
+.dryskin-theme .dryskin-memo-box {
+  display: flex;
+  gap: 10px;
+  background: #f4faf8;
+  border: 1px dashed var(--dry-mint);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.dryskin-theme .dryskin-memo-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.dryskin-theme .dryskin-memo-label {
+  font-weight: 700;
+  color: #2f8f7f;
+  margin: 0 0 4px;
+}
+
+.dryskin-theme .dryskin-memo-body p:last-child {
+  margin: 0;
+}
+
+/* 記事末「まとめカード」。結論リスト+次の一歩を、他ボックスより一段強い
+   トーン(テーマ色の帯+白背景)で締めくくりとして目立たせる。 */
+.dryskin-theme .dryskin-matome-card {
+  background: #fff;
+  border: 2px solid var(--dry-blue);
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+
+.dryskin-theme .dryskin-matome-label {
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--dry-blue-dark);
+  margin: 0 0 8px;
+}
+
+.dryskin-theme .dryskin-matome-next {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #d8e6f2;
+}
+
+/* ==================== 断面図・ループ図・複合グラフ共通(SVG図解) ==================== */
+.dryskin-diagram {
+  background: #fff;
+  border: 1px solid #dbe7f0;
+}
+
+.dryskin-diagram-svg,
+.dryskin-loop-svg,
+.dryskin-combo-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.dryskin-diagram-label-main {
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--dry-blue-dark);
+}
+
+.dryskin-diagram-label-main.dryskin-diagram-label-dry {
+  fill: var(--dry-warn);
+}
+
+.dryskin-diagram-label-sub {
+  font-size: 12px;
+  fill: #2f6fb3;
+}
+
+.dryskin-diagram-label-sub.dryskin-diagram-label-dry {
+  fill: var(--dry-warn);
+}
+
+.dryskin-diagram-caption {
+  font-size: 12px;
+  fill: #55606b;
+}
+
+.dryskin-diagram-note {
+  margin: 12px 0 0;
+  font-size: 0.82rem;
+  color: #55606b;
+}
+
+.dryskin-loop-label {
+  font-size: 12px;
+  fill: #1c3a54;
+  font-weight: 600;
+}
+
+.dryskin-loop-scissors {
+  font-size: 22px;
+}
+
+.dryskin-loop-caption {
+  font-size: 12px;
+  fill: var(--dry-warn);
+  font-weight: 700;
+}
+
+.dryskin-combo-scroll {
+  overflow-x: auto;
+}
+
+.dryskin-combo-xlabel {
+  font-size: 11px;
+  fill: #6b7280;
+}
+
+/* ==================== 肌質4タイプ判別表 ==================== */
+.dryskin-matrix {
+  background: #fff;
+  border: 1px solid #dbe7f0;
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.dryskin-scroll-wrap {
+  overflow-x: auto;
+}
+
+.dryskin-scroll-note {
+  font-size: 0.78rem;
+  color: #6b7280;
+  margin: 6px 0 0;
+}
+
+.dryskin-matrix-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 480px;
+  font-size: 0.88rem;
+}
+
+.dryskin-matrix-table th,
+.dryskin-matrix-table td {
+  border: 1px solid #dbe7f0;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.dryskin-matrix-table thead th {
+  background: var(--dry-pale);
+  color: #1c3a54;
+  font-weight: 700;
+}
+
+.dryskin-matrix-table tbody th {
+  background: #fbfdff;
+  text-align: left;
+  font-weight: 700;
+  color: var(--dry-blue-dark);
+}
+
+.dryskin-matrix-mark {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+/* ==================== 縦タイムライン(朝/夜ケア) ==================== */
+.dryskin-timeline-figure {
+  background: #fff;
+  border: 1px solid #dbe7f0;
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+
+.dryskin-timeline-block + .dryskin-timeline-block {
+  margin-top: 24px;
+}
+
+.dryskin-timeline-heading {
+  font-weight: 700;
+  color: var(--dry-blue-dark);
+  margin: 0 0 12px;
+}
+
+.dryskin-timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid var(--dry-mint);
+  margin-left: 14px;
+}
+
+.dryskin-timeline-item {
+  position: relative;
+  padding: 0 0 20px 22px;
+  display: flex;
+}
+
+.dryskin-timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.dryskin-timeline-dot {
+  position: absolute;
+  left: -15px;
+  top: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--dry-blue);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dryskin-timeline-item.pm .dryskin-timeline-dot {
+  background: var(--dry-blue-dark);
+}
+
+.dryskin-timeline-body {
+  padding-left: 10px;
+}
+
+.dryskin-timeline-time {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.dryskin-timeline-step {
+  margin: 2px 0 4px;
+  font-weight: 600;
+  color: #1c3a54;
+}
+
+.dryskin-timeline-ng {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--dry-warn);
+}
+
+/* 旧セルフ診断カード(components/DrySkinSelfCheck.js)は2026-08-09、汎用chart type
+   "diagnosis"(.chart-diagnosis*、globals.css内の汎用4type共通領域を参照)に置き換えて
+   廃止した。乾燥肌記事のブルー系配色は.dryskin-theme内の--chart-accent系変数の
+   再定義で引き継いでいる。 */
+
+/* ==================== NEVORAポイント/注意ボックス(本文中はblockquote装飾に統合済み) ==================== */
+.dryskin-theme .dryskin-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.dryskin-theme .dryskin-badge-point {
+  background: var(--dry-mint);
+  color: #0f3d34;
+}
+
+.dryskin-theme .dryskin-badge-warn {
+  background: #fbdad6;
+  color: #8a2f26;
+}
+
+/* ============================================================
+   ファンデーション崩れタイプ別比較 記事専用パーツ
+   (対象: content/articles/2026-07-26_ファンデーション崩れタイプ別比較.md のみ)
+   テーマカラー: モカブラウン#B08968 + ミント#A8D5C8 + アイボリー#FDF8F3
+   ============================================================ */
+
+/* 顔マップ図解(faceMap) */
+.facemap-svg {
+  width: 200px;
+  height: 240px;
+  flex-shrink: 0;
+}
+
+/* 診断フローチャート(flowchart): タイプ別3カラムのQ&Aカード */
+.flowchart-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.flowchart-column {
+  background: #fdf8f3;
+  border: 1px solid #e7d9c8;
+  border-radius: var(--radius-sm);
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.flowchart-badge {
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.flowchart-step {
+  margin-bottom: 2px;
+}
+
+.flowchart-question {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.flowchart-answer {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 2px 0 0;
+}
+
+.flowchart-arrow {
+  font-size: 0.75rem;
+  color: #b08968;
+  margin: 2px 0;
+}
+
+/* 二択(はい/いいえ)セルフチェック: 4問を独立したチェック項目として縦一列に
+   並べる一覧レイアウト。列挙型(.flowchart-grid)と違い横スクロールは発生させず、
+   常に画面幅いっぱいの1カラム表示にする。以前は「Q1でいいえなら次の質問へ」と
+   いう消去法の決定木にしていたが、複数の質問に同時に「はい」が付き得る内容
+   (例: 老人性色素斑と肝斑の併発)を1本道の分岐で表現すると「1タイプにしか
+   当てはまらない」かのような誤った印象を与えるため、独立項目の一覧+
+   「複数該当することもある」注記に変更した(2026-08-09)。 */
+.flowchart-selfcheck-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 0;
+}
+
+.flowchart-selfcheck-item {
+  background: #fdf8f3;
+  border: 1px solid #e7d9c8;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+
+.flowchart-selfcheck-question {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0 0 6px;
+}
+
+.flowchart-selfcheck-result {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.flowchart-selfcheck-badge {
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+
+.flowchart-selfcheck-note {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 8px 0 0;
+}
+
+/* 崩れ度合いの時系列イメージ(lineChart) */
+.linechart-svg {
+  width: 100%;
+  max-width: 320px;
+  display: block;
+}
+
+/* 「⏱ 30秒でわかる」冒頭サマリー・チェックリスト等、通常のblockquoteより
+   一段強めに視線を集めたいブロック向けの装飾違いのblockquote。
+   本文中でこのクラスを直接使うことはできない(生HTML不可)ため、
+   通常blockquoteの中に絵文字プレフィックスを含めて表現する。 */
+.article-body blockquote strong:first-child {
+  color: var(--color-primary-dark);
+}
+
+/* GFMタスクリスト(- [ ] 項目)のチェックリスト表示。タップ領域を
+   44px以上確保し、チェック済みはミントで塗りつぶす。 */
+.article-body ul.contains-task-list {
+  list-style: none;
+  padding-left: 0.2em;
+}
+
+.article-body li.task-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  background: #f4faf7;
+  border: 1px solid #cdeade;
+  border-radius: var(--radius-sm);
+  list-style: none;
+}
+
+.article-body li.task-list-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: #2f9e6e;
+  margin-top: 2px;
+}
+
+/* 診断フローチャート(.flowchart-grid)は3カラム固定だったため、480px超〜640px
+   あたりの画面幅(大きめのスマホ横向き・小型タブレット等)では1カラムあたりが
+   約150px前後まで狭まり、「何時ごろ崩れる?」のような短い日本語見出しでさえ
+   単語の途中で折り返され、読みにくく詰まった見た目になっていた。1カラム化の
+   しきい値を480pxから640pxに引き上げ、狭い幅では早めに縦積みレイアウトへ
+   切り替える(2026-08-10修正、他の480px基準のブレークポイントとは独立させ、
+   .flowchart-grid/.flowchart-column以外のスタイルには影響させない)。 */
+@media (max-width: 640px) {
+  .flowchart-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .flowchart-column {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .facemap-svg {
+    width: 100%;
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dryskin-check-question {
+    font-size: 1rem;
+  }
+}
+
+/* ---- セクション交互背景(H2見出し単位、lib/foundationCompareExtras.js) ---- */
+.fnd-section {
+  padding: 4px 0;
+}
+
+.fnd-section-plain {
+  background: #fff;
+}
+
+.fnd-section-tint {
+  background: rgba(176, 137, 104, 0.06);
+  border-radius: var(--radius-md);
+  margin: 0 -8px;
+  padding: 8px 8px 4px;
+}
+
+.fnd-section-card {
+  background: #fff;
+  border: 1px solid #e7d9c8;
+  border-radius: var(--radius-md);
+  margin: 12px -4px;
+  padding: 12px 12px 4px;
+}
+
+/* ---- タイプ別h3見出しのラベルバッジ(pill) ---- */
+.fnd-badge {
+  display: inline-block;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.72rem;
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.fnd-badge-sebum {
+  background: #eb6834;
+}
+
+.fnd-badge-dry {
+  background: #2a78d6;
+}
+
+.fnd-badge-mix {
+  background: #1baf7a;
+}
+
+/* =====================================================================
+   「リップ比較」記事(2026-07-26_リップ比較.md)専用スタイル(lib/lipCompareExtras.js)
+   クラス名はすべて lip- プレフィックスで他記事のスタイルと衝突しないようにしている。
+   テーマカラー: ローズレッド#D6456B / ヌードベージュ#E5C5B5 / ディープボルドー#6E1F35
+   ===================================================================== */
+
+/* ---- 独自目次(details) ---- */
+.lip-toc {
+  margin: 0 0 24px;
+  border: 1px solid #E5C5B5;
+  border-radius: var(--radius-md);
+  background: #fff;
+  overflow: hidden;
+}
+
+.lip-toc > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-weight: 700;
+  color: #6E1F35;
+  background: #fbecef;
+}
+
+.lip-toc > summary::-webkit-details-marker {
+  display: none;
+}
+
+.lip-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 10px 14px;
+}
+
+.lip-toc-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: 44px;
+  color: #6E1F35;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.lip-toc-item a:hover {
+  background: #fbecef;
+}
+
+.lip-toc-emoji {
+  font-size: 1rem;
+}
+
+/* ---- セクション交互背景(H2見出し単位) ---- */
+.lip-section {
+  padding: 4px 0;
+}
+
+.lip-section-plain {
+  background: #fff;
+}
+
+.lip-section-tint {
+  background: rgba(214, 69, 107, 0.05);
+  border-radius: var(--radius-md);
+  margin: 0 -8px;
+  padding: 8px 8px 4px;
+}
+
+.lip-section-card {
+  background: #fff;
+  border: 1px solid #E5C5B5;
+  border-radius: var(--radius-md);
+  margin: 12px -4px;
+  padding: 12px 12px 4px;
+}
+
+.lip-section h2 {
+  background: linear-gradient(120deg, #fbecef, #fff 75%) !important;
+  border-left-color: #D6456B !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.lip-section h3 {
+  border-left-color: #D6456B !important;
+  color: #6E1F35 !important;
+}
+
+/* ---- 断面比較図 ---- */
+.lip-cross-section .lip-cross-svg {
+  display: block;
+  height: auto;
+  min-width: 400px;
+  overflow: visible;
+}
+
+.lip-cross-name {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #6E1F35;
+}
+
+.lip-cross-desc {
+  font-size: 12px;
+  fill: #7a5c62;
+}
+
+.lip-cross-note {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ---- レーダーチャート ---- */
+.radar-svg {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.radar-ring {
+  fill: none;
+  stroke: #e8dcd8;
+  stroke-width: 1;
+}
+
+.radar-axis-line {
+  stroke: #d8c6c1;
+  stroke-width: 1;
+}
+
+.radar-axis-label {
+  font-size: 12px;
+  fill: #6E1F35;
+  font-weight: 600;
+}
+
+.radar-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.radar-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.radar-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+/* ---- 商品比較表 ---- */
+.lip-scroll-hint {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: var(--color-text-faint);
+}
+
+.lip-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.lip-product-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.lip-product-table th,
+.lip-product-table td {
+  border: 1px solid #E5C5B5;
+  padding: 8px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.lip-product-table th {
+  background: #fbecef;
+  color: #6E1F35;
+  font-weight: 700;
+}
+
+.lip-product-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: normal !important;
+  min-width: 160px;
+}
+
+.lip-color-chip {
+  flex-shrink: 0;
+}
+
+/* ---- 手順ガイド ---- */
+.lip-step-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lip-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.lip-step-icon {
+  flex-shrink: 0;
+}
+
+.lip-step-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #6E1F35;
+}
+
+/* ==========================================================================
+   「くせ毛タイプ別まとまる髪型ガイド」記事専用スタイル
+   (content/articles/2026-08-05_くせ毛タイプ別まとまる髪型ガイド.md)
+   テーマカラー: チェスナットブラウン#8B6F52 / ピンクベージュ#E8CFC4 /
+   ダークブラウン#3A2E26。他記事のクラスとは名前空間を分け(hairtype- /
+   nevora-point- / warning-box- / hairtype-checklist- 接頭辞)、既存クラスは変更しない。
+   ========================================================================== */
+
+.hairtype-diagram-svg,
+.hairtype-flow-svg,
+.hairtype-steps-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.hairtype-diagram-label-main {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #3A2E26;
+}
+
+.hairtype-diagram-label-sub {
+  font-size: 11px;
+  fill: #6b5a4a;
+}
+
+.hairtype-diagram-caption {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.hairtype-flow-q {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #3A2E26;
+}
+
+.hairtype-flow-a {
+  font-size: 12px;
+  fill: #6b5a4a;
+}
+
+.hairtype-silhouette-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 560px) {
+  .hairtype-silhouette-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.hairtype-silhouette-tile {
+  text-align: center;
+  background: #FBF5F0;
+  border: 1px solid #E8CFC4;
+  border-radius: var(--radius-md);
+  padding: 10px 6px 14px;
+}
+
+.hairtype-silhouette-svg {
+  width: 100%;
+  max-width: 96px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.hairtype-silhouette-name {
+  margin: 6px 0 4px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #3A2E26;
+}
+
+.hairtype-silhouette-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #8B6F52;
+  color: #fff;
+}
+
+.hairtype-step-num {
+  text-anchor: middle;
+  font-size: 16px;
+  font-weight: 700;
+  fill: #fff;
+}
+
+.hairtype-step-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #3A2E26;
+}
+
+.hairtype-step-desc {
+  font-size: 11px;
+  fill: #6b5a4a;
+}
+
+/* 乾かし方4ステップの説明文(SVG外のHTMLリスト。狭いスロットへの詰め込みで
+   隣の説明と重なるのを避けるため、SVGは番号・矢印のみにしテキストはここに出す) */
+.hairtype-steps-list {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.hairtype-steps-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  background: rgba(139, 111, 82, 0.06);
+  border-radius: var(--radius-md);
+}
+
+.hairtype-steps-list-label {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #3A2E26;
+}
+
+.hairtype-steps-list-desc {
+  font-size: 0.85rem;
+  color: #6b5a4a;
+}
+
+/* 💡 NEVORAポイント: マスコットの一言+アクセント枠(本文の言い換えではなく
+   一段深い実務補足を入れる箇所)。enhanceAnnotationBlockquotes(lib/posts.js)が
+   「> 💡 NEVORAポイント」の引用ブロックをこのHTML構造に変換する。 */
+.nevora-point-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 1.6em 0;
+  padding: 16px 18px;
+  background: #FBF3EC;
+  border: 1px solid #E8CFC4;
+  border-left: 5px solid #8B6F52;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.nevora-point-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.nevora-point-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  /* 背景#FBF3EC上でWCAG AA(4.5:1)を満たすよう、同色相のまま#8B6F52から
+     暗くした値(2026-08-08、4.26:1→4.67:1)。 */
+  color: #83694d;
+}
+
+.nevora-point-body p:last-child {
+  margin: 0;
+  line-height: 1.8;
+}
+
+/* ⚠️ 注意ボックス。NEVORAポイントと同じ引用記法から変換されるが、
+   色を変えて警告であることが一目でわかるようにする。 */
+.warning-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 1.6em 0;
+  padding: 16px 18px;
+  background: #FFF6EC;
+  border: 1px solid #E8B98F;
+  border-left: 5px solid #C97B3B;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.warning-box-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.warning-box-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  /* 背景#FFF6EC上でWCAG AA(4.5:1)を満たすよう、同色相のまま#C97B3Bから
+     暗くした値(2026-08-08、3.08:1→4.67:1)。 */
+  color: #a0602c;
+}
+
+.warning-box-body p:last-child {
+  margin: 0;
+  line-height: 1.8;
+}
+
+/* セクションごとの背景を白⇔テーマカラー淡色⇔罫線カードで交互にするための
+   H2見出し配色バリエーション(3周期)。article-body内のH2の出現順で
+   自動的に交互になる(記事Markdown側での指定は不要)。 */
+.article-body h2:nth-of-type(3n+2) {
+  background: linear-gradient(120deg, #F3E7DD, #FBF5F0 75%);
+  border-left-color: #8B6F52;
+}
+
+.article-body h2:nth-of-type(3n) {
+  background: #FFFFFF;
+  border: 1px solid #E8CFC4;
+  border-left: 6px solid #8B6F52;
+}
+
+/* ✅ 今日からできるチェックリスト */
+.hairtype-checklist {
+  margin: 1.6em 0;
+  padding: 18px 20px;
+  background: #FBF5F0;
+  border: 1px solid #E8CFC4;
+  border-radius: var(--radius-lg);
+}
+
+.hairtype-checklist-title {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: #3A2E26;
+}
+
+.hairtype-checklist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hairtype-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  margin: 0;
+}
+
+.hairtype-checklist li::before {
+  content: "\2610";
+  font-size: 1.3rem;
+  color: #8B6F52;
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* 記事末まとめカード */
+.hairtype-summary-card {
+  margin: 2em 0;
+  padding: 22px 20px;
+  background: #3A2E26;
+  color: #FBF5F0;
+  border-radius: var(--radius-lg);
+}
+
+.hairtype-summary-card h2,
+.hairtype-summary-card h3 {
+  color: #FBF5F0 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 10px !important;
+}
+
+.hairtype-summary-card ul {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.hairtype-summary-card a {
+  color: #F3D9B1;
+}
+
+@media (max-width: 480px) {
+  .hairtype-silhouette-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* H2見出し単位のセクション背景交互化(白 / テーマ淡色 / 罫線カード) */
+.hairtype-section {
+  margin: 0 0 32px;
+  padding: 20px 16px;
+  border-radius: var(--radius-lg);
+}
+
+.hairtype-section-plain {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.hairtype-section-tint {
+  background: rgba(139, 111, 82, 0.05);
+}
+
+.hairtype-section-card {
+  background: #fff;
+  border: 1px solid #E8CFC4;
+}
+
+.hairtype-section h2 {
+  margin-top: 0;
+}
+
+/* 幅375pxで表がはみ出さないようにする横スクロールラッパー。外側の
+   table-scroll-outerは非スクロールでposition:relativeにし、右端フェード
+   (::after)がスクロール位置に関わらず表の右端に固定表示されるようにする。 */
+.table-scroll-outer {
+  position: relative;
+  margin: 1.6em 0;
+}
+
+.table-scroll-outer::after {
+  content: "";
+  position: absolute;
+  top: 34px;
+  right: 0;
+  bottom: 0;
+  width: 28px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95));
+  pointer-events: none;
+}
+
+.table-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-scroll-wrap table {
+  margin: 0.4em 0 0;
+  min-width: 480px;
+}
+
+.table-scroll-note {
+  font-size: 0.78rem;
+  color: #8B6F52;
+  margin: 0;
+}
+
+.lip-step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #D6456B;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.lip-step-desc {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 480px) {
+  .lip-cross-name {
+    font-size: 12px;
+  }
+  .lip-toc-item a {
+    font-size: 0.92rem;
+  }
+}
+
+/* ================================================================
+   「マイクロニードル美容液比較」記事(2026-08-02_マイクロニードル美容液比較.md)専用
+   スマホ最適化スタイル。すべて mn- プレフィックスで、この記事のcontentHtmlに
+   しか出現しないクラス名(.mn-article配下)のためスコープしており、
+   他記事の表示には影響しない。テーマカラー: パープル#7B61FF + ゴールド#D9B86A。
+   ================================================================ */
+
+.mn-article {
+  --mn-purple: #7b61ff;
+  --mn-gold: #d9b86a;
+  --mn-ink: #2c2540;
+}
+
+/* 目次(絵文字付き折りたたみ) */
+.mn-toc {
+  margin: 0 0 1.6em;
+  border: 1px solid var(--mn-purple, #7b61ff);
+  border-radius: var(--radius-md);
+  background: #faf8ff;
+  overflow: hidden;
+}
+
+.mn-toc summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(120deg, #7b61ff, #9b7cff);
+}
+
+.mn-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.mn-toc-list {
+  margin: 0;
+  padding: 12px 18px 16px 34px;
+}
+
+.mn-toc-item {
+  margin-bottom: 8px;
+}
+
+.mn-toc-item a {
+  color: var(--mn-ink);
+  text-decoration: none;
+}
+
+.mn-toc-item a:hover {
+  text-decoration: underline;
+}
+
+.mn-toc-emoji {
+  margin-right: 6px;
+}
+
+/* H2/H3見出し(パープル+ゴールドの帯) */
+.mn-article .article-body h2 {
+  background: linear-gradient(120deg, #efe9ff, #fff9ec 80%);
+  border-left: 6px solid var(--mn-purple);
+  color: var(--mn-ink);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.mn-article .article-body h3 {
+  border-left: 4px solid var(--mn-gold);
+  color: #6a4fd6;
+}
+
+.mn-article .article-body p,
+.mn-article .article-body li {
+  line-height: 1.8;
+}
+
+/* セクション単位で背景を交互に変える(白 ⇔ テーマカラー5%淡色 ⇔ 罫線カード) */
+.mn-section {
+  margin: 0 -1px;
+  padding: 4px 0 1px;
+}
+
+.mn-section-plain {
+  background: transparent;
+}
+
+.mn-section-tint {
+  background: #f6f3ff;
+  border-radius: var(--radius-md);
+  padding: 12px 14px 4px;
+}
+
+.mn-section-card {
+  background: #fffaf0;
+  border: 1px solid #ecdcb4;
+  border-radius: var(--radius-md);
+  padding: 12px 14px 4px;
+}
+
+/* 水滴型マスコット「ネヴォラちゃん」共通 */
+.mn-mascot-svg {
+  flex-shrink: 0;
+  display: block;
+}
+
+/* (1) ⏱30秒でわかるサマリーカード */
+.mn-quick-summary {
+  margin: 1.2em 0 2em;
+  padding: 18px;
+  background: linear-gradient(135deg, #2c2540, #4a3d7a);
+  border-radius: var(--radius-lg);
+  color: #fff;
+}
+
+.mn-quick-summary-title {
+  margin: 0 0 12px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mn-quick-summary-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.mn-quick-summary-label {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--mn-gold);
+  letter-spacing: 0.04em;
+}
+
+.mn-quick-summary-col ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 0.9rem;
+}
+
+.mn-quick-summary-col li {
+  margin-bottom: 6px;
+}
+
+/* (3) 💡NEVORAポイント / ⚠️注意ボックス(マスコット吹き出し+アクセント枠) */
+.mn-tip,
+.mn-warning {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 1.8em 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+}
+
+.mn-tip {
+  background: #f4f0ff;
+  border: 1px solid var(--mn-purple);
+  border-left: 5px solid var(--mn-purple);
+}
+
+.mn-warning {
+  background: #fff3e0;
+  border: 1px solid #e0a94a;
+  border-left: 5px solid #c97b3b;
+}
+
+.mn-tip-bubble,
+.mn-warning-bubble {
+  flex: 1;
+}
+
+.mn-tip-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--mn-purple);
+}
+
+.mn-warning-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #c97b3b;
+}
+
+.mn-tip p:last-child,
+.mn-warning p:last-child {
+  margin: 0;
+  line-height: 1.8;
+}
+
+/* 📝体験メモ */
+.mn-memo {
+  margin: 1.8em 0;
+  padding: 16px 18px;
+  background: repeating-linear-gradient(#fffdf7, #fffdf7 27px, #f1e6c9 28px);
+  border: 1px dashed var(--mn-gold);
+  border-radius: var(--radius-md);
+}
+
+.mn-memo-title {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: #8a6d2a;
+}
+
+.mn-memo-body p {
+  margin: 0 0 8px;
+}
+
+/* まとめカード */
+.mn-final-summary {
+  margin: 2em 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #2c2540, #4a3d7a);
+  color: #fff;
+  border-radius: var(--radius-lg);
+}
+
+.mn-final-summary-title {
+  margin: 0 0 12px;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.mn-final-summary-conclusions {
+  margin: 0 0 14px;
+  padding-left: 1.2em;
+}
+
+.mn-final-summary-conclusions li {
+  margin-bottom: 6px;
+}
+
+.mn-final-summary-next {
+  font-weight: 700;
+  color: var(--mn-gold);
+}
+
+.mn-final-summary-label {
+  margin: 14px 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--mn-gold);
+}
+
+.mn-final-summary-links ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.mn-final-summary-links a {
+  color: #fff;
+}
+
+/* ① SVG3コマ手順図 */
+.mn-steps {
+  margin: 2em 0;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.mn-steps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.mn-steps-panel {
+  position: relative;
+  text-align: center;
+  padding: 10px 6px;
+  background: #faf8ff;
+  border-radius: var(--radius-sm);
+}
+
+.mn-steps-num {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--mn-purple);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mn-steps-icon {
+  width: 100%;
+  max-width: 70px;
+  height: auto;
+  margin: 6px auto 4px;
+  display: block;
+}
+
+.mn-steps-title {
+  margin: 4px 0 2px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--mn-ink);
+}
+
+.mn-steps-desc {
+  margin: 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ② SVGスケール図 */
+.mn-scale {
+  margin: 2em 0;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.mn-scale-svg {
+  width: 100%;
+  max-width: 340px;
+  display: block;
+  margin: 0 auto;
+  height: auto;
+}
+
+.mn-scale-layer-label {
+  font-size: 12px;
+  fill: var(--color-text-muted);
+}
+
+.mn-scale-needle-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--mn-ink);
+}
+
+.mn-scale-legend {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.mn-scale-legend li {
+  margin-bottom: 4px;
+}
+
+.mn-scale-dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mn-purple);
+  margin-right: 6px;
+}
+
+/* ⑤ SVGフローチャート */
+.mn-flow {
+  margin: 2em 0;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.mn-flow-svg {
+  width: 100%;
+  max-width: 340px;
+  display: block;
+  margin: 0 auto;
+  height: auto;
+}
+
+.mn-flow-root {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #fff;
+}
+
+.mn-flow-cond {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--mn-ink);
+}
+
+.mn-flow-result {
+  font-size: 11px;
+  font-weight: 800;
+  fill: #6a4fd6;
+}
+
+@media (max-width: 480px) {
+  .mn-quick-summary-body {
+    grid-template-columns: 1fr;
+  }
+  .mn-steps-list {
+    grid-template-columns: 1fr;
+  }
+  .mn-tip,
+  .mn-warning {
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+  .mn-mascot-svg {
+    align-self: center;
+  }
+  .mn-flow-cond,
+  .mn-flow-result {
+    font-size: 10px;
+  }
+}
+
+/* ================================================================
+   「基礎化粧品の基本知識と肌質診断」記事(2026-07-26_基礎化粧品の基本知識と肌質診断.md)
+   専用スマホ最適化スタイル(2026-08-07単調さ改善リニューアル)。すべて skb- プレフィックスで、
+   この記事のcontentHtmlにしか出現しないクラス名(.skb-article配下)のためスコープしており、
+   他記事の表示には影響しない。テーマカラー: ミルクベージュ#C8A882 + アイボリー#FBF7F0 +
+   グリーンティー#8FA37E。lib/microneedleExtras.js(.mn-*)の設計・構造をそのまま踏襲し、
+   配色のみをこの記事のテーマカラーに変更している。
+   ================================================================ */
+
+.skb-article {
+  --skb-beige: #c8a882;
+  --skb-beige-dark: #8b6f52;
+  --skb-green: #8fa37e;
+  --skb-green-dark: #6b8161;
+  --skb-ivory: #fbf7f0;
+  --skb-ink: #4a3f35;
+}
+
+/* H2/H3見出し(ベージュ+グリーンの帯。太字ゴシック+字間調整で単調さを解消) */
+.skb-article .article-body h2 {
+  background: linear-gradient(120deg, #f1e9da, #eef2e9 80%);
+  border-left: 6px solid var(--skb-beige);
+  color: var(--skb-ink);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.skb-article .article-body h3 {
+  border-left: 4px solid var(--skb-green);
+  color: var(--skb-green-dark);
+  font-weight: 700;
+}
+
+.skb-article .article-body p,
+.skb-article .article-body li {
+  line-height: 1.8;
+}
+
+/* セクション単位で背景を交互に変える(白 ⇔ テーマカラー5%淡色 ⇔ 罫線カード) */
+.skb-section {
+  margin: 0 -1px;
+  padding: 4px 0 1px;
+}
+
+.skb-section-plain {
+  background: transparent;
+}
+
+.skb-section-tint {
+  background: #f8f3ea;
+  border-radius: var(--radius-md);
+  padding: 12px 14px 4px;
+}
+
+.skb-section-card {
+  background: #f4f7f1;
+  border: 1px solid #d9e2d1;
+  border-radius: var(--radius-md);
+  padding: 12px 14px 4px;
+}
+
+/* マスコット「ネヴォラちゃん」共通 */
+.skb-mascot-svg {
+  flex-shrink: 0;
+  display: block;
+}
+
+/* ⏱30秒でわかるサマリーカード */
+.skb-quick-summary {
+  margin: 1.2em 0 2em;
+  padding: 18px;
+  background: linear-gradient(135deg, var(--skb-beige-dark), var(--skb-green-dark));
+  border-radius: var(--radius-lg);
+  color: #fff;
+}
+
+.skb-quick-summary-title {
+  margin: 0 0 12px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skb-quick-summary-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.skb-quick-summary-label {
+  margin: 0 0 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #f1e2c5;
+  letter-spacing: 0.04em;
+}
+
+.skb-quick-summary-col ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 0.9rem;
+}
+
+.skb-quick-summary-col li {
+  margin-bottom: 6px;
+}
+
+/* 💡NEVORAポイント / ⚠️注意ボックス(マスコット吹き出し+アクセント枠) */
+.skb-tip,
+.skb-warning {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 1.8em 0;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+}
+
+.skb-tip {
+  background: #eef2e9;
+  border: 1px solid var(--skb-green);
+  border-left: 5px solid var(--skb-green);
+}
+
+.skb-warning {
+  background: #fbf0e4;
+  border: 1px solid #d9a860;
+  border-left: 5px solid #b5652e;
+}
+
+.skb-tip-bubble,
+.skb-warning-bubble {
+  flex: 1;
+}
+
+.skb-tip-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--skb-green-dark);
+}
+
+.skb-warning-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: #b5652e;
+}
+
+.skb-tip p:last-child,
+.skb-warning p:last-child {
+  margin: 0;
+  line-height: 1.8;
+}
+
+/* 📝体験メモ */
+.skb-memo {
+  margin: 1.8em 0;
+  padding: 16px 18px;
+  background: repeating-linear-gradient(#fffdf9, #fffdf9 27px, #f1e6cf 28px);
+  border: 1px dashed var(--skb-beige);
+  border-radius: var(--radius-md);
+}
+
+.skb-memo-title {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: var(--skb-beige-dark);
+}
+
+.skb-memo-body p {
+  margin: 0 0 8px;
+}
+
+/* まとめカード */
+.skb-final-summary {
+  margin: 2em 0;
+  padding: 20px;
+  background: linear-gradient(135deg, var(--skb-beige-dark), var(--skb-green-dark));
+  color: #fff;
+  border-radius: var(--radius-lg);
+}
+
+.skb-final-summary-title {
+  margin: 0 0 12px;
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.skb-final-summary-conclusions {
+  margin: 0 0 14px;
+  padding-left: 1.2em;
+}
+
+.skb-final-summary-conclusions li {
+  margin-bottom: 6px;
+}
+
+.skb-final-summary-next {
+  font-weight: 700;
+  color: #f1e2c5;
+}
+
+.skb-final-summary-label {
+  margin: 14px 0 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f1e2c5;
+}
+
+.skb-final-summary-links ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+.skb-final-summary-links a {
+  color: #fff;
+}
+
+@media (max-width: 480px) {
+  .skb-quick-summary-body {
+    grid-template-columns: 1fr;
+  }
+  .skb-tip,
+  .skb-warning {
+    flex-direction: column;
+    align-items: center;
+    text-align: left;
+  }
+  .skb-mascot-svg {
+    align-self: center;
+  }
+}
+
+/* =========================================================================
+   「普通肌におすすめの美容成分」記事
+   (content/articles/2026-08-05_普通肌におすすめの美容成分.md)専用スタイル
+   (2026-08-07 スマホ可読性リニューアル)。すべて .perfectskin- プレフィックス
+   または .perfectskin-theme / .perfectskin-summary-box スコープ配下に閉じており、
+   他記事(.article-body のデフォルトスタイル、および他記事専用テーマ)には
+   影響しない。テーマカラー: ソフトイエロー#E8C547 + セージグリーン#9CB380 +
+   オフホワイト#FCFAF2。「今の良さを守る」予防・維持をやわらかく伝えるトーン。
+   ========================================================================= */
+
+.perfectskin-theme {
+  --ps-yellow: #e8c547;
+  --ps-yellow-dark: #a9822a;
+  --ps-sage: #9cb380;
+  --ps-sage-dark: #5f7548;
+  --ps-cream: #fcfaf2;
+  --ps-text: #4a4534;
+}
+
+/* 冒頭「⏱ 30秒でわかる」サマリーカード(article-summary-box)専用の装飾 */
+.perfectskin-summary-box {
+  background: linear-gradient(150deg, #fff9e6, var(--ps-cream, #fcfaf2) 70%);
+  border: 1px solid #ecd98f;
+  border-left: 6px solid #e8c547;
+}
+
+.perfectskin-summary-eyebrow {
+  margin: 0;
+  font-weight: 800;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  color: #a9822a;
+}
+
+/* H2: 太字ゴシック+字間-0.02em。3周期でセクション背景を
+   白⇔テーマカラー淡色⇔罫線カードに交互化する(.article-body側の
+   汎用3周期ルールより詳細度を上げて、この記事だけ配色を上書きする)。 */
+.article-body.perfectskin-theme h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: #fff;
+  border-left: 6px solid var(--ps-sage);
+  color: var(--ps-text);
+}
+
+.article-body.perfectskin-theme h2:nth-of-type(3n+2) {
+  background: linear-gradient(120deg, #fbf1cf, var(--ps-cream) 75%);
+  border-left-color: var(--ps-yellow-dark);
+}
+
+.article-body.perfectskin-theme h2:nth-of-type(3n) {
+  background: #fff;
+  border: 1px solid #dbe6cd;
+  border-left: 6px solid var(--ps-sage-dark);
+}
+
+/* H3: やや細め+左4pxアクセントバー(既存の.article-body h3を継承しつつ配色のみ変更) */
+.article-body.perfectskin-theme h3 {
+  font-weight: 600;
+  border-left-color: var(--ps-sage);
+  color: var(--ps-sage-dark);
+}
+
+.article-body.perfectskin-theme p {
+  line-height: 1.8;
+}
+
+/* 数字・スペックはやや大きめ+等幅数字(早見表・折れ線グラフの数値表示) */
+.article-body.perfectskin-theme .chart-table td,
+.article-body.perfectskin-theme table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 引用(NEVORAポイント/注意)をテーマカラーで上書き */
+.article-body.perfectskin-theme .nevora-point-box {
+  background: #fbf1cf;
+  border-color: #ecd98f;
+  border-left-color: var(--ps-yellow-dark);
+}
+
+.article-body.perfectskin-theme .nevora-point-label {
+  /* 背景#fbf1cf上で--ps-yellow-dark(#a9822a)は3.15:1でAA未達のため、
+     --ps-yellow-darkそのものは変えず、同色相で暗くした個別値を使う
+     (2026-08-08、3.15:1→4.61:1)。 */
+  color: #876822;
+}
+
+.article-body.perfectskin-theme .warning-box {
+  background: #f2f6ea;
+  border-color: #d3e0c1;
+  border-left-color: var(--ps-sage-dark);
+}
+
+.article-body.perfectskin-theme .warning-box-label {
+  color: var(--ps-sage-dark);
+}
+
+.article-body.perfectskin-theme .article-chart,
+.article-body.perfectskin-theme .article-accordion,
+.article-body.perfectskin-theme blockquote {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+/* ==================== ピラミッド図(普通肌を支える3本柱) ==================== */
+.article-pyramid-chart {
+  background: #fff;
+  border: 1px solid #ecd98f;
+}
+
+.pyramid-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.pyramid-layer-label {
+  font-size: 15px;
+  font-weight: 700;
+  fill: #3a331a;
+}
+
+.pyramid-layer-sub {
+  font-size: 12px;
+  fill: #5a5238;
+}
+
+/* ==================== 季節帯グラフ(年間カレンダー) ==================== */
+.article-calendar-band {
+  background: #fff;
+  border: 1px solid #dbe6cd;
+}
+
+.calendar-band-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.calendar-band-label {
+  font-size: 11px;
+  fill: #5a5238;
+}
+
+.calendar-band-legend {
+  font-size: 12px;
+  fill: #4a4534;
+  font-weight: 600;
+}
+
+/* ==================== 📝体験メモ(既存article-accordionを流用しつつ配色のみ変更) ==================== */
+.article-body.perfectskin-theme .article-accordion {
+  background: var(--ps-cream);
+  border: 1px solid #ecd98f;
+}
+
+.article-body.perfectskin-theme .article-accordion-summary {
+  color: var(--ps-yellow-dark);
+}
+
+/* ==================== ✅ 今日からできるチェックリスト ==================== */
+.article-body.perfectskin-theme li.task-list-item {
+  background: #f2f6ea;
+  border-color: #d3e0c1;
+}
+
+.article-body.perfectskin-theme li.task-list-item input[type="checkbox"] {
+  accent-color: var(--ps-sage-dark);
+}
+
+/* ==================== まとめカード ==================== */
+.perfectskin-matome-card {
+  margin: 2em 0 0;
+  padding: 20px 22px;
+  background: linear-gradient(150deg, var(--ps-sage), var(--ps-sage-dark));
+  border-radius: var(--radius-lg);
+  color: #fbf9f0;
+}
+
+.perfectskin-matome-card h2,
+.perfectskin-matome-card h3 {
+  color: #fbf9f0 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 10px !important;
+}
+
+.perfectskin-matome-card ul {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.perfectskin-matome-card a {
+  color: #fff6d8;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .pyramid-layer-label {
+    font-size: 13px;
+  }
+  .pyramid-layer-sub {
+    font-size: 10px;
+  }
+}
+
+/* =====================================================================
+   「夏の皮脂汗メイク崩れ対策」記事(2026-07-20_夏の皮脂汗メイク崩れ対策.md)
+   専用スタイル(lib/summerMakeupExtras.js)。クラス名はすべて smk- プレフィックスで
+   他記事のスタイルと衝突しないようにしている。
+   テーマカラー: アクアブルー#2FA8C7 / サンイエロー#F5C24B / ホワイト
+   ===================================================================== */
+
+/* ---- 独自目次(details) ---- */
+.smk-toc {
+  margin: 0 0 24px;
+  border: 1px solid #BFE3EC;
+  border-radius: var(--radius-md);
+  background: #fff;
+  overflow: hidden;
+}
+
+.smk-toc > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-weight: 700;
+  color: #1D7E9C;
+  background: #E9F7FA;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.smk-toc > summary::-webkit-details-marker {
+  display: none;
+}
+
+.smk-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 10px 14px;
+}
+
+.smk-toc-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: 44px;
+  color: #1D7E9C;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.smk-toc-item a:hover {
+  background: #E9F7FA;
+}
+
+.smk-toc-emoji {
+  font-size: 1rem;
+}
+
+/* ---- セクション交互背景(H2見出し単位) ---- */
+.smk-section {
+  padding: 4px 0;
+}
+
+.smk-section-plain {
+  background: #fff;
+}
+
+.smk-section-tint {
+  background: rgba(47, 168, 199, 0.06);
+  border-radius: var(--radius-md);
+  margin: 0 -8px;
+  padding: 8px 8px 4px;
+}
+
+.smk-section-card {
+  background: #fff;
+  border: 1px solid #F0DBA6;
+  border-radius: var(--radius-md);
+  margin: 12px -4px;
+  padding: 12px 12px 4px;
+}
+
+.smk-section h2 {
+  background: linear-gradient(120deg, #E9F7FA, #fff 75%) !important;
+  border-left-color: #2FA8C7 !important;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.smk-section h3 {
+  border-left-color: #F5C24B !important;
+  color: #1D7E9C !important;
+}
+
+.smk-section h4 {
+  font-weight: 700;
+}
+
+/* ---- 共通の図解キャプション ---- */
+.smk-diagram-note {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* ---- 断面図(通常の脂性肌 vs インナードライ) ---- */
+.smk-cross-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.smk-cross-label {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #1D7E9C;
+}
+
+.smk-cross-label-dry {
+  fill: #C9931F;
+}
+
+.smk-cross-sub {
+  font-size: 11px;
+  fill: #4a4a52;
+}
+
+.smk-cross-sub-inline {
+  font-size: 10px;
+  font-weight: 700;
+  fill: #6b4a12;
+}
+
+/* ---- 診断フローチャート ---- */
+.smk-flow-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.smk-flow-q {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #24242b;
+}
+
+.smk-flow-badge {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #fff;
+}
+
+.smk-flow-result-label {
+  font-size: 13px;
+  font-weight: 800;
+  fill: #fff;
+}
+
+.smk-flow-result-desc {
+  font-size: 11px;
+  fill: #fff;
+}
+
+/* ---- 気温×皮脂分泌量の折れ線グラフ ---- */
+.smk-linechart-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.smk-linechart-svg {
+  min-width: 340px;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.smk-linechart-xlabel {
+  font-size: 12px;
+  fill: var(--color-text-muted);
+}
+
+/* ---- タイムライン ---- */
+.smk-timeline-list {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.smk-timeline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 10px 12px;
+  background: #F7FBFC;
+  border: 1px solid #E3F1F4;
+  border-radius: var(--radius-md);
+}
+
+.smk-timeline-icon {
+  flex-shrink: 0;
+}
+
+.smk-timeline-time {
+  margin: 0 0 4px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1D7E9C;
+}
+
+.smk-timeline-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #2FA8C7;
+  color: #fff;
+  font-size: 0.75rem;
+}
+
+.smk-timeline-what {
+  margin: 0 0 4px;
+  font-size: 0.92rem;
+  color: var(--color-text);
+}
+
+.smk-timeline-action {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #C9931F;
+}
+
+/* ---- 対比表・診断結果などで使うインラインバッジ(強調表現の1種) ---- */
+.smk-badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.smk-badge-dry {
+  background: #2FA8C7;
+}
+
+.smk-badge-oil {
+  background: #C9931F;
+}
+
+.smk-badge-mix {
+  background: #B79CD1;
+}
+
+/* 数字・スペック表記(タブラー数字で桁が揃うようにする) */
+.smk-article .article-body table td.smk-num,
+.smk-article .article-body table th.smk-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .smk-flow-q {
+    font-size: 12px;
+  }
+  .smk-toc-item a {
+    font-size: 0.92rem;
+  }
+}
+
+/* =========================================================================
+   「前髪の巻き方完全ガイド」記事(content/articles/2026-08-02_前髪の巻き方完全ガイド.md)
+   専用スタイル(2026-08-07 スマホ可読性リニューアル)。すべて .maegami- プレフィックス
+   または .maegami-theme スコープ配下に閉じており、他記事(.article-body)の
+   デフォルトスタイルには影響しない。テーマカラー: ピンク#F08CA0 + アイボリー#FFF8F3 +
+   ダークグレー#423A3A(サイト全体のテーマカラーと衝突しないよう記事スコープの
+   CSS変数として定義する)。
+   ========================================================================= */
+
+.maegami-theme {
+  --mg-pink: #f08ca0;
+  --mg-pink-dark: #d96b81;
+  --mg-ivory: #fff8f3;
+  --mg-dark: #423a3a;
+}
+
+/* H2:アイコン付きの帯。奇数/偶数で背景を白⇔淡色⇔罫線カードに交互化する */
+.maegami-theme h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--mg-ivory);
+  border-left: 6px solid var(--mg-pink);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--mg-dark);
+  padding: 10px 14px;
+  margin-top: 2.4em;
+  margin-bottom: 0.9em;
+}
+
+.maegami-theme > h2:nth-of-type(3n+2) {
+  background: #fff;
+  border-left-color: var(--mg-pink-dark);
+}
+
+.maegami-theme > h2:nth-of-type(3n) {
+  background: #fff;
+  border: 1px solid #f2d9d0;
+  border-left: 6px solid var(--mg-pink);
+}
+
+/* H3:左4pxアクセントバー+やや細め */
+.maegami-theme h3 {
+  font-weight: 600;
+  border-left: 4px solid var(--mg-pink);
+  padding-left: 10px;
+  color: var(--mg-pink-dark);
+  margin-top: 1.8em;
+}
+
+/* H4:絵文字+太字(記事内で使う場合に備えた共通指定) */
+.maegami-theme h4 {
+  font-weight: 700;
+}
+
+.maegami-theme p {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.maegami-theme .article-chart,
+.maegami-theme .article-accordion,
+.maegami-theme .maegami-matrix,
+.maegami-theme .maegami-checklist,
+.maegami-theme .maegami-conclusion-card,
+.maegami-theme .maegami-quicksummary,
+.maegami-theme .quick-summary-box,
+.maegami-theme .nevora-point-box,
+.maegami-theme .warning-box,
+.maegami-theme blockquote {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+/* 数字・スペックはやや大きめ+等幅数字 */
+.maegami-theme table td,
+.maegami-theme table th {
+  font-variant-numeric: tabular-nums;
+}
+
+.maegami-theme table td {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+/* ==================== ⏱ 30秒でわかる冒頭サマリーカード ==================== */
+.maegami-quicksummary {
+  background: var(--mg-ivory);
+  border: 1px solid #f2d9d0;
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin: 24px 0 32px;
+}
+
+.maegami-quicksummary-heading {
+  margin: 0 0 8px;
+  font-weight: 800;
+  color: var(--mg-pink-dark);
+  font-size: 1.05rem;
+}
+
+.maegami-quicksummary-list {
+  margin: 0 0 12px;
+  padding-left: 1.3em;
+}
+
+.maegami-quicksummary-list li {
+  margin-bottom: 4px;
+  font-weight: 600;
+}
+
+.maegami-quicksummary-subheading {
+  margin: 0 0 6px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--mg-dark);
+}
+
+.maegami-quicksummary-targets {
+  margin: 0;
+  padding-left: 1.3em;
+}
+
+.maegami-quicksummary-targets li {
+  margin-bottom: 4px;
+  font-size: 0.92rem;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 手順4コマ図(ストレートアイロン編/コテ編) ==================== */
+.maegami-steps-figure {
+  background: #fff;
+  border: 1px solid #f2d9d0;
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.maegami-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.maegami-steps-svg {
+  display: block;
+  height: auto;
+  min-width: 460px;
+}
+
+.maegami-steps-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--mg-dark);
+}
+
+.maegami-steps-detail {
+  font-size: 12px;
+  fill: #7a6f6f;
+}
+
+.maegami-scroll-note {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+}
+
+/* ==================== 温度ダイヤル図 ==================== */
+.maegami-dial-figure {
+  background: #fff;
+  border: 1px solid #f2d9d0;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+}
+
+.maegami-dial-svg {
+  display: block;
+  height: auto;
+  min-width: 340px;
+  overflow: visible;
+}
+
+.maegami-dial-zone-label {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--mg-dark);
+}
+
+.maegami-dial-tick {
+  font-size: 12px;
+  fill: #7a6f6f;
+}
+
+.maegami-dial-caption {
+  font-size: 12px;
+  fill: var(--color-text-muted);
+}
+
+/* ==================== 温度トレードオフ曲線グラフ ==================== */
+.maegami-tradeoff-figure {
+  background: #fff;
+  border: 1px solid #f2d9d0;
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.maegami-tradeoff-svg {
+  display: block;
+  height: auto;
+  min-width: 480px;
+}
+
+.maegami-tradeoff-xlabel {
+  font-size: 12px;
+  fill: #7a6f6f;
+}
+
+.maegami-tradeoff-legend {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.82rem;
+}
+
+.maegami-tradeoff-legend li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.maegami-legend-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 3px;
+  background: var(--mg-pink);
+  border-radius: 2px;
+}
+
+.maegami-legend-swatch-dash {
+  background: repeating-linear-gradient(
+    to right,
+    var(--mg-dark) 0,
+    var(--mg-dark) 4px,
+    transparent 4px,
+    transparent 7px
+  );
+}
+
+.maegami-diagram-note {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+}
+
+/* ==================== トラブル対応マトリクス ==================== */
+.maegami-matrix-table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.maegami-matrix-table th,
+.maegami-matrix-table td {
+  border: 1px solid #f2d9d0;
+  padding: 10px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.maegami-matrix-table thead th {
+  background: var(--mg-ivory);
+  color: var(--mg-dark);
+  font-weight: 700;
+}
+
+.maegami-matrix-symptom {
+  font-weight: 700;
+  color: var(--mg-pink-dark);
+  white-space: nowrap;
+}
+
+/* ==================== ✅チェックリスト ==================== */
+.maegami-checklist {
+  background: #fff;
+  border: 1px dashed var(--mg-pink);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.maegami-checklist-title {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: var(--mg-pink-dark);
+}
+
+.maegami-checklist-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.maegami-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px dashed #f2d9d0;
+  min-height: 44px;
+}
+
+.maegami-check-item:last-child {
+  border-bottom: none;
+}
+
+.maegami-check-box {
+  font-size: 1.1rem;
+  color: var(--mg-pink);
+  line-height: 1.4;
+}
+
+/* ==================== まとめカード ==================== */
+.maegami-conclusion-card {
+  background: linear-gradient(135deg, var(--mg-ivory), #fff);
+  border: 1px solid #f2d9d0;
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+}
+
+.maegami-conclusion-heading {
+  margin: 0 0 10px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--mg-dark);
+}
+
+.maegami-conclusion-list {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.maegami-conclusion-list li {
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.maegami-conclusion-next {
+  margin: 0 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.maegami-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--mg-pink);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.maegami-conclusion-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.maegami-conclusion-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 700;
+  color: var(--mg-pink-dark);
+}
+
+@media (max-width: 480px) {
+  .maegami-theme h2 {
+    font-size: 1.08rem;
+  }
+  .maegami-theme h3 {
+    font-size: 0.98rem;
+  }
+  .maegami-steps-svg,
+  .maegami-tradeoff-svg {
+    min-width: 420px;
+  }
+}
+
+/* =========================================================================
+   「くすみケア比較」記事(content/articles/2026-07-26_くすみケア比較.md)
+   専用スタイル(2026-08-07 スマホ可読性リニューアル・lib/kusumiWidgets.js)。
+   すべて .kusumi- プレフィックスまたは .kusumi-theme スコープ配下に閉じており、
+   他記事(.article-body)のデフォルトスタイルには影響しない。
+   テーマカラー: モーブ#A78BAF / シャンパンピンク#F0DCE0 / チャコール#3E3A42。
+   ========================================================================= */
+
+.kusumi-theme {
+  --ks-mauve: #a78baf;
+  --ks-mauve-dark: #7c5d89;
+  --ks-champagne: #f0dce0;
+  --ks-charcoal: #3e3a42;
+}
+
+/* ---- 独自目次(details) ---- */
+.kusumi-toc {
+  margin: 0 0 24px;
+  border: 1px solid var(--ks-champagne);
+  border-radius: var(--radius-md);
+  background: #fff;
+  overflow: hidden;
+}
+
+.kusumi-toc > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--ks-charcoal);
+  background: #fbf3f5;
+}
+
+.kusumi-toc > summary::-webkit-details-marker {
+  display: none;
+}
+
+.kusumi-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 10px 14px;
+}
+
+.kusumi-toc-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: 44px;
+  color: var(--ks-charcoal);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.kusumi-toc-item a:hover {
+  background: #fbf3f5;
+}
+
+.kusumi-toc-emoji {
+  font-size: 1rem;
+}
+
+/* ---- セクション交互背景(H2見出し単位) ---- */
+.kusumi-section {
+  padding: 4px 0;
+}
+
+.kusumi-section-plain {
+  background: #fff;
+}
+
+.kusumi-section-tint {
+  background: rgba(167, 139, 175, 0.06);
+  border-radius: var(--radius-md);
+  margin: 0 -8px;
+  padding: 8px 8px 4px;
+}
+
+.kusumi-section-card {
+  background: #fff;
+  border: 1px solid var(--ks-champagne);
+  border-radius: var(--radius-md);
+  margin: 12px -4px;
+  padding: 12px 12px 4px;
+}
+
+.kusumi-theme h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #fbf3f5, #fff 75%) !important;
+  border-left: 6px solid var(--ks-mauve) !important;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--ks-charcoal);
+  padding: 10px 14px;
+  margin-top: 2.4em;
+  margin-bottom: 0.9em;
+}
+
+.kusumi-theme h3 {
+  font-weight: 600;
+  border-left: 4px solid var(--ks-mauve) !important;
+  padding-left: 10px;
+  color: var(--ks-mauve-dark) !important;
+  margin-top: 1.8em;
+}
+
+.kusumi-theme h4 {
+  font-weight: 700;
+}
+
+.kusumi-theme p {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.kusumi-theme .article-chart,
+.kusumi-theme .article-accordion,
+.kusumi-theme .kusumi-checklist,
+.kusumi-theme .kusumi-summary-card,
+.kusumi-theme .quick-summary-box,
+.kusumi-theme .nevora-point-box,
+.kusumi-theme .warning-box,
+.kusumi-theme blockquote {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.kusumi-theme table td,
+.kusumi-theme table th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- ① 頬クローズアップ3面図 ---- */
+.kusumi-faces .kusumi-faces-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.kusumi-face-label {
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--ks-charcoal);
+}
+
+.kusumi-face-sub {
+  font-size: 12px;
+  fill: #6b5a63;
+}
+
+/* ---- ② 診断フローチャート ---- */
+.kusumi-flow .kusumi-flow-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.kusumi-flow-q {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--ks-charcoal);
+}
+
+.kusumi-flow-a {
+  font-size: 12px;
+  fill: var(--ks-mauve-dark);
+}
+
+.kusumi-diagram-caption {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #6b5a63;
+  line-height: 1.7;
+}
+
+/* ---- ③ 成分×タイプ マトリクス表・⑤ 商品比較表(横スクロール) ---- */
+.kusumi-scroll-hint {
+  margin: 4px 0 6px;
+  font-size: 0.82rem;
+  color: #6b5a63;
+}
+
+.kusumi-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--ks-champagne);
+  border-radius: var(--radius-md);
+}
+
+.kusumi-matrix-table,
+.kusumi-product-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.kusumi-matrix-table th,
+.kusumi-matrix-table td,
+.kusumi-product-table th,
+.kusumi-product-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--ks-champagne);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.kusumi-matrix-table thead th,
+.kusumi-product-table thead th {
+  background: var(--ks-champagne);
+  color: var(--ks-charcoal);
+  font-weight: 800;
+}
+
+.kusumi-product-name-cell {
+  font-weight: 700;
+  color: var(--ks-charcoal);
+}
+
+.kusumi-matrix-mark {
+  text-align: center !important;
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.kusumi-matrix-mark.mark-good {
+  color: #6a8f5c;
+}
+
+.kusumi-matrix-mark.mark-ok {
+  color: var(--ks-mauve-dark);
+}
+
+.kusumi-matrix-mark.mark-mid {
+  color: #b98a3d;
+}
+
+.kusumi-matrix-mark.mark-bad {
+  color: #b04c4c;
+}
+
+/* ---- ✅ 今日からできるチェックリスト ---- */
+.kusumi-checklist {
+  margin: 1.6em 0;
+  padding: 18px 20px;
+  background: var(--ks-champagne);
+  border: 1px solid #e0c3ca;
+  border-radius: var(--radius-lg);
+}
+
+.kusumi-checklist-title {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: var(--ks-charcoal);
+}
+
+.kusumi-checklist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.kusumi-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  margin: 0;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+
+.kusumi-checklist li::before {
+  content: "\2610";
+  font-size: 1.3rem;
+  color: var(--ks-mauve);
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* ---- 記事末まとめカード ---- */
+.kusumi-summary-card {
+  margin: 2em 0;
+  padding: 22px 20px;
+  background: var(--ks-charcoal);
+  color: #f6eef0;
+  border-radius: var(--radius-lg);
+}
+
+.kusumi-summary-card h2,
+.kusumi-summary-card h3 {
+  color: #f6eef0 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 10px !important;
+}
+
+.kusumi-summary-card ul {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.kusumi-summary-card a {
+  color: var(--ks-champagne);
+}
+
+@media (max-width: 480px) {
+  .kusumi-theme h2 {
+    font-size: 1.08rem;
+  }
+  .kusumi-theme h3 {
+    font-size: 0.98rem;
+  }
+  .kusumi-matrix-table,
+  .kusumi-product-table {
+    min-width: 520px;
+  }
+}
+
+/* ========================================================================
+   「ヒアルロン酸・コラーゲン・セラミドの違い」記事
+   (content/articles/2026-08-02_ヒアルロン酸コラーゲンセラミドの違い.md)専用
+   スマホ最適化スタイル(2026-08-07)。すべて .hyalu- プレフィックスまたは
+   .hyalu-article スコープ配下、もしくは既存の汎用コンポーネント(mn-tip/mn-warning/
+   maegami-quicksummary/maegami-checklist/maegami-conclusion-card)のCSS変数を
+   .hyalu-article内で上書きする形にとどめており、他記事の表示には影響しない。
+   テーマカラー: アクアブルー#3FA9D9 + パールホワイト#F4FAFD + コーラル#F08C7A。
+   ======================================================================== */
+
+.hyalu-article {
+  /* mn-tip/mn-warning(lib/microneedleExtras.js)の配色をこの記事のテーマに寄せる */
+  --mn-purple: #3fa9d9;
+  --mn-gold: #f08c7a;
+  --mn-ink: #1c3a4a;
+  /* maegami-quicksummary/maegami-checklist/maegami-conclusion-card
+     (lib/maegamiWidgets.js)の配色をこの記事のテーマに寄せる */
+  --mg-pink: #3fa9d9;
+  --mg-pink-dark: #2a78d6;
+  --mg-ivory: #f4fafd;
+  --mg-dark: #1c3a4a;
+}
+
+/* 目次(絵文字付き折りたたみ) */
+.hyalu-toc {
+  margin: 0 0 1.6em;
+  border: 1px solid #3fa9d9;
+  border-radius: var(--radius-md);
+  background: #f4fafd;
+  overflow: hidden;
+}
+
+.hyalu-toc summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(120deg, #3fa9d9, #6cc3e8);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.hyalu-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.hyalu-toc-list {
+  margin: 0;
+  padding: 12px 18px 16px 34px;
+}
+
+.hyalu-toc-item {
+  margin-bottom: 10px;
+}
+
+.hyalu-toc-item a {
+  color: #1c3a4a;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.hyalu-toc-item a:hover {
+  text-decoration: underline;
+}
+
+.hyalu-toc-emoji {
+  margin-right: 6px;
+}
+
+/* H2:アイコン付きの帯。3の倍数で背景を白⇔淡色⇔罫線カードに交互化する */
+.hyalu-article .article-body h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: #f4fafd;
+  border-left: 6px solid #3fa9d9;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: #1c3a4a;
+  padding: 10px 14px;
+  margin-top: 2.4em;
+  margin-bottom: 0.9em;
+}
+
+.hyalu-article .article-body > h2:nth-of-type(3n+2) {
+  background: #fff;
+  border-left-color: #f08c7a;
+}
+
+.hyalu-article .article-body > h2:nth-of-type(3n) {
+  background: #fff;
+  border: 1px solid #d8ecf5;
+  border-left: 6px solid #3fa9d9;
+}
+
+/* H3:左4pxアクセントバー+やや細め */
+.hyalu-article .article-body h3 {
+  font-weight: 600;
+  border-left: 4px solid #f08c7a;
+  padding-left: 10px;
+  color: #2a78d6;
+  margin-top: 1.8em;
+}
+
+.hyalu-article .article-body h4 {
+  font-weight: 700;
+}
+
+.hyalu-article .article-body p,
+.hyalu-article .article-body li {
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.hyalu-article .article-body > * {
+  margin-bottom: 32px;
+}
+
+/* mn-tip/mn-warning(NEVORAポイント/注意ボックス)の背景・枠線をテーマカラーへ */
+.hyalu-article .mn-tip {
+  background: #eaf6fb;
+}
+
+.hyalu-article .mn-warning {
+  background: #fdece7;
+  border-color: #f08c7a;
+}
+
+.hyalu-article .mn-warning-label {
+  color: #c1543a;
+}
+
+/* ① SVG肌3層モデル図 */
+.hyalu-diagram-svg {
+  width: 100%;
+  height: auto;
+  max-width: 360px;
+  display: block;
+  margin: 0 auto;
+}
+
+.hyalu-diagram-layer-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #1c3a4a;
+}
+
+.hyalu-diagram-legend {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.hyalu-diagram-legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hyalu-legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hyalu-diagram-note {
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+/* ④ 3つのたとえイラスト */
+.hyalu-metaphor-trio {
+  margin: 2em 0;
+  padding: 18px;
+  background: #fff;
+  border: 1px solid #d8ecf5;
+  border-radius: var(--radius-md);
+}
+
+.hyalu-metaphor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+@media (min-width: 640px) {
+  .hyalu-metaphor-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.hyalu-metaphor-card {
+  text-align: center;
+  padding: 12px;
+  border-radius: var(--radius-md);
+}
+
+.hyalu-metaphor-col {
+  background: #fdf1ec;
+}
+
+.hyalu-metaphor-ha {
+  background: #eaf3fb;
+}
+
+.hyalu-metaphor-cer {
+  background: #eafaf1;
+}
+
+.hyalu-metaphor-svg {
+  width: 88px;
+  height: 88px;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+.hyalu-metaphor-name {
+  margin: 0 0 6px;
+  font-weight: 800;
+  color: #1c3a4a;
+}
+
+.hyalu-metaphor-desc {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+/* 比較表・目的別選び方表:数値・記号はtabular-numsで桁揃え */
+.hyalu-article .article-body table {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .hyalu-article .article-body h2 {
+    font-size: 1.08rem;
+  }
+  .hyalu-article .article-body h3 {
+    font-size: 0.98rem;
+  }
+  .hyalu-article .article-body table {
+    min-width: 480px;
+  }
+}
+
+/* ====================================================================
+   「基礎化粧品とは？」記事(2026-07-26_基礎化粧品の基本知識と肌質診断.md)専用
+   SVG図解ウィジェット(lib/skincareBasicsWidgets.js)。他記事のクラス名と
+   衝突しない sc101- 接頭辞を使用し、テーマ用スコープクラスは導入せず
+   グローバルに定義する(配色はSVG側でハードコード済み)。
+   ==================================================================== */
+.sc101-figure {
+  background: #fff;
+  border: 1px solid #E8DCC8;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.sc101-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sc101-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sc101-flow-svg {
+  display: block;
+  height: auto;
+  min-width: 460px;
+}
+
+.sc101-matrix-svg {
+  display: block;
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.sc101-amount-svg {
+  display: block;
+  height: auto;
+  min-width: 360px;
+}
+
+.sc101-svg-label-sm {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #4A3F35;
+}
+
+.sc101-svg-step-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #3A2E26;
+}
+
+.sc101-matrix-type {
+  font-size: 15px;
+  font-weight: 800;
+  fill: #4A3F35;
+}
+
+.sc101-matrix-desc {
+  font-size: 12px;
+  fill: #6b5a4a;
+}
+
+.sc101-axis-label {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #6B8161;
+}
+
+.sc101-axis-sub {
+  font-size: 11px;
+  fill: #6b5a4a;
+}
+
+.sc101-amount-text {
+  font-size: 12px;
+  font-weight: 700;
+  fill: #8B6F52;
+}
+
+.sc101-scroll-note {
+  margin: 6px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-faint);
+}
+
+.sc101-diagram-rule {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #6B8161;
+  background: #F1F5EE;
+  border-radius: var(--radius-sm, 6px);
+  padding: 6px 10px;
+  display: inline-block;
+}
+
+/* ================================================================
+   「スキンケアの効果、メイクで台無しにしてない？」記事
+   (content/articles/2026-07-21_メイクとスキンケアの相性.md)専用スマホ最適化スタイル。
+   すべて mkskorder- プレフィックスで、この記事のcontentHtmlにしか出現しない
+   クラス名(.mkskorder-article配下)のためスコープしており、他記事の表示には
+   影響しない(lib/hairTypeWidgets.js・lib/azelaicAcidWidgets.js等と同じ設計方針)。
+   テーマカラー: コーラルピンク#FF7B7B / ネイビー#26374F / クリーム#FFF6F2。
+   ================================================================ */
+
+/* ① レイヤー断面図(lib/makeupSkincareOrderWidgets.js renderLayerCrossSectionHtml) */
+.mkskorder-diagram-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.mkskorder-layer-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.mkskorder-layer-sub {
+  font-size: 12px;
+}
+
+.mkskorder-layer-wall-label {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+/* ② 相性マトリクス(2×2) */
+.mkskorder-matrix-svg {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.mkskorder-matrix-icon {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.mkskorder-matrix-good {
+  fill: #2f8f5b;
+}
+
+.mkskorder-matrix-ok {
+  fill: #cf8a1f;
+}
+
+.mkskorder-matrix-bad {
+  fill: #c9483a;
+}
+
+.mkskorder-matrix-cond {
+  font-size: 12px;
+  fill: #26374F;
+}
+
+.mkskorder-matrix-result {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #26374F;
+}
+
+/* ③ 待ち時間タイムライン */
+.mkskorder-timeline-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.mkskorder-timeline-svg {
+  display: block;
+  height: auto;
+  min-width: 400px;
+}
+
+.mkskorder-timeline-icon {
+  font-size: 20px;
+}
+
+.mkskorder-timeline-sec {
+  font-size: 13px;
+  font-weight: 700;
+  fill: #C9483A;
+}
+
+.mkskorder-timeline-label {
+  font-size: 12px;
+  fill: #26374F;
+}
+
+/* ④ 崩れ度合いの2本線グラフ(既存の.quadrant-axis/.donut-chart-layout/.donut-legendを再利用) */
+.mkskorder-line-svg {
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  display: block;
+}
+
+.mkskorder-line-axis-label {
+  font-size: 12px;
+  fill: var(--color-text-muted);
+}
+
+.mkskorder-line-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.mkskorder-line-legend-label {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+/* H2見出し単位のセクション背景交互化(白 / テーマ淡色 / 罫線カード) */
+.mkskorder-section {
+  margin: 0 0 32px;
+  padding: 20px 16px;
+  border-radius: var(--radius-lg);
+}
+
+.mkskorder-section-plain {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.mkskorder-section-tint {
+  background: rgba(255, 123, 123, 0.05);
+}
+
+.mkskorder-section-card {
+  background: #FFFFFF;
+  border: 1px solid #FFD9D9;
+}
+
+.mkskorder-section h2 {
+  margin-top: 0;
+}
+
+.mkskorder-article h2 {
+  background: linear-gradient(120deg, #FFE3E3, #FFF6F2 75%);
+  border-left-color: #FF7B7B;
+  color: #26374F;
+}
+
+.mkskorder-article h3 {
+  font-weight: 500;
+  border-left: 4px solid #FF7B7B;
+  color: #26374F;
+}
+
+/* 強調3種の使い分け: ①アクセント色マーカー(既存.hl) ②太字(既存strong)
+   ③色付きバッジ相当として、本文中の==強調==をコーラルピンク基調に上書きする。 */
+.mkskorder-article mark.hl {
+  background: #FFD9D9;
+  color: #26374F;
+}
+
+.mkskorder-article strong {
+  color: #C9483A;
+}
+
+/* 💡 NEVORAポイント / ⚠️ 注意ボックスを、この記事だけテーマカラーで強調する
+   (共通の.nevora-point-box/.warning-boxをベースに、コーラルピンクのアクセント枠へ上書き)。 */
+.mkskorder-article .nevora-point-box {
+  background: #FFF6F2;
+  border-color: #FFD9D9;
+  border-left-color: #FF7B7B;
+}
+
+.mkskorder-article .nevora-point-label {
+  /* 背景#FFF6F2上で#C9483Aは4.41:1でAA未達のため、同色相で暗くする
+     (2026-08-08、4.41:1→4.61:1)。 */
+  color: #c64436;
+}
+
+.mkskorder-article .warning-box {
+  background: #FFF6F2;
+  border-color: #F3C1C1;
+  border-left-color: #26374F;
+}
+
+.mkskorder-article .warning-box-label {
+  color: #26374F;
+}
+
+/* =========================================================================
+   「在宅ワーク時短スキンケア」記事
+   (content/articles/2026-07-21_在宅ワーク時短スキンケア削っていい工程.md)専用スタイル
+   (2026-08-07 スマホ可読性リニューアル)。テーマカラー:
+   モスグリーン#5FA88C(--zwsc-green) / ウォームクリーム#FAF3E7(--zwsc-cream) /
+   テラコッタ#D98F6E(--zwsc-terracotta)。.zwsc-article スコープ配下にのみ適用し、
+   他記事(.article-body)の表示には影響しない。
+   ========================================================================= */
+.zwsc-article {
+  --zwsc-green: #5fa88c;
+  --zwsc-green-dark: #3f7d66;
+  --zwsc-cream: #faf3e7;
+  --zwsc-terracotta: #d98f6e;
+  --zwsc-ink: #3a3530;
+}
+
+.zwsc-article h2 {
+  background: linear-gradient(120deg, #e4f1eb, #faf3e7 75%);
+  border-left: 5px solid var(--zwsc-green);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  margin: 0 0 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--zwsc-ink);
+}
+
+.zwsc-article h3 {
+  border-left: 4px solid var(--zwsc-terracotta);
+  padding-left: 10px;
+  font-weight: 600;
+  color: var(--zwsc-ink);
+}
+
+.zwsc-article h4 {
+  font-weight: 700;
+}
+
+.zwsc-article p,
+.zwsc-article li {
+  line-height: 1.8;
+}
+
+.zwsc-article table td,
+.zwsc-article table th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 強調3種の使い分け: ①アクセント色マーカー(既存.hl) ②太字(既存strong)
+   ③色付きバッジ(.zwsc-priority-badge等)。==強調==はテラコッタ基調に上書きする。 */
+.zwsc-article mark.hl {
+  background: #f5d9c8;
+  color: var(--zwsc-ink);
+}
+
+.zwsc-article strong {
+  color: var(--zwsc-green-dark);
+}
+
+/* セクション単位で背景を交互に変える(白 ⇔ テーマカラー淡色 ⇔ 罫線カード) */
+.zwsc-section {
+  margin: 0 0 32px;
+  padding: 16px 14px;
+  border-radius: var(--radius-lg);
+}
+
+.zwsc-section-plain {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.zwsc-section-tint {
+  background: rgba(95, 168, 140, 0.06);
+}
+
+.zwsc-section-card {
+  background: #fffdfa;
+  border: 1px solid #ecd9c8;
+}
+
+.zwsc-section h2 {
+  margin-top: 0;
+}
+
+/* 💡NEVORAポイント / ⚠️注意ボックス(共通の.nevora-point-box/.warning-box)を
+   この記事のテーマカラーで上書きする。 */
+.zwsc-article .nevora-point-box {
+  background: #eef6f2;
+  border-color: #cfe6dc;
+  border-left-color: var(--zwsc-green);
+}
+
+.zwsc-article .nevora-point-label {
+  /* 背景#eef6f2上で--zwsc-green-dark(#3f7d66)は4.40:1でAA未達のため、
+     --zwsc-green-darkそのものは変えず、同色相で暗くした個別値を使う
+     (2026-08-08、4.40:1→4.64:1)。 */
+  color: #3d7963;
+}
+
+.zwsc-article .warning-box {
+  background: #fdf3ec;
+  border-color: #ecd0b8;
+  border-left-color: var(--zwsc-terracotta);
+}
+
+.zwsc-article .warning-box-label {
+  /* 背景#fdf3ec上で#b56a3fは3.77:1でAA未達のため、同色相で暗くする
+     (2026-08-08、3.77:1→4.60:1)。 */
+  color: #a15e38;
+}
+
+.zwsc-article .quick-summary-box,
+.zwsc-article .quick-conclusion-box {
+  background: linear-gradient(135deg, var(--zwsc-green-dark), var(--zwsc-terracotta));
+  color: #fff;
+}
+
+.zwsc-article .quick-summary-label,
+.zwsc-article .quick-conclusion-label {
+  color: #fef8ef;
+}
+
+/* 汎用ウィジェット(lib/maegamiWidgets.jsのrenderChecklistHtml/renderConclusionCardHtml/
+   renderQuickSummaryCardHtml)を frontmatter経由で流用しているため、見た目だけこの記事の
+   テーマカラーに上書きする(挙動は共通処理のまま)。 */
+.zwsc-article .maegami-quicksummary {
+  background: var(--zwsc-cream);
+  border: 1px solid #ecd9c8;
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin: 24px 0 32px;
+}
+
+.zwsc-article .maegami-quicksummary-heading {
+  color: var(--zwsc-green-dark);
+}
+
+.zwsc-article .maegami-quicksummary-subheading {
+  color: var(--zwsc-ink);
+}
+
+.zwsc-article .maegami-checklist {
+  background: #fff;
+  border: 1px solid #cfe6dc;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.zwsc-article .maegami-checklist-title {
+  color: var(--zwsc-green-dark);
+}
+
+.zwsc-article .maegami-check-box {
+  color: var(--zwsc-green);
+}
+
+.zwsc-article .maegami-conclusion-card {
+  background: linear-gradient(135deg, var(--zwsc-green-dark), var(--zwsc-terracotta));
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.zwsc-article .maegami-conclusion-links a,
+.zwsc-article .maegami-conclusion-next {
+  color: #fef8ef;
+}
+
+.zwsc-article .maegami-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* 横スクロールが必要な図解・表の共通ラッパー */
+.zwsc-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.zwsc-scroll-note {
+  margin: 4px 0 0;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+}
+
+/* ①信号機診断図 */
+.zwsc-signal-figure {
+  background: #fff;
+  border: 1px solid #ecd9c8;
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.zwsc-signal-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.zwsc-signal-mark {
+  font-size: 13px;
+  fill: #fff;
+  font-weight: 800;
+}
+
+.zwsc-signal-step {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--zwsc-ink);
+}
+
+.zwsc-signal-note {
+  font-size: 12px;
+  fill: var(--color-text-muted);
+}
+
+.zwsc-signal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.zwsc-signal-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+/* ②工程別テーブル+優先度バッジ */
+.zwsc-process-table {
+  background: #fff;
+  border: 1px solid #ecd9c8;
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.zwsc-process-table-inner {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.zwsc-process-table-inner th,
+.zwsc-process-table-inner td {
+  border-bottom: 1px solid #f0e6d8;
+  padding: 8px 6px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.zwsc-table-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.zwsc-priority-badge {
+  display: inline-block;
+  min-height: 22px;
+  line-height: 22px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* バッジ文字色は、コントラスト比4.5:1以上(WCAG AA・小さい太字テキスト基準)を
+   確保できる濃さに調整済み(2026-08-08)。--zwsc-green-dark等の共通変数より
+   意図的に濃い個別の色を使っている。 */
+.zwsc-badge-must {
+  background: #f4dcd0;
+  color: #96401f;
+}
+
+.zwsc-badge-recommend {
+  background: #fbe9c7;
+  color: #7a5310;
+}
+
+.zwsc-badge-optional {
+  background: #dcece4;
+  color: #2c5b4b;
+}
+
+/* ③時間配分帯グラフ */
+.zwsc-timeband-figure {
+  background: #fff;
+  border: 1px solid #ecd9c8;
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.zwsc-timeband-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.zwsc-band-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--zwsc-ink);
+}
+
+.zwsc-timeband-legend {
+  margin-top: 10px;
+}
+
+/* ④朝夜タイムライン */
+.zwsc-timeline-figure {
+  background: #fff;
+  border: 1px solid #ecd9c8;
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.zwsc-timeline-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.zwsc-timeline-track-label {
+  margin: 0 0 8px;
+  font-weight: 800;
+  color: var(--zwsc-green-dark);
+}
+
+.zwsc-timeline-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid #d9e9e1;
+  margin-left: 8px;
+}
+
+.zwsc-timeline-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0 6px 14px;
+  position: relative;
+}
+
+.zwsc-timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -6px;
+  top: 14px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--zwsc-terracotta);
+}
+
+.zwsc-timeline-clock {
+  font-size: 0.85rem;
+}
+
+.zwsc-timeline-time {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--zwsc-ink);
+  min-width: 3.6em;
+}
+
+.zwsc-timeline-step {
+  color: var(--zwsc-ink);
+}
+
+@media (min-width: 620px) {
+  .zwsc-timeline-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ========================================================================
+   「頭皮のかゆみ・フケに効くシャンプー比較」記事
+   (content/articles/2026-08-02_頭皮かゆみフケシャンプー比較.md)専用
+   スマホ最適化スタイル(2026-08-08)。すべて .kss- プレフィックスまたは
+   .kss-article スコープ配下、もしくは既存の汎用コンポーネント(nevora-point-box/
+   warning-box/quick-summary-box/article-accordion/maegami-quicksummary/
+   maegami-checklist/maegami-conclusion-card)を .kss-article 内で上書きする形に
+   とどめており、他記事の表示には影響しない。
+   テーマカラー: ミントグリーン#4FB49B + スレートグレー#4C5A63 + ペールミント#EAF6F2。
+   ======================================================================== */
+
+.kss-article {
+  --kss-mint: #4fb49b;
+  --kss-mint-dark: #368a76;
+  --kss-slate: #4c5a63;
+  --kss-pale: #eaf6f2;
+  --kss-terracotta: #d98f6e;
+}
+
+/* 目次(絵文字付き折りたたみ) */
+.kss-toc {
+  margin: 0 0 24px;
+  border: 1px solid var(--kss-mint);
+  border-radius: var(--radius-md);
+  background: #fff;
+  overflow: hidden;
+}
+
+.kss-toc summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 16px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(120deg, var(--kss-mint-dark), var(--kss-mint));
+}
+
+.kss-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.kss-toc-list {
+  margin: 0;
+  padding: 12px 18px 16px 30px;
+  list-style: none;
+}
+
+.kss-toc-item {
+  margin-bottom: 10px;
+}
+
+.kss-toc-item a {
+  color: var(--kss-slate);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.kss-toc-item a:hover {
+  text-decoration: underline;
+}
+
+.kss-toc-emoji {
+  margin-right: 6px;
+}
+
+/* H2:アイコン付きの帯。3の倍数でセクション背景を白⇔淡色⇔罫線カードに交互化する
+   (実際の背景交互はlib/kayumiScalpWidgets.jsのwrapKssSectionsで.kss-sectionに付与) */
+.kss-article .article-body h2,
+.kss-article h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--kss-pale);
+  border-left: 6px solid var(--kss-mint);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--kss-slate);
+  padding: 10px 14px;
+  margin-top: 2.4em;
+  margin-bottom: 0.9em;
+}
+
+.kss-section-tint h2,
+.kss-section-card h2 {
+  background: #fff;
+}
+
+.kss-section-card h2 {
+  border-left-color: var(--kss-terracotta);
+}
+
+/* H3:左4pxアクセントバー+やや細め */
+.kss-article h3 {
+  font-weight: 600;
+  border-left: 4px solid var(--kss-terracotta);
+  padding-left: 10px;
+  color: var(--kss-mint-dark);
+  margin-top: 1.8em;
+}
+
+.kss-article h4 {
+  font-weight: 700;
+}
+
+.kss-article p,
+.kss-article li {
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.kss-article table td,
+.kss-article table th {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 強調3種の使い分け: ①アクセント色マーカー(既存mark.hl) ②太字 ③色付きバッジ */
+.kss-article mark.hl {
+  background: #d6efe8;
+  color: var(--kss-slate);
+}
+
+.kss-article strong {
+  color: var(--kss-mint-dark);
+}
+
+/* セクション単位で背景を交互に変える(白 ⇔ テーマカラー淡色 ⇔ 罫線カード) */
+.kss-section {
+  margin: 0 0 32px;
+  padding: 16px 14px;
+  border-radius: var(--radius-lg);
+}
+
+.kss-section-plain {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.kss-section-tint {
+  background: rgba(79, 180, 155, 0.07);
+}
+
+.kss-section-card {
+  background: #fff;
+  border: 1px solid #d8ece6;
+}
+
+.kss-section h2 {
+  margin-top: 0;
+}
+
+/* 💡NEVORAポイント / ⚠️注意ボックス(共通の.nevora-point-box/.warning-box)を
+   この記事のテーマカラーで上書きする。 */
+.kss-article .nevora-point-box {
+  background: var(--kss-pale);
+  border-color: #cfe6dc;
+  border-left-color: var(--kss-mint);
+}
+
+.kss-article .nevora-point-label {
+  /* 背景#eaf6f2上で--kss-mint-dark(#368a76)は3.75:1でAA未達のため、
+     --kss-mint-darkそのものは変えず、同色相で暗くした個別値を使う
+     (2026-08-08、3.75:1→4.61:1)。 */
+  color: #307a69;
+}
+
+.kss-article .warning-box {
+  background: #fdf1ec;
+  border-color: #ecd0b8;
+  border-left-color: var(--kss-terracotta);
+}
+
+.kss-article .warning-box-label {
+  /* 背景#fdf1ec上で#b5602fは4.05:1でAA未達のため、同色相で暗くする
+     (2026-08-08、4.05:1→4.62:1)。 */
+  color: #a7592b;
+}
+
+.kss-article .quick-summary-box {
+  background: linear-gradient(135deg, var(--kss-mint-dark), var(--kss-mint));
+  color: #fff;
+}
+
+.kss-article .quick-summary-label {
+  color: #f2fffb;
+}
+
+/* 汎用ウィジェット(lib/maegamiWidgets.js)を frontmatter経由で流用しているため、
+   見た目だけこの記事のテーマカラーに上書きする(挙動は共通処理のまま)。 */
+.kss-article .maegami-quicksummary {
+  background: var(--kss-pale);
+  border: 1px solid #cfe6dc;
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin: 24px 0 32px;
+}
+
+.kss-article .maegami-quicksummary-heading {
+  color: var(--kss-mint-dark);
+}
+
+.kss-article .maegami-quicksummary-subheading {
+  color: var(--kss-slate);
+}
+
+.kss-article .maegami-checklist {
+  background: #fff;
+  border: 1px solid #cfe6dc;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.kss-article .maegami-checklist-title {
+  color: var(--kss-mint-dark);
+}
+
+.kss-article .maegami-check-box {
+  color: var(--kss-mint);
+}
+
+.kss-article .maegami-conclusion-card {
+  background: linear-gradient(135deg, var(--kss-slate), var(--kss-mint-dark));
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.kss-article .maegami-conclusion-links a,
+.kss-article .maegami-conclusion-next {
+  color: #f2fffb;
+}
+
+.kss-article .maegami-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* アコーディオン(FAQ・体験談)をテーマカラーへ */
+.kss-article .article-accordion {
+  border-color: #cfe6dc;
+}
+
+.kss-article .article-accordion-summary {
+  color: var(--kss-mint-dark);
+}
+
+/* 図解共通ラッパー */
+.kss-figure {
+  background: #fff;
+  border: 1px solid #d8ece6;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin: 2em 0;
+}
+
+.kss-figure figcaption.chart-title {
+  font-weight: 700;
+  color: var(--kss-slate);
+  margin-bottom: 8px;
+}
+
+.kss-scalp-svg,
+.kss-flake-svg,
+.kss-flow-svg,
+.kss-steps-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.kss-diagram-heading {
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--kss-slate);
+}
+
+.kss-diagram-label {
+  font-size: 12px;
+  fill: var(--kss-slate);
+}
+
+.kss-figure-legend {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--kss-slate);
+}
+
+.kss-legend-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* 診断フロー */
+.kss-flow-node-text {
+  font-size: 12px;
+  fill: var(--kss-slate);
+  font-weight: 700;
+}
+
+.kss-flow-node-text-light {
+  font-size: 12px;
+  fill: #fff;
+  font-weight: 800;
+}
+
+/* 洗い方5ステップ */
+.kss-step-num {
+  font-size: 13px;
+  fill: #fff;
+  font-weight: 800;
+}
+
+.kss-step-text {
+  font-size: 13px;
+  fill: var(--kss-slate);
+  font-weight: 700;
+}
+
+.kss-step-seconds {
+  font-size: 12px;
+  fill: var(--kss-mint-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  .kss-article h2 {
+    font-size: 1.08rem;
+  }
+  .kss-article h3 {
+    font-size: 0.98rem;
+  }
+}
+
+/* ========================================================================
+   「大人のあせも、なぜできる?原因・ニキビとの見分け方・セルフケアと皮膚科受診の目安」記事
+   (content/articles/2026-08-08_大人の汗疹あせも対策.md)専用スマホ最適化スタイル
+   (2026-08-08)。すべて .asemo- プレフィックスまたは .asemo-article スコープ配下、
+   もしくは既存の汎用コンポーネント(nevora-point-box/warning-box/quick-summary-box/
+   article-accordion)を .asemo-article 内で上書きする形にとどめており、他記事の表示には
+   影響しない。テーマカラー: コーラルオレンジ#E8734F(炎症・注意) + クリームピーチ#FFF3EA
+   (背景) + チャコールブラウン#4A3F38(テキスト) + セージグリーン#7FA98B(ケア・回復)。
+   ======================================================================== */
+
+.asemo-article {
+  --asemo-coral: #e8734f;
+  --asemo-coral-dark: #c85a38;
+  --asemo-brown: #4a3f38;
+  --asemo-peach: #fff3ea;
+  --asemo-sage: #7fa98b;
+}
+
+/* 目次(絵文字付き折りたたみ) */
+.asemo-toc {
+  margin: 0 0 24px;
+  border: 1px solid var(--asemo-coral);
+  border-radius: var(--radius-md);
+  background: #fff;
+  overflow: hidden;
+}
+
+.asemo-toc summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 12px 16px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(120deg, var(--asemo-coral-dark), var(--asemo-coral));
+}
+
+.asemo-toc summary::-webkit-details-marker {
+  display: none;
+}
+
+.asemo-toc-list {
+  margin: 0;
+  padding: 12px 18px 16px 30px;
+  list-style: none;
+}
+
+.asemo-toc-item {
+  margin-bottom: 10px;
+}
+
+.asemo-toc-item a {
+  color: var(--asemo-brown);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+}
+
+.asemo-toc-item a:hover {
+  text-decoration: underline;
+}
+
+.asemo-toc-emoji {
+  margin-right: 6px;
+}
+
+/* H2:アイコン付きの帯。セクション背景交互化はlib/asemoWidgets.jsのwrapAsemoSectionsで
+   .asemo-sectionに付与する */
+.asemo-article .article-body h2,
+.asemo-article h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--asemo-peach);
+  border-left: 6px solid var(--asemo-coral);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--asemo-brown);
+  padding: 10px 14px;
+  margin-top: 2.4em;
+  margin-bottom: 0.9em;
+}
+
+.asemo-section-tint h2,
+.asemo-section-card h2 {
+  background: #fff;
+}
+
+.asemo-section-card h2 {
+  border-left-color: var(--asemo-sage);
+}
+
+/* H3:左4pxアクセントバー */
+.asemo-article h3 {
+  font-weight: 600;
+  border-left: 4px solid var(--asemo-sage);
+  padding-left: 10px;
+  color: var(--asemo-coral-dark);
+  margin-top: 1.8em;
+}
+
+.asemo-article h4 {
+  font-weight: 700;
+}
+
+.asemo-article p,
+.asemo-article li {
+  line-height: 1.8;
+  font-size: 1rem;
+}
+
+.asemo-article table td,
+.asemo-article table th {
+  font-variant-numeric: tabular-nums;
+}
+
+.asemo-article mark.hl {
+  background: #fbe1d4;
+  color: var(--asemo-brown);
+}
+
+.asemo-article strong {
+  color: var(--asemo-coral-dark);
+}
+
+/* セクション単位で背景を交互に変える(白 ⇔ テーマカラー淡色 ⇔ 罫線カード) */
+.asemo-section {
+  margin: 0 0 32px;
+  padding: 16px 14px;
+  border-radius: var(--radius-lg);
+}
+
+.asemo-section-plain {
+  background: transparent;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.asemo-section-tint {
+  background: rgba(232, 115, 79, 0.07);
+}
+
+.asemo-section-card {
+  background: #fff;
+  border: 1px solid #f3ded2;
+}
+
+.asemo-section h2 {
+  margin-top: 0;
+}
+
+/* 💡NEVORAポイント / ⚠️注意ボックス(共通の.nevora-point-box/.warning-box)を
+   この記事のテーマカラーで上書きする。 */
+.asemo-article .nevora-point-box {
+  background: var(--asemo-peach);
+  border-color: #f3ded2;
+  border-left-color: var(--asemo-coral);
+}
+
+.asemo-article .nevora-point-label {
+  /* 背景#fff3ea上で--asemo-coral-dark(#c85a38)は3.87:1でAA未達のため、
+     --asemo-coral-darkそのものは変えず、同色相で暗くした個別値を使う
+     (2026-08-08、3.87:1→4.63:1)。 */
+  color: #b45132;
+}
+
+.asemo-article .warning-box {
+  background: #fdece7;
+  border-color: #f0bfa8;
+  border-left-color: var(--asemo-coral-dark);
+}
+
+.asemo-article .warning-box-label {
+  color: #a8442a;
+}
+
+.asemo-article .quick-summary-box {
+  background: linear-gradient(135deg, #c85a38, #e8734f);
+  color: #fff;
+}
+
+.asemo-article .quick-summary-label {
+  color: #fff6f2;
+}
+
+/* アコーディオン(FAQ)をテーマカラーへ */
+.asemo-article .article-accordion {
+  border-color: #f3ded2;
+}
+
+.asemo-article .article-accordion-summary {
+  color: var(--asemo-coral-dark);
+}
+
+/* 図解共通ラッパー */
+.asemo-figure {
+  background: #fff;
+  border: 1px solid #f3ded2;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin: 2em 0;
+}
+
+.asemo-figure figcaption.chart-title {
+  font-weight: 700;
+  color: var(--asemo-brown);
+  margin-bottom: 8px;
+}
+
+.asemo-diagram-caption {
+  font-size: 0.85rem;
+  color: var(--asemo-brown);
+  margin: 10px 0 0;
+}
+
+.asemo-crosssection-svg,
+.asemo-flow-svg,
+.asemo-steps-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.asemo-diagram-heading {
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--asemo-brown);
+}
+
+.asemo-diagram-label {
+  font-size: 9.5px;
+  fill: var(--asemo-brown);
+}
+
+/* 診断フロー */
+.asemo-flow-node-text {
+  font-size: 9.5px;
+  fill: var(--asemo-brown);
+  font-weight: 700;
+}
+
+.asemo-flow-node-text-light {
+  font-size: 9.5px;
+  fill: #fff;
+  font-weight: 800;
+}
+
+/* セルフケア5ステップ */
+.asemo-step-num {
+  font-size: 13px;
+  fill: #fff;
+  font-weight: 800;
+}
+
+.asemo-step-text {
+  font-size: 13px;
+  fill: var(--asemo-brown);
+  font-weight: 700;
+}
+
+.asemo-step-note {
+  font-size: 12px;
+  fill: var(--asemo-coral-dark);
+}
+
+/* 見分け方カード比較(横スクロール) */
+.asemo-scroll-hint {
+  font-size: 0.8rem;
+  color: var(--asemo-coral-dark);
+  margin: 0 0 8px;
+}
+
+.asemo-compare-cards-wrap {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.asemo-compare-card {
+  flex: 0 0 78%;
+  max-width: 260px;
+  background: var(--asemo-peach);
+  border: 1px solid #f3ded2;
+  border-top: 4px solid var(--asemo-coral);
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+
+.asemo-compare-card-title {
+  font-weight: 800;
+  font-size: 1.05rem;
+  margin: 0 0 8px;
+}
+
+.asemo-compare-card-list {
+  margin: 0;
+}
+
+.asemo-compare-card-list dt {
+  font-size: 0.75rem;
+  color: var(--asemo-brown);
+  opacity: 0.7;
+  margin-top: 8px;
+}
+
+.asemo-compare-card-list dd {
+  margin: 2px 0 0;
+  font-size: 0.92rem;
+  color: var(--asemo-brown);
+  line-height: 1.5;
+}
+
+@media (min-width: 640px) {
+  .asemo-compare-card {
+    flex: 1 1 0;
+  }
+}
+
+/* チェックリスト */
+.asemo-checklist {
+  background: #fff;
+  border: 1px solid #f3ded2;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  margin: 1.6em 0;
+}
+
+.asemo-checklist-title {
+  color: var(--asemo-coral-dark);
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.asemo-checklist ul {
+  margin: 0;
+  padding-left: 1.2em;
+}
+
+/* まとめカード */
+.asemo-summary-card {
+  background: linear-gradient(135deg, #4a3f38, #c85a38);
+  color: #fff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin: 2em 0;
+}
+
+.asemo-summary-card h3 {
+  color: #fff;
+  border-left: none;
+  padding-left: 0;
+  margin-top: 0.6em;
+}
+
+.asemo-summary-card a {
+  color: #ffe4d6;
+}
+
+@media (max-width: 480px) {
+  .asemo-article h2 {
+    font-size: 1.08rem;
+  }
+  .asemo-article h3 {
+    font-size: 0.98rem;
+  }
+  .asemo-compare-card {
+    flex-basis: 84%;
+  }
+}
+
+/* =========================================================================
+   「毛穴ケア比較」記事(content/articles/2026-07-26_毛穴ケア比較.md)専用スタイル
+   (2026-08-08 スマホ可読性リニューアル・lib/poreCareWidgets.js)。
+   すべて .pc- プレフィックスまたは .pore-theme スコープ配下に閉じており、
+   他記事(.article-body)のデフォルトスタイルには影響しない。
+   テーマカラー: テラコッタ#D98362 / ピーチクリーム#FBEEE4 / チャコール#40363A。
+   ========================================================================= */
+
+.pore-theme {
+  --pc-terracotta: #d98362;
+  --pc-terracotta-dark: #b4674a;
+  --pc-peach: #fbeee4;
+  --pc-charcoal: #40363a;
+}
+
+/* ---- 独自目次(details) ---- */
+.pc-toc {
+  margin: 0 0 24px;
+  border: 1px solid var(--pc-peach);
+  border-radius: var(--radius-md);
+  background: #fff;
+  overflow: hidden;
+}
+
+.pc-toc > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 18px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  color: var(--pc-charcoal);
+  background: #fdf5ef;
+}
+
+.pc-toc > summary::-webkit-details-marker {
+  display: none;
+}
+
+.pc-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 10px 14px;
+}
+
+.pc-toc-item a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  min-height: 44px;
+  color: var(--pc-charcoal);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.pc-toc-item a:hover {
+  background: #fdf5ef;
+}
+
+.pc-toc-emoji {
+  font-size: 1rem;
+}
+
+/* ---- セクション交互背景(H2見出し単位) ---- */
+.pc-section {
+  padding: 4px 0;
+}
+
+.pc-section-plain {
+  background: #fff;
+}
+
+.pc-section-tint {
+  background: rgba(217, 131, 98, 0.06);
+  border-radius: var(--radius-md);
+  margin: 0 -8px;
+  padding: 8px 8px 4px;
+}
+
+.pc-section-card {
+  background: #fff;
+  border: 1px solid var(--pc-peach);
+  border-radius: var(--radius-md);
+  margin: 12px -4px;
+  padding: 12px 12px 4px;
+}
+
+.pore-theme h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #fdf5ef, #fff 75%) !important;
+  border-left: 6px solid var(--pc-terracotta) !important;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--pc-charcoal);
+  padding: 10px 14px;
+  margin-top: 2.4em;
+  margin-bottom: 0.9em;
+}
+
+.pore-theme h3 {
+  font-weight: 600;
+  border-left: 4px solid var(--pc-terracotta) !important;
+  padding-left: 10px;
+  color: var(--pc-terracotta-dark) !important;
+  margin-top: 1.8em;
+}
+
+.pore-theme p {
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+.pore-theme .article-chart,
+.pore-theme .article-accordion,
+.pore-theme .pc-checklist,
+.pore-theme .pc-summary-card,
+.pore-theme .quick-summary-box,
+.pore-theme .nevora-point-box,
+.pore-theme .warning-box,
+.pore-theme blockquote {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+/* ---- ① 毛穴タイプ3面図 ---- */
+.pc-faces .pc-faces-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.pc-face-label {
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--pc-charcoal);
+}
+
+.pc-face-sub {
+  font-size: 12px;
+  fill: #6b5850;
+}
+
+.pc-diagram-caption {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  color: #6b5850;
+  line-height: 1.7;
+}
+
+/* ---- ② 選び方3軸アイコン ---- */
+.pc-axis-icons .pc-axis-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.pc-axis-label {
+  font-size: 13px;
+  font-weight: 800;
+  fill: var(--pc-charcoal);
+}
+
+.pc-axis-sub {
+  font-size: 11px;
+  fill: #6b5850;
+}
+
+/* ---- ③ 使い心地ダイヤル ---- */
+.pc-dial .pc-dial-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.pc-dial-end {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--pc-terracotta-dark);
+}
+
+.pc-dial-item {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--pc-charcoal);
+}
+
+.pc-dial-item2 {
+  font-size: 11px;
+  fill: #6b5850;
+}
+
+/* ---- 表の横スクロール対応(毛穴タイプ別処方・注意点の表など) ---- */
+.pc-scroll-hint {
+  margin: 4px 0 6px;
+  font-size: 0.82rem;
+  color: #6b5850;
+}
+
+.pc-scroll-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--pc-peach);
+  border-radius: var(--radius-md);
+}
+
+.pc-table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.pc-table th,
+.pc-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--pc-peach);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pc-table thead th {
+  background: var(--pc-peach);
+  color: var(--pc-charcoal);
+  font-weight: 800;
+}
+
+/* ---- ✅ チェックリスト ---- */
+.pc-checklist {
+  margin: 1.6em 0;
+  padding: 18px 20px;
+  background: var(--pc-peach);
+  border: 1px solid #ecd4c3;
+  border-radius: var(--radius-lg);
+}
+
+.pc-checklist-title {
+  margin: 0 0 10px;
+  font-weight: 800;
+  color: var(--pc-charcoal);
+}
+
+.pc-checklist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pc-checklist li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 44px;
+  margin: 0;
+  background: #fff;
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+
+.pc-checklist li::before {
+  content: "\2610";
+  font-size: 1.3rem;
+  color: var(--pc-terracotta);
+  line-height: 1.4;
+  flex-shrink: 0;
+}
+
+/* ---- 記事末まとめカード ---- */
+.pc-summary-card {
+  margin: 2em 0;
+  padding: 22px 20px;
+  background: var(--pc-charcoal);
+  color: #f8efe9;
+  border-radius: var(--radius-lg);
+}
+
+.pc-summary-card h3 {
+  color: #f8efe9 !important;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 0 10px !important;
+}
+
+.pc-summary-card ul {
+  margin: 0 0 14px;
+  padding-left: 1.3em;
+}
+
+.pc-summary-card a {
+  color: var(--pc-peach);
+}
+
+@media (max-width: 480px) {
+  .pore-theme h2 {
+    font-size: 1.08rem;
+  }
+  .pore-theme h3 {
+    font-size: 0.98rem;
+  }
+  .pc-table {
+    min-width: 520px;
+  }
+}
+
+/* デプロイ確認(nevora-beauty, Root Directory配下) 2026-08-08 */
+/* デプロイ再トリガー確認(3470be4未反映のため) 2026-08-09 */
+
+
+/* 運営者情報ページ末尾の最終更新日 */
+.about-last-updated {
+  margin-top: 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border, #e2e0dc);
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #5c5852);
+  text-align: right;
+}
+
+/* お問い合わせフォームの送信結果メッセージ */
+.form-message {
+  margin: 16px 0 0;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+.form-message-success {
+  background: #eef7f0;
+  border: 1px solid #b7ddc2;
+  color: #1d5c31;
+}
+.form-message-error {
+  background: #fdf0ee;
+  border: 1px solid #eebfb7;
+  color: #8a2b1b;
+}

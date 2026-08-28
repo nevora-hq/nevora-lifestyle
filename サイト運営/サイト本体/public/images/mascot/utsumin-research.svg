@@ -1,0 +1,14 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="マスコットキャラクター ウツミンちゃん(リサーチポーズ)">
+  <ellipse cx="120" cy="215" rx="55" ry="10" fill="#d2241e" opacity="0.08"/>
+  <path d="M120 30 C 165 85, 185 125, 185 150 C 185 188, 155 210, 120 210 C 85 210, 55 188, 55 150 C 55 125, 75 85, 120 30 Z" fill="#fbe5e4" stroke="#d2241e" stroke-width="6" stroke-linejoin="round"/>
+  <circle cx="86" cy="150" r="10" fill="#d2241e" opacity="0.35"/>
+  <circle cx="154" cy="150" r="10" fill="#d2241e" opacity="0.35"/>
+  <path d="M91 132 Q98 124 105 132" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M135 132 Q142 124 149 132" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M104 156 Q120 174 136 156" stroke="#d2241e" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="170" cy="102" r="16" fill="none" stroke="#29dae0" stroke-width="5"/><line x1="170" y1="118" x2="170" y2="136" stroke="#29dae0" stroke-width="5" stroke-linecap="round"/><circle cx="70" cy="95" r="4" fill="#29dae0"/>
+  <circle cx="182" cy="150" r="26" fill="none" stroke="#29dae0" stroke-width="7"/>
+  <line x1="200" y1="168" x2="214" y2="182" stroke="#29dae0" stroke-width="7" stroke-linecap="round"/>
+  <path d="M155 190 q10 -12 27 -20" stroke="#d2241e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M62 178 q-18 4 -22 20" stroke="#d2241e" stroke-width="6" fill="none" stroke-linecap="round"/>
+</svg>
