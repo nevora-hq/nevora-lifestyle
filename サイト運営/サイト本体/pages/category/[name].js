@@ -29,7 +29,11 @@ function buildCategoryJsonLd(category, posts, siteUrl) {
     { name: category, url: `${siteUrl}/category/${encodeURIComponent(category)}` },
   ]);
   const itemList = buildItemListJsonLd(
-    posts.map((p) => ({ name: p.title, url: `${siteUrl}/posts/${p.slug}` }))
+    posts.map((p) => ({
+      name: p.title,
+      // canonical・sitemap.xmlと同じpercent-encodedのURLで揃える。
+      url: `${siteUrl}/posts/${encodeURIComponent(p.slug)}`,
+    }))
   );
   return [breadcrumb, itemList].filter(Boolean);
 }
