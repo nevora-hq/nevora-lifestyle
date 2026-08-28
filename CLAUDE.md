@@ -78,7 +78,9 @@ Next.js(React)+ GitHub + Vercel(無料ホスティング・自動デプロイ)�
 2. ~~GSC所有権確認タグ~~ … 設定済み(`NEXT_PUBLIC_GSC_VERIFICATION`。metaタグの出力を本番で確認済み)
 3. ~~問い合わせのメール直行化~~ … 完了。Formspreeは廃止し、`pages/contact.js` は
    `nevora01123@gmail.com` の明示とmailtoリンクだけの構成
-4. **公開切替(残作業)** … Vercelに `NEXT_PUBLIC_ALLOW_INDEX=1` を設定して再デプロイする。
+4. **公開切替(残作業・号令待ち)** … Vercelに `NEXT_PUBLIC_ALLOW_INDEX=1` を設定して再デプロイする。
+   **実施は全サイト(美容・AI・お金・副業・生活)の記事投入が済んだ段階でまとめて行う。
+   ユーザーからの号令があるまで着手しない。**
    手順は `docs/rollout-noindex-and-image-convention.md` A-6節。`NEXT_PUBLIC_`付きの変数は
    ビルド時に埋め込まれるため設定後の再デプロイが必須。**切替後にGSCへサイトマップを送信する**
    (それまでは送信しない)
