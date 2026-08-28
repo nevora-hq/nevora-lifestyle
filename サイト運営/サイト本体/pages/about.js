@@ -42,7 +42,7 @@ export default function About() {
             </tr>
             <tr>
               <th>URL</th>
-              <td>https://nevora-beauty.com/</td>
+              <td>https://nevora-lifestyle.vercel.app/</td>
             </tr>
             <tr>
               <th>運営者</th>

@@ -72,18 +72,20 @@ Next.js(React)+ GitHub + Vercel(無料ホスティング・自動デプロイ)�
 
 ## 再開時の残作業(2026-08-28時点)
 
-サイトの構築は完了し、**公開切替の1点だけを残して**クローズしている。記事は0件。
+サイトの構築は完了し、**公開切替まで完了している**。記事は1件(食・料理)。
 
 1. ~~GA4測定ID~~ … 設定済み(`G-NK7SCN1W7N`。Vercelの3環境と`.env.local`)
 2. ~~GSC所有権確認タグ~~ … 設定済み(`NEXT_PUBLIC_GSC_VERIFICATION`。metaタグの出力を本番で確認済み)
 3. ~~問い合わせのメール直行化~~ … 完了。Formspreeは廃止し、`pages/contact.js` は
    `nevora01123@gmail.com` の明示とmailtoリンクだけの構成
-4. **公開切替(残作業・号令待ち)** … Vercelに `NEXT_PUBLIC_ALLOW_INDEX=1` を設定して再デプロイする。
-   **実施は全サイト(美容・AI・お金・副業・生活)の記事投入が済んだ段階でまとめて行う。
-   ユーザーからの号令があるまで着手しない。**
-   手順は `docs/rollout-noindex-and-image-convention.md` A-6節。`NEXT_PUBLIC_`付きの変数は
-   ビルド時に埋め込まれるため設定後の再デプロイが必須。**切替後にGSCへサイトマップを送信する**
-   (それまでは送信しない)
+4. ~~公開切替~~ … **2026-08-28に実施済み。** ユーザーの号令(全サイト〔美容・AI・お金・副業・
+   生活〕の記事投入完了の判断)を受けて、Vercelの **Production環境のみ** に
+   `NEXT_PUBLIC_ALLOW_INDEX=1` を設定し、空コミットのpushで再デプロイした。
+   Preview/Developmentには設定していない(プレビューはnoindexのまま維持する方針)。
+   本番で robots.txt の `Allow: /` と `Sitemap:` 行の出力、公開ページからnoindexメタが
+   消えたこと、`/admin`(401)・404・`/compare`(リンク0件時)のnoindex維持を確認済み。
+   手順の原本は `docs/rollout-noindex-and-image-convention.md` A-6節。
+   **残: GSCへのサイトマップ送信(`https://nevora-lifestyle.vercel.app/sitemap.xml`)は未実施。**
 
 **独自ドメインは当面取得しない。** `https://nevora-lifestyle.vercel.app` のまま公開する。
 
