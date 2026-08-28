@@ -16,7 +16,7 @@ const OUT = path.join(__dirname, "..", "public", "images", "ogp.png");
 const MASCOT_DIR = path.join(__dirname, "..", "public", "images", "mascot");
 
 // 中央に大きく置くメイン + 左右に小さく置くサブ(存在するファイルだけ使う)
-const MASCOTS = { main: "kuramin-normal.png", left: "karumin-normal.svg", right: "kiramin-normal.svg" };
+const MASCOTS = { main: "kuramin-normal.svg", left: "karumin-normal.svg", right: "kiramin-normal.svg" };
 
 // styles/globals.css の :root と対応
 const COLOR = {

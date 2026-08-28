@@ -1,0 +1,13 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="クラミンちゃん(シンボルマーク)">
+  <!-- ファビコン・ロゴマーク用の簡略版。小さいサイズで潰れないよう、
+       手足・影・ハイライトを省き、輪郭線を太くしている。
+       体の輪郭はkuramin-normal.svgと同じパスを、余白いっぱいまで拡大して使う。 -->
+  <g transform="translate(120 120) scale(1.14) translate(-120 -118.5)">
+    <path d="M120 26 C 165 82, 186 124, 186 150 C 186 189, 156 211, 120 211 C 84 211, 54 189, 54 150 C 54 124, 75 82, 120 26 Z" fill="#f2f8f3" stroke="#2a6244" stroke-width="11" stroke-linejoin="round"/>
+    <ellipse cx="86" cy="157" rx="15" ry="10" fill="#cfe3d3"/>
+    <ellipse cx="154" cy="157" rx="15" ry="10" fill="#cfe3d3"/>
+    <circle cx="98" cy="139" r="9.5" fill="#24242b"/>
+    <circle cx="142" cy="139" r="9.5" fill="#24242b"/>
+    <path d="M108 159 Q120 170 132 159" stroke="#24242b" stroke-width="5.5" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

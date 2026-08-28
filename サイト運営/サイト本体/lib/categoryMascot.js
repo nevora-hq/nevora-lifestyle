@@ -1,6 +1,6 @@
 // カテゴリ別のマスコットキャラクター設定。
-// NEVORA公式マスコット体系。大カテゴリ10種 + サイト全体のメインマスコット
-// 「ネヴォミンちゃん」で構成する。各キャラは normalImage(挨拶)/
+// NEVORA公式マスコット体系。大カテゴリ10種 + 生活サイトのメインマスコット
+// 「クラミンちゃん」で構成する。各キャラは normalImage(挨拶)/
 // researchImage(補足)/matomeImage(振り返り)の3ポーズを持つ。
 // 新ジャンル追加時はこのファイルに追記するだけで拡張できる設計を維持する。
 
@@ -194,18 +194,20 @@ const NEMUMIN = {
   ],
 };
 
-// サイト全体のメインマスコット。カテゴリを横断する案内・ホームページで使用する。
-export const NEVOMIN = {
-  name: "ネヴォミンちゃん",
-  normalImage: "/images/mascot/nevomin-normal.svg",
-  researchImage: "/images/mascot/nevomin-research.svg",
-  matomeImage: "/images/mascot/nevomin-matome.svg",
+// 生活サイトのメインマスコット。カテゴリを横断する案内・ホームページで使用する。
+// ロゴ・ファビコン(scripts/generate-brand-assets.js)とOGP(scripts/generate-ogp.js)も
+// 同じSVGから書き出しているため、絵を変えるときは kuramin-*.svg を直して両方を再実行する。
+export const KURAMIN = {
+  name: "クラミンちゃん",
+  normalImage: "/images/mascot/kuramin-normal.svg",
+  researchImage: "/images/mascot/kuramin-research.svg",
+  matomeImage: "/images/mascot/kuramin-matome.svg",
   comments: [
     "気になるテーマは、カテゴリからも探せるよ。",
     "迷ったときは、担当のミンたちに聞いてみてね。",
   ],
   introComments: [
-    "こんにちは、ネヴォミンです。NEVORAへようこそ。",
+    "こんにちは、クラミンです。NEVORAへようこそ。",
     "ようこそ、NEVORAへ。ここでは色んな「ミン」たちが案内役をしていますよ。",
   ],
   outroComments: [
@@ -214,7 +216,7 @@ export const NEVOMIN = {
   ],
   // ホームページ冒頭専用の自己紹介コメント(トップページのみで使用)。
   homeComment:
-    "はじめまして、ネヴォミンだよ!このサイトでは毎日の暮らしに役立つ情報を、カテゴリー担当のなかまたちと一緒に紹介しているよ。気になるジャンルから読んでみてね。",
+    "はじめまして、クラミンだよ!このサイトでは毎日の暮らしに役立つ情報を、カテゴリー担当のなかまたちと一緒に紹介しているよ。気になるジャンルから読んでみてね。",
 };
 
 const CATEGORY_MASCOTS = {

@@ -33,13 +33,13 @@ export default function HeroBanner() {
       </div>
       <div className="hero-banner-mascot">
         <img
-          src="/images/mascot/nevomin-normal.svg"
-          alt="NEVORA公式マスコット ネヴォミンちゃん"
+          src="/images/mascot/kuramin-normal.svg"
+          alt="NEVORA公式マスコット クラミンちゃん"
           width={72}
           height={72}
           loading="eager"
         />
-        <span className="hero-banner-mascot-name">ネヴォミン</span>
+        <span className="hero-banner-mascot-name">クラミン</span>
       </div>
     </section>
   );

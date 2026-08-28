@@ -10,7 +10,7 @@ import NewPostsCarousel from "../components/NewPostsCarousel";
 import SectionBand from "../components/SectionBand";
 import { getAllPostsMeta, getAllMajorCategories } from "../lib/posts";
 import { getCategoryMeta } from "../lib/categoryMeta";
-import { getCategoryMascot, NEVOMIN } from "../lib/categoryMascot";
+import { getCategoryMascot, KURAMIN } from "../lib/categoryMascot";
 import Link from "next/link";
 
 // 「人気カテゴリー」として常時表示する3カテゴリ(残りはアコーディオンで展開)。
@@ -131,16 +131,16 @@ export default function Home({
           <div className="container container--wide">
             <div className="mascot-comment mascot-comment-home">
               <img
-                src={NEVOMIN.normalImage}
-                alt={NEVOMIN.name}
+                src={KURAMIN.normalImage}
+                alt={KURAMIN.name}
                 width={64}
                 height={64}
                 className="mascot-comment-img"
                 loading="lazy"
               />
               <div className="mascot-comment-bubble">
-                <span className="mascot-comment-name">{NEVOMIN.name}</span>
-                <p className="mascot-comment-text">{NEVOMIN.homeComment}</p>
+                <span className="mascot-comment-name">{KURAMIN.name}</span>
+                <p className="mascot-comment-text">{KURAMIN.homeComment}</p>
               </div>
             </div>
           </div>

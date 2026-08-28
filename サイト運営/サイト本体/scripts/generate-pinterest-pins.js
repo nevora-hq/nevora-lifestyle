@@ -65,7 +65,7 @@ const MASCOT_BY_CATEGORY = {
   "暮らしの知恵": { file: "manamin", name: "マナミン" },
   "睡眠・休息": { file: "nemumin", name: "ネムミン" },
   // カテゴリ未登録記事のフォールバック
-  "default": { file: "nevomin", name: "ネヴォミン" },
+  "default": { file: "kuramin", name: "クラミン" },
 };
 
 // --sample で使う既定の3記事(異なるカテゴリ)。記事を追加したらここを更新する。
