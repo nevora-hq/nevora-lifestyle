@@ -70,16 +70,20 @@ Next.js(React)+ GitHub + Vercel(無料ホスティング・自動デプロイ)�
 - 定義を変更したら、必ずVS Codeを完全に再起動してから記事作業に入る
 - git worktree が残っていると同名衝突で定義が読まれなくなる。エージェントが呼べない場合はまず `git worktree list` を確認する
 
-## 再開時の残作業(2026-08-28クローズ時点)
+## 再開時の残作業(2026-08-28時点)
 
-サイトの構築は完了し、公開待ちの状態でクローズした。記事は0件。再開時は次の4点を反映してから公開する。
+サイトの構築は完了し、**公開切替の1点だけを残して**クローズしている。記事は0件。
 
-1. **GA4測定ID** … `NEXT_PUBLIC_GA_MEASUREMENT_ID` が未設定。美容サイトの測定IDが残っていたため無効化済み(放置すると生活サイトのアクセスが美容サイト側に計上される)
-2. **GSC所有権確認タグ** … `NEXT_PUBLIC_GSC_VERIFICATION` が未設定(`pages/_document.js` が参照)
-3. **問い合わせのメール直行化** … Formspreeは廃止する方針。`nevora01123@gmail.com` へのmailtoを主動線にするよう `pages/contact.js` を組み替える(未設定時にmailtoへフォールバックする実装は既にある)
-4. **公開切替** … Vercelに `NEXT_PUBLIC_ALLOW_INDEX=1` を設定して再デプロイ。手順は `docs/rollout-noindex-and-image-convention.md` A-6節
+1. ~~GA4測定ID~~ … 設定済み(`G-NK7SCN1W7N`。Vercelの3環境と`.env.local`)
+2. ~~GSC所有権確認タグ~~ … 設定済み(`NEXT_PUBLIC_GSC_VERIFICATION`。metaタグの出力を本番で確認済み)
+3. ~~問い合わせのメール直行化~~ … 完了。Formspreeは廃止し、`pages/contact.js` は
+   `nevora01123@gmail.com` の明示とmailtoリンクだけの構成
+4. **公開切替(残作業)** … Vercelに `NEXT_PUBLIC_ALLOW_INDEX=1` を設定して再デプロイする。
+   手順は `docs/rollout-noindex-and-image-convention.md` A-6節。`NEXT_PUBLIC_`付きの変数は
+   ビルド時に埋め込まれるため設定後の再デプロイが必須。**切替後にGSCへサイトマップを送信する**
+   (それまでは送信しない)
 
-**独自ドメインは当面取得しない。** `https://nevora-lifestyle.vercel.app` のまま公開する(`NEXT_PUBLIC_SITE_URL` 設定済み)。
+**独自ドメインは当面取得しない。** `https://nevora-lifestyle.vercel.app` のまま公開する。
 
 ### 生成物の再作成コマンド
 
