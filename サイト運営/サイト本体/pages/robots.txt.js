@@ -8,7 +8,14 @@ function resolveSiteUrl(req) {
 export async function getServerSideProps({ req, res }) {
   const siteUrl = resolveSiteUrl(req);
 
-  const body = `User-agent: *
+  // NEXT_PUBLIC_NOINDEX=1 のときはサイト全体をクロール拒否にする
+  // (components/Layout.jsのnoindex metaと連動。独自ドメイン確定前の暫定運用)。
+  const body =
+    process.env.NEXT_PUBLIC_NOINDEX === "1"
+      ? `User-agent: *
+Disallow: /
+`
+      : `User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /api/

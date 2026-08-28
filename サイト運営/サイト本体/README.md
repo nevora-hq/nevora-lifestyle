@@ -99,3 +99,15 @@ Webサイト
 - 未公開の記事は `記事データ/公開待ち` にあり、`sync-content.js` の同期対象外のためサイト・sitemap のいずれにも出ない。`確定稿` に誤って置かれた場合も `publishAt` が未来ならスキップされる
 - 公開の反映は `.github/workflows/publish-queue.yml` が commit・push し、Vercel の自動デプロイで行う(手動の vercel CLI は使わない)。ジョブが失敗した場合は `publish-queue` ラベル付きの Issue が自動で立つ
 - 記事の公開日(表示・sitemap・JSON-LD の `datePublished`)は、`queue:release` が動いた**実際の公開日**になる
+
+## トップページの写真素材
+
+元画像(PNG)は次のフォルダで管理し、`scripts/generate-site-images.js`のMANIFESTでファイル名を対応付けてwebpへ変換する。
+
+```
+C:\Users\kokim\OneDrive\デスクトップ\画像フォルダ\各種サイト\{サイト名}\ライブラリ\ホームページ用
+```
+
+- 生成コマンド: `node scripts/generate-site-images.js`(`hero` `band` `category` のようにキー前方一致で絞り込み可)
+- 元画像は1536×1024(横長3:2)で用意する。srcsetの最大幅は元画像幅に丸められるため、幅を変える場合は`components/HeroBanner.js`・`pages/index.js`の`widths`/`srcSet`も合わせて更新すること
+- 記事用の画像は同じライブラリの`記事用`フォルダで管理し、image-selector / image-placerが担当する

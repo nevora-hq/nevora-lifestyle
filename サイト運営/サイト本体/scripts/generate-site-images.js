@@ -24,7 +24,7 @@ const fs = require("fs");
 const sharp = require("sharp");
 
 const SRC_DIR =
-  "c:/Users/kokim/OneDrive/デスクトップ/画像フォルダ/各種サイト/生活サイト/ライブラリ";
+  "c:/Users/kokim/OneDrive/デスクトップ/画像フォルダ/各種サイト/生活サイト/ライブラリ/ホームページ用";
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const RESPONSIVE_WIDTHS = [640, 1024, 1600];
 const RESPONSIVE_FALLBACK = 1600;

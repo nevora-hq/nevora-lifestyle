@@ -396,7 +396,7 @@ img {
 
    レイヤー構成(下から順に):
      .hero-banner-img   … 写真本体(object-fitでトリミング)
-     .hero-banner-warm  … 暖色ウォッシュ(クール系の写真をブランドのピンク寄りに寄せる)
+     .hero-banner-warm  … カラーウォッシュ(写真をブランドのグリーン寄りに寄せる)
      .hero-banner-scrim … 左側スクリム+下端/右下の落とし込み(文字とマスコットの可読性)
      .hero-banner-overlay(.hero-banner-inner) … テキスト
      .hero-banner-mascot … マスコット */
@@ -413,12 +413,11 @@ img {
   width: 100%;
   height: clamp(220px, 34vw, 420px);
   object-fit: cover;
-  /* 縦方向は強く上寄せする。ヒーローの枠は元画像(縦横比1.87)より横長になるため
-     cover時に切られるのは上下のみで、ワイドになるほど上下の切り取り量が増える。
-     基準を12%まで上げることで、超ワイド表示(2560px以上)やブラウザ縮小時でも
-     額〜目のラインが残る(0%にすると今度は化粧品が全て切れるため12%が上限)。
+  /* ヒーローの枠は元画像(縦横比1.5)より横長になるため、cover時に切られるのは
+     上下のみ。写真の主題(窓・ソファ・ダイニングテーブル)は下寄りにあるため
+     65%で下寄せし、天井の空白が大きく入らないようにする。
      横方向は、枠が縦長寄りになるスマホでのみ効く(PCでは全幅が表示される)。 */
-  object-position: 45% 0%;
+  object-position: 50% 65%;
   margin: 0;
 }
 
@@ -426,11 +425,15 @@ img {
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* 生活サイトのテーマカラー(淡いグリーン #E8F0E5 系)に寄せるウォッシュ。
+     multiplyで重ねるため、指定色が淡いほど効果は控えめになる。
+     濃度(α)は美容サイト時代と同値のままなので、下のスクリムと合わせた
+     文字コントラストは変わらない。 */
   background: linear-gradient(
     115deg,
-    rgba(255, 176, 196, 0.18) 0%,
-    rgba(255, 214, 196, 0.12) 55%,
-    rgba(255, 244, 236, 0.06) 100%
+    rgba(186, 214, 190, 0.18) 0%,
+    rgba(210, 228, 208, 0.12) 55%,
+    rgba(232, 240, 229, 0.06) 100%
   );
   mix-blend-mode: multiply;
 }
@@ -452,15 +455,15 @@ img {
   background:
     linear-gradient(
       90deg,
-      rgba(48, 16, 30, 0.78) 0%,
-      rgba(48, 16, 30, 0.74) calc(50% + 60px),
-      rgba(56, 22, 38, 0.34) calc(50% + 200px),
-      rgba(60, 26, 44, 0) calc(50% + 330px)
+      rgba(22, 38, 28, 0.78) 0%,
+      rgba(22, 38, 28, 0.74) calc(50% + 60px),
+      rgba(26, 44, 33, 0.34) calc(50% + 200px),
+      rgba(30, 48, 36, 0) calc(50% + 330px)
     ),
     /* 右下: マスコットを明るい写真の上でも見えるようにわずかに落とす */
-      radial-gradient(220px 140px at 93% 88%, rgba(40, 14, 26, 0.3), transparent 72%),
+      radial-gradient(220px 140px at 93% 88%, rgba(20, 34, 25, 0.3), transparent 72%),
     /* 下端: 直下のスライダーとの境目をなじませる */
-      linear-gradient(to top, rgba(40, 14, 26, 0.2) 0%, rgba(40, 14, 26, 0) 38%);
+      linear-gradient(to top, rgba(20, 34, 25, 0.2) 0%, rgba(20, 34, 25, 0) 38%);
 }
 
 /* スマホは写真の右側(化粧品ボトル・窓)が明るく、左側スクリムだけでは
@@ -469,9 +472,9 @@ img {
 @media (max-width: 767px) {
   .hero-banner-scrim {
     background:
-      linear-gradient(100deg, rgba(45, 16, 28, 0.82) 0%, rgba(52, 20, 34, 0.72) 100%),
-      radial-gradient(160px 110px at 90% 86%, rgba(40, 14, 26, 0.3), transparent 72%),
-      linear-gradient(to top, rgba(40, 14, 26, 0.3) 0%, rgba(40, 14, 26, 0) 46%);
+      linear-gradient(100deg, rgba(21, 36, 26, 0.82) 0%, rgba(24, 41, 30, 0.72) 100%),
+      radial-gradient(160px 110px at 90% 86%, rgba(20, 34, 25, 0.3), transparent 72%),
+      linear-gradient(to top, rgba(20, 34, 25, 0.3) 0%, rgba(20, 34, 25, 0) 46%);
   }
 }
 
@@ -483,13 +486,13 @@ img {
     background:
       linear-gradient(
         90deg,
-        rgba(48, 16, 30, 0.86) 0px,
-        rgba(48, 16, 30, 0.74) 520px,
-        rgba(56, 22, 38, 0.34) 760px,
-        rgba(60, 26, 44, 0) 920px
+        rgba(22, 38, 28, 0.86) 0px,
+        rgba(22, 38, 28, 0.74) 520px,
+        rgba(26, 44, 33, 0.34) 760px,
+        rgba(30, 48, 36, 0) 920px
       ),
-      radial-gradient(220px 140px at 93% 88%, rgba(40, 14, 26, 0.4), transparent 72%),
-      linear-gradient(to top, rgba(40, 14, 26, 0.32) 0%, rgba(40, 14, 26, 0) 42%);
+      radial-gradient(220px 140px at 93% 88%, rgba(20, 34, 25, 0.4), transparent 72%),
+      linear-gradient(to top, rgba(20, 34, 25, 0.32) 0%, rgba(20, 34, 25, 0) 42%);
   }
 }
 
@@ -519,7 +522,7 @@ img {
   font-weight: 700;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  color: #ffe3ec;
+  color: #f1f7f1;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
 }
 
@@ -537,7 +540,7 @@ img {
   margin: 0;
   font-size: clamp(0.85rem, 0.8rem + 0.3vw, 0.98rem);
   line-height: 1.7;
-  color: #f5eef1;
+  color: #eef4ee;
   max-width: 460px;
   text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
 }
@@ -1404,10 +1407,10 @@ img {
   pointer-events: none;
   background: linear-gradient(
     90deg,
-    rgba(48, 16, 30, 0.84) 0%,
-    rgba(48, 16, 30, 0.76) calc(50% - 180px),
-    rgba(56, 22, 38, 0.3) calc(50% + 60px),
-    rgba(60, 26, 44, 0) calc(50% + 220px)
+    rgba(22, 38, 28, 0.84) 0%,
+    rgba(22, 38, 28, 0.76) calc(50% - 180px),
+    rgba(26, 44, 33, 0.3) calc(50% + 60px),
+    rgba(30, 48, 36, 0) calc(50% + 220px)
   );
 }
 
@@ -1419,8 +1422,8 @@ img {
   .section-band-scrim {
     background: linear-gradient(
       100deg,
-      rgba(48, 16, 30, 0.86) 0%,
-      rgba(52, 20, 34, 0.76) 100%
+      rgba(22, 38, 28, 0.86) 0%,
+      rgba(24, 41, 30, 0.76) 100%
     );
   }
 }

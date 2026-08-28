@@ -49,7 +49,11 @@ export default function Layout({
         <title>{title}</title>
         <meta name="description" content={description} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {noindex && <meta name="robots" content="noindex, nofollow" />}
+        {/* サイト全体のnoindexスイッチ。独自ドメイン確定前など、検索結果に出したくない
+            期間は環境変数 NEXT_PUBLIC_NOINDEX=1 を設定する(pages/robots.txt.jsと連動)。 */}
+        {(noindex || process.env.NEXT_PUBLIC_NOINDEX === "1") && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
         {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
         <meta property="og:site_name" content={SITE_NAME} />
         <meta property="og:locale" content="ja_JP" />
