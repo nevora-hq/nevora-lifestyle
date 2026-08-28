@@ -129,12 +129,7 @@ export default function PostPage({ post, related, nextPost }) {
         {!isCustomLayout && (post.summaryPoints?.length > 0 ||
           post.targetReader ||
           post.comparisonCriteria?.length > 0) && (
-          <div className={`article-summary-box${isPerfectSkinArticle ? " perfectskin-summary-box" : ""}`}>
-            {isPerfectSkinArticle && (
-              <p className="perfectskin-summary-eyebrow" aria-hidden="true">
-                ⏱ 30秒でわかる
-              </p>
-            )}
+          <div className="article-summary-box">
             {post.summaryPoints?.length > 0 && (
               <div className="article-summary-block">
                 <details open className="article-accordion article-summary-accordion">
