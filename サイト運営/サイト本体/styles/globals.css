@@ -2491,6 +2491,21 @@ h1.page-title {
   transform: translateY(-1px);
 }
 
+/* ---- お問い合わせページ(メール直行の動線) ---- */
+.contact-address {
+  margin: 18px 0 14px;
+  font-size: clamp(1.05rem, 1rem + 0.4vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  word-break: break-all;
+}
+
+.contact-mail-btn {
+  /* メールソフトを開く主動線。アフィリエイトボタンと同じ見た目を流用するが、
+     広告と誤認されないよう本文の流れの中に単独で置く。 */
+  margin-bottom: 4px;
+}
+
 /* ---- 本文中埋め込み型アフィリエイトバナー ----
    AdSenseの広告枠と見た目が混同されないよう、
    PRバッジ・枠線・余白でコンテンツ本文および広告枠の双方から
