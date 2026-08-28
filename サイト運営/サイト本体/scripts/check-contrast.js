@@ -146,6 +146,18 @@ const parseRgb = (s) => {
       });
       await page.waitForTimeout(500);
 
+      // カルーセルの自動送りやCSSアニメーションが2枚のスクリーンショットの間に
+      // 進むと、背景が変わった画素を「文字」と誤認する。測定前に止めておく。
+      await page.evaluate(() => {
+        const style = document.createElement("style");
+        style.textContent =
+          "*,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important;}";
+        document.head.appendChild(style);
+        const maxId = setInterval(() => {}, 100000);
+        for (let i = 1; i <= maxId; i++) clearInterval(i);
+      });
+      await page.waitForTimeout(200);
+
       const items = await page.evaluate(eval("(" + COLLECT + ")"));
       if (!items.length) {
         await page.close();
