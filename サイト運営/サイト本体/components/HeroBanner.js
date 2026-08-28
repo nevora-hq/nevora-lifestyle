@@ -7,10 +7,10 @@ export default function HeroBanner() {
     <section className="hero-banner">
       {/* srcsetの各幅は scripts/generate-hero-image.js で生成する。
           full-bleed(画面幅いっぱい)のため sizes は 100vw。
-          元画像が1717pxのため最大は1600w(それ以上は拡大になるので作らない)。 */}
+          元画像が1536pxのため最大は1536w(それ以上は拡大になるので作らない)。 */}
       <img
         src="/images/hero/home-hero.webp"
-        srcSet="/images/hero/home-hero-640.webp 640w, /images/hero/home-hero-1024.webp 1024w, /images/hero/home-hero-1600.webp 1600w"
+        srcSet="/images/hero/home-hero-640.webp 640w, /images/hero/home-hero-1024.webp 1024w, /images/hero/home-hero-1536.webp 1536w"
         sizes="100vw"
         alt=""
         className="hero-banner-img"

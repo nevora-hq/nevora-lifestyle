@@ -107,7 +107,7 @@ export default function Home({
           rel="preload"
           as="image"
           href="/images/hero/home-hero.webp"
-          imageSrcSet="/images/hero/home-hero-640.webp 640w, /images/hero/home-hero-1024.webp 1024w, /images/hero/home-hero-1600.webp 1600w"
+          imageSrcSet="/images/hero/home-hero-640.webp 640w, /images/hero/home-hero-1024.webp 1024w, /images/hero/home-hero-1536.webp 1536w"
           imageSizes="100vw"
           type="image/webp"
           fetchPriority="high"
@@ -146,6 +146,20 @@ export default function Home({
           </div>
         </section>
 
+
+        {/* 左側に余白のある写真。見出しは1180pxグリッドの左端に揃えて白抜きで重ねる */}
+        <SectionBand
+          base="/images/band/band-01"
+          widths={[640, 1024, 1536]}
+          objectPosition="50% 45%"
+        >
+          <h2 id="category-band-title" className="section-band-title">
+            暮らしのテーマから探す
+          </h2>
+          <p className="section-band-lead">
+            気になるカテゴリーをタップすると、関連する記事をまとめて見られます。
+          </p>
+        </SectionBand>
 
         <section className="home-stripe home-stripe--cream">
           <div className="container container--wide">

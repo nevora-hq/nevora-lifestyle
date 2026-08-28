@@ -24,7 +24,7 @@ const fs = require("fs");
 const sharp = require("sharp");
 
 const SRC_DIR =
-  "c:/Users/kokim/OneDrive/デスクトップ/画像フォルダ/生活サイト/ホームページ用";
+  "c:/Users/kokim/OneDrive/デスクトップ/画像フォルダ/各種サイト/生活サイト/ライブラリ";
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 const RESPONSIVE_WIDTHS = [640, 1024, 1600];
 const RESPONSIVE_FALLBACK = 1600;
@@ -34,17 +34,25 @@ const QUALITY = 78;
 // key: 絞り込み用の識別子 / src: 元画像 / out: public配下の出力パス(拡張子なし)
 const MANIFEST = [
   // ---- ヒーロー(Step1) ----
-  { key: "hero", src: "ChatGPT Image 2026年8月17日 15_49_19.png", out: "images/hero/home-hero", responsive: true },
+  { key: "hero", src: "ChatGPT Image 2026年8月28日 11_23_39.png", out: "images/hero/home-hero", responsive: true },
 
   // ---- セクションバンド(Step4) ----
   // band-01: 左側に白壁の余白がある横長写真。見出しを重ねて使う
-  { key: "band-01", src: "ChatGPT Image 2026年8月17日 15_49_25.png", out: "images/band/band-01", responsive: true },
-  // band-02: ゴールドポンプのボトル3本と木製コームの静物(テキストは重ねない)
-  { key: "band-02", src: "ChatGPT Image 2026年8月17日 15_49_40.png", out: "images/band/band-02", responsive: true },
+  { key: "band-01", src: "ChatGPT Image 2026年8月28日 11_23_45.png", out: "images/band/band-01", responsive: true },
+  // band-02: 静物カット(テキストは重ねない)
+  { key: "band-02", src: "ChatGPT Image 2026年8月28日 11_23_51.png", out: "images/band/band-02", responsive: true },
 
   // ---- カテゴリカード(Step3)。出力名は lib/categoryMeta.js の image と対応させる ----
-  // 生活サイト用の素材が用意できたら src を埋めて有効化する。
-  // { key: "category-kaji", src: "", out: "images/category/kaji" },
+  { key: "category-kaji", src: "ChatGPT Image 2026年8月28日 11_23_57.png", out: "images/category/kaji" },
+  { key: "category-souji", src: "ChatGPT Image 2026年8月28日 11_24_04.png", out: "images/category/souji" },
+  { key: "category-sentaku", src: "ChatGPT Image 2026年8月28日 11_24_09.png", out: "images/category/sentaku" },
+  { key: "category-shuno", src: "ChatGPT Image 2026年8月28日 11_24_15.png", out: "images/category/shuno" },
+  { key: "category-setsuyaku", src: "ChatGPT Image 2026年8月28日 11_24_21.png", out: "images/category/setsuyaku" },
+  { key: "category-ryori", src: "ChatGPT Image 2026年8月28日 11_24_26.png", out: "images/category/ryori" },
+  { key: "category-sumai", src: "ChatGPT Image 2026年8月28日 11_24_32.png", out: "images/category/sumai" },
+  { key: "category-kaden", src: "ChatGPT Image 2026年8月28日 11_24_38.png", out: "images/category/kaden" },
+  { key: "category-chie", src: "ChatGPT Image 2026年8月28日 11_24_44.png", out: "images/category/chie" },
+  { key: "category-suimin", src: "ChatGPT Image 2026年8月28日 11_24_49.png", out: "images/category/suimin" },
 ];
 
 async function emit(srcPath, outBase, width, suffix) {
