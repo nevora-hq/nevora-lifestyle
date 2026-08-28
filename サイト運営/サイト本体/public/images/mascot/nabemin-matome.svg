@@ -1,0 +1,12 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="マスコットキャラクター ナベミンちゃん(まとめポーズ)">
+  <ellipse cx="120" cy="231" rx="52" ry="8" fill="#b92559" opacity="0.10"/>
+  <path d="M104 205 q-7 13 -3 22" stroke="#b92559" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M136 205 q7 13 3 22" stroke="#b92559" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M120 26 C 165 82, 186 124, 186 150 C 186 189, 156 211, 120 211 C 84 211, 54 189, 54 150 C 54 124, 75 82, 120 26 Z" fill="#f7e3ea" stroke="#b92559" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="150" y="72" width="11" height="11" rx="2" fill="#ffffff"/>
+  <ellipse cx="86" cy="157" rx="14" ry="9" fill="#e3abbf"/><ellipse cx="154" cy="157" rx="14" ry="9" fill="#e3abbf"/>
+  <path d="M90 143 Q98 134 106 143" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M134 143 Q142 134 150 143" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M106 158 Q120 173 134 158" stroke="#24242b" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <path d="M66 180 q-20 18 -48 12" stroke="#b92559" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M174 180 q20 18 48 12" stroke="#b92559" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <g transform="translate(182 146) scale(0.85)"><rect x="4" y="6" width="32" height="28" rx="4" fill="#f7e3ea" stroke="#b92559" stroke-width="4"/><path d="M12 15 H28 M12 21 H28 M12 27 H22" stroke="#b92559" stroke-width="3" stroke-linecap="round"/></g>
+</svg>

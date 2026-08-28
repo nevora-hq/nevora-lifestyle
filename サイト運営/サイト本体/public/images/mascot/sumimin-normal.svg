@@ -1,0 +1,12 @@
+<svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="マスコットキャラクター スミミンちゃん">
+  <ellipse cx="120" cy="231" rx="52" ry="8" fill="#8f5300" opacity="0.10"/>
+  <path d="M104 205 q-7 13 -3 22" stroke="#8f5300" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M136 205 q7 13 3 22" stroke="#8f5300" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M58 172 q-16 2 -22 14" stroke="#8f5300" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M182 176 q12 10 18 12" stroke="#8f5300" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M120 26 C 165 82, 186 124, 186 150 C 186 189, 156 211, 120 211 C 84 211, 54 189, 54 150 C 54 124, 75 82, 120 26 Z" fill="#f7efe3" stroke="#8f5300" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="150" y="72" width="11" height="11" rx="2" fill="#ffffff"/>
+  <ellipse cx="86" cy="157" rx="14" ry="9" fill="#e3cbab"/><ellipse cx="154" cy="157" rx="14" ry="9" fill="#e3cbab"/>
+  <circle cx="98" cy="140" r="8" fill="#24242b"/><circle cx="142" cy="140" r="8" fill="#24242b"/><circle cx="100.8" cy="136.6" r="2.4" fill="#fff"/><circle cx="144.8" cy="136.6" r="2.4" fill="#fff"/>
+  <path d="M109 160 Q120 171 131 160" stroke="#24242b" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <g transform="translate(186 170) scale(1.15)"><path d="M20 4 L37 19 V37 H3 V19 Z" fill="#f7efe3" stroke="#8f5300" stroke-width="4" stroke-linejoin="round"/><rect x="15" y="24" width="10" height="13" rx="1.5" fill="#8f5300"/></g>
+</svg>

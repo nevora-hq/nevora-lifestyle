@@ -16,12 +16,12 @@ const OUT = path.join(__dirname, "..", "public", "images", "ogp.png");
 const MASCOT_DIR = path.join(__dirname, "..", "public", "images", "mascot");
 
 // 中央に大きく置くメイン + 左右に小さく置くサブ(存在するファイルだけ使う)
-const MASCOTS = { main: "kuramin-normal.svg", left: "karumin-normal.svg", right: "kiramin-normal.svg" };
+const MASCOTS = { main: "kuramin-normal.svg", left: "tekimin-normal.svg", right: "nabemin-normal.svg" };
 
 // styles/globals.css の :root と対応
 const COLOR = {
-  primary: "#2a6244",
-  primaryDark: "#1e4e36",
+  primary: "#25573c",
+  primaryDark: "#1a4530",
   text: "#24242b",
   bgFrom: "#f4f8f1",
   bgMid: "#eaf2ec",
@@ -55,18 +55,18 @@ function html() {
   .t1 { margin-top: 24px; font-size: 44px; font-weight: 700; letter-spacing: 0.04em; color: ${COLOR.text}; }
   .t2 { margin-top: 6px; font-size: 84px; font-weight: 700; letter-spacing: 0.08em; color: ${COLOR.text}; line-height: 1.1; }
   .rule { margin-top: 24px; width: 430px; height: 3px;
-    background: linear-gradient(90deg, ${COLOR.primary}, rgba(42, 98, 68, 0)); }
+    background: linear-gradient(90deg, ${COLOR.primary}, rgba(37, 87, 60, 0)); }
   .lead { margin-top: 20px; font-size: 24px; color: ${COLOR.primaryDark}; letter-spacing: 0.04em; }
   .stage { position: absolute; right: 28px; top: 50%; transform: translateY(-50%);
     width: 400px; height: 400px; display: flex; align-items: flex-end; justify-content: center; }
   .ring { position: absolute; inset: 0; border-radius: 50%;
     background: radial-gradient(circle at 50% 45%, #ffffff 0%, rgba(255,255,255,0.55) 62%, rgba(255,255,255,0) 72%); }
   .ring::after { content: ""; position: absolute; inset: 18px; border-radius: 50%;
-    border: 2px dashed rgba(42, 98, 68, 0.18); }
+    border: 2px dashed rgba(37, 87, 60, 0.18); }
   .m { position: relative; }
   .m-main { width: 224px; }
   .m-side { width: 118px; margin-bottom: 22px; }
-  .dot { position: absolute; border-radius: 50%; background: rgba(42, 98, 68, 0.14); }
+  .dot { position: absolute; border-radius: 50%; background: rgba(37, 87, 60, 0.14); }
 </style></head><body><div class="wrap">
   <div class="dot" style="left:64px;top:520px;width:14px;height:14px"></div>
   <div class="dot" style="left:600px;top:96px;width:10px;height:10px"></div>

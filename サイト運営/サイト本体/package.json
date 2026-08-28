@@ -16,7 +16,11 @@
     "queue": "node scripts/queue.js",
     "queue:status": "node scripts/queue-status.js",
     "queue:release": "node scripts/queue-release.js",
-    "pins": "node scripts/generate-pinterest-pins.js"
+    "pins": "node scripts/generate-pinterest-pins.js",
+    "check:contrast": "node scripts/check-contrast.js",
+    "mascots": "node scripts/generate-mascots.js",
+    "brand": "node scripts/generate-brand-assets.js",
+    "ogp": "node scripts/generate-ogp.js"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

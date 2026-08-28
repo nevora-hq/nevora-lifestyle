@@ -2,20 +2,23 @@
 // NEVORA公式マスコット体系。大カテゴリ10種 + 生活サイトのメインマスコット
 // 「クラミンちゃん」で構成する。各キャラは normalImage(挨拶)/
 // researchImage(補足)/matomeImage(振り返り)の3ポーズを持つ。
-// 新ジャンル追加時はこのファイルに追記するだけで拡張できる設計を維持する。
+//
+// **SVGの絵は scripts/generate-mascots.js が唯一の定義元。** キャラを追加・変更する
+// ときは、そちらの CHARACTERS と lib/categoryMeta.js の color/soft、このファイルの
+// 3点をセットで更新し、`node scripts/generate-mascots.js` を実行する。
 
-const KARUMIN = {
-  name: "カルミンちゃん",
-  normalImage: "/images/mascot/karumin-normal.svg",
-  researchImage: "/images/mascot/karumin-research.svg",
-  matomeImage: "/images/mascot/karumin-matome.svg",
+const TEKIMIN = {
+  name: "テキミンちゃん",
+  normalImage: "/images/mascot/tekimin-normal.svg",
+  researchImage: "/images/mascot/tekimin-research.svg",
+  matomeImage: "/images/mascot/tekimin-matome.svg",
   comments: [
     "家事は完璧を目指すより、続けられる形にするのが一番だよ。",
     "先に段取りを決めておくと、同じ作業でもぐっとラクになるよ。",
   ],
   introComments: [
-    "こんにちは、カルミンだよ!今日は家事をラクにするお話をするね。",
-    "カルミン、参上!一緒に軽やかな毎日を目指そう。",
+    "こんにちは、テキミンだよ!今日は家事をラクにするお話をするね。",
+    "テキミン、参上!一緒に段取りよく片づけよう。",
   ],
   outroComments: [
     "今日からできる小さな一歩、一緒に踏み出してみようね。",
@@ -23,18 +26,18 @@ const KARUMIN = {
   ],
 };
 
-const HIKAMIN = {
-  name: "ヒカミンちゃん",
-  normalImage: "/images/mascot/hikamin-normal.svg",
-  researchImage: "/images/mascot/hikamin-research.svg",
-  matomeImage: "/images/mascot/hikamin-matome.svg",
+const PIKAMIN = {
+  name: "ピカミンちゃん",
+  normalImage: "/images/mascot/pikamin-normal.svg",
+  researchImage: "/images/mascot/pikamin-research.svg",
+  matomeImage: "/images/mascot/pikamin-matome.svg",
   comments: [
     "汚れは種類によって落とし方が違うから、まず正体を見きわめよう。",
     "こまめに落とすほうが、まとめて頑張るより結局ラクなんだ。",
   ],
   introComments: [
-    "こんにちは、ヒカミンだよ!今日は掃除のコツを紹介するね。",
-    "ヒカミン、参上!一緒にピカピカにしていこう。",
+    "こんにちは、ピカミンだよ!今日は掃除のコツを紹介するね。",
+    "ピカミン、参上!一緒にピカピカにしていこう。",
   ],
   outroComments: [
     "気になるところから少しずつ、で大丈夫だよ。",
@@ -42,18 +45,18 @@ const HIKAMIN = {
   ],
 };
 
-const SARAMIN = {
-  name: "サラミンちゃん",
-  normalImage: "/images/mascot/saramin-normal.svg",
-  researchImage: "/images/mascot/saramin-research.svg",
-  matomeImage: "/images/mascot/saramin-matome.svg",
+const FUWAMIN = {
+  name: "フワミンちゃん",
+  normalImage: "/images/mascot/fuwamin-normal.svg",
+  researchImage: "/images/mascot/fuwamin-research.svg",
+  matomeImage: "/images/mascot/fuwamin-matome.svg",
   comments: [
     "洗剤の量は多いほどいいわけじゃないよ。表示どおりが基本だよ。",
     "干し方を変えるだけで、乾き方もニオイも変わるんだ。",
   ],
   introComments: [
-    "こんにちは、サラミンです。今日は洗濯の話をしますね。",
-    "サラミン、参上!洗濯の困りごとを一緒に解決しよう。",
+    "こんにちは、フワミンです。今日は洗濯の話をしますね。",
+    "フワミン、参上!洗濯の困りごとを一緒に解決しよう。",
   ],
   outroComments: [
     "洗濯表示もチェックしながら、無理のない方法を選んでね。",
@@ -61,18 +64,18 @@ const SARAMIN = {
   ],
 };
 
-const KURUMIN = {
-  name: "クルミンちゃん",
-  normalImage: "/images/mascot/kurumin-normal.svg",
-  researchImage: "/images/mascot/kurumin-research.svg",
-  matomeImage: "/images/mascot/kurumin-matome.svg",
+const HAKOMIN = {
+  name: "ハコミンちゃん",
+  normalImage: "/images/mascot/hakomin-normal.svg",
+  researchImage: "/images/mascot/hakomin-research.svg",
+  matomeImage: "/images/mascot/hakomin-matome.svg",
   comments: [
     "収納は増やす前に、まず減らすところから考えると失敗しにくいよ。",
     "使う場所の近くにしまうのが、散らからない一番のコツだよ。",
   ],
   introComments: [
-    "こんにちは、クルミンだよ!今日は片づけのお話をするね。",
-    "クルミン、参上!一緒にすっきりまとめていこう。",
+    "こんにちは、ハコミンだよ!今日は片づけのお話をするね。",
+    "ハコミン、参上!一緒にすっきりまとめていこう。",
   ],
   outroComments: [
     "一か所ずつで大丈夫。終わったところから暮らしがラクになるよ。",
@@ -80,18 +83,18 @@ const KURUMIN = {
   ],
 };
 
-const KIRAMIN = {
-  name: "キラミンちゃん",
-  normalImage: "/images/mascot/kiramin-normal.svg",
-  researchImage: "/images/mascot/kiramin-research.svg",
-  matomeImage: "/images/mascot/kiramin-matome.svg",
+const YARIKUMIN = {
+  name: "ヤリクミンちゃん",
+  normalImage: "/images/mascot/yarikumin-normal.svg",
+  researchImage: "/images/mascot/yarikumin-research.svg",
+  matomeImage: "/images/mascot/yarikumin-matome.svg",
   comments: [
     "節約は我慢より、固定費の見直しから始めると続きやすいよ。",
     "金額の大きいところから手をつけるのが、効率のいいやり方だよ。",
   ],
   introComments: [
-    "こんにちは、キラミンです。今日は家計と節約の話をしますね。",
-    "キラミン、参上!ムリなく続く方法を一緒に探そう。",
+    "こんにちは、ヤリクミンです。今日は家計と節約の話をしますね。",
+    "ヤリクミン、参上!ムリなく続く方法を一緒に探そう。",
   ],
   outroComments: [
     "続けられる範囲でどうぞ。積み重ねが一番効きますよ。",
@@ -99,18 +102,18 @@ const KIRAMIN = {
   ],
 };
 
-const MOCHIMIN = {
-  name: "モチミンちゃん",
-  normalImage: "/images/mascot/mochimin-normal.svg",
-  researchImage: "/images/mascot/mochimin-research.svg",
-  matomeImage: "/images/mascot/mochimin-matome.svg",
+const NABEMIN = {
+  name: "ナベミンちゃん",
+  normalImage: "/images/mascot/nabemin-normal.svg",
+  researchImage: "/images/mascot/nabemin-research.svg",
+  matomeImage: "/images/mascot/nabemin-matome.svg",
   comments: [
     "作り置きは、保存の仕方までセットで考えると失敗しにくいよ。",
     "食材は買い方より、使い切り方を決めておくとムダが減るよ。",
   ],
   introComments: [
-    "こんにちは、モチミンだよ!今日はごはんづくりのお話をするね。",
-    "モチミン、参上!毎日の食事づくりを一緒にラクにしよう。",
+    "こんにちは、ナベミンだよ!今日はごはんづくりのお話をするね。",
+    "ナベミン、参上!毎日の食事づくりを一緒にラクにしよう。",
   ],
   outroComments: [
     "無理のない範囲で、作れそうなものから試してみてね。",
@@ -118,18 +121,18 @@ const MOCHIMIN = {
   ],
 };
 
-const IROMIN = {
-  name: "イロミンちゃん",
-  normalImage: "/images/mascot/iromin-normal.svg",
-  researchImage: "/images/mascot/iromin-research.svg",
-  matomeImage: "/images/mascot/iromin-matome.svg",
+const SUMIMIN = {
+  name: "スミミンちゃん",
+  normalImage: "/images/mascot/sumimin-normal.svg",
+  researchImage: "/images/mascot/sumimin-research.svg",
+  matomeImage: "/images/mascot/sumimin-matome.svg",
   comments: [
     "部屋の印象は、色の数を絞るだけでもぐっと落ち着くよ。",
     "家具は置く前に、通り道の幅を測っておくと失敗しにくいよ。",
   ],
   introComments: [
-    "こんにちは、イロミンだよ!今日は部屋づくりのお話をするね。",
-    "イロミン登場!居心地のいい部屋、一緒に考えよう。",
+    "こんにちは、スミミンだよ!今日は部屋づくりのお話をするね。",
+    "スミミン登場!居心地のいい部屋、一緒に考えよう。",
   ],
   outroComments: [
     "今の部屋でできそうなところから、試してみてね。",
@@ -195,8 +198,8 @@ const NEMUMIN = {
 };
 
 // 生活サイトのメインマスコット。カテゴリを横断する案内・ホームページで使用する。
-// ロゴ・ファビコン(scripts/generate-brand-assets.js)とOGP(scripts/generate-ogp.js)も
-// 同じSVGから書き出しているため、絵を変えるときは kuramin-*.svg を直して両方を再実行する。
+// ロゴ・ファビコン(generate-brand-assets.js)とOGP(generate-ogp.js)も同じSVGから
+// 書き出しているため、絵を変えたらそれらも再実行する。
 export const KURAMIN = {
   name: "クラミンちゃん",
   normalImage: "/images/mascot/kuramin-normal.svg",
@@ -220,13 +223,13 @@ export const KURAMIN = {
 };
 
 const CATEGORY_MASCOTS = {
-  "家事・時短": KARUMIN,
-  "掃除": HIKAMIN,
-  "洗濯": SARAMIN,
-  "収納・片づけ": KURUMIN,
-  "節約・家計": KIRAMIN,
-  "食・料理": MOCHIMIN,
-  "住まい・インテリア": IROMIN,
+  "家事・時短": TEKIMIN,
+  "掃除": PIKAMIN,
+  "洗濯": FUWAMIN,
+  "収納・片づけ": HAKOMIN,
+  "節約・家計": YARIKUMIN,
+  "食・料理": NABEMIN,
+  "住まい・インテリア": SUMIMIN,
   "生活家電": DENMIN,
   "暮らしの知恵": MANAMIN,
   "睡眠・休息": NEMUMIN,

@@ -2,14 +2,18 @@
 // 対象ジャンルはプロジェクト直下のCLAUDE.mdを唯一の情報源とし、
 // カテゴリが増えた場合はここに追記する(未登録カテゴリはdefaultにフォールバック)。
 //
+// color は「人気」バッジ・CTA等の文字色にも使われるため、白カード上で6:1以上を満たす
+// 値にすること(scripts/check-contrast.js で実測できる)。soft はマスコットの体の塗りと
+// 共通で、scripts/generate-mascots.js の CHARACTERS と同じ値を持たせる。
+//
 // image は /public/images/category/<name>.webp を指す。元画像(PNG)は
 // scripts/generate-site-images.js のMANIFESTで管理し、`node scripts/generate-site-images.js`
 // でwebpに変換して出力する。カテゴリを追加するときは両方に追記すること。
 const CATEGORY_META = {
   "家事・時短": {
     icon: "🧹",
-    color: "#0ca678",
-    soft: "#dff7ee",
+    color: "#0b6b4f",
+    soft: "#e3f7f1",
     image: "/images/category/kaji.webp",
     description:
       "毎日の家事をラクにする段取り・時短のコツや、家事の負担を減らす道具選びをまとめています。",
@@ -17,8 +21,8 @@ const CATEGORY_META = {
   },
   "掃除": {
     icon: "🧼",
-    color: "#1c7ed6",
-    soft: "#dff0ff",
+    color: "#1663a9",
+    soft: "#e3eef7",
     image: "/images/category/souji.webp",
     description:
       "汚れの種類別の落とし方や、場所ごとの掃除の手順・洗剤の使い分けを紹介します。",
@@ -26,8 +30,8 @@ const CATEGORY_META = {
   },
   "洗濯": {
     icon: "👕",
-    color: "#3b5bdb",
-    soft: "#dfe6ff",
+    color: "#0f6b7c",
+    soft: "#e3f4f7",
     image: "/images/category/sentaku.webp",
     description:
       "洗剤の選び方・干し方・シミ抜き・部屋干しのニオイ対策など、洗濯の困りごとを解決します。",
@@ -35,8 +39,8 @@ const CATEGORY_META = {
   },
   "収納・片づけ": {
     icon: "🗂️",
-    color: "#ae3ec9",
-    soft: "#f5e3fb",
+    color: "#9932b2",
+    soft: "#f3e3f7",
     image: "/images/category/shuno.webp",
     description:
       "散らかりにくい収納の考え方と、部屋別・アイテム別の片づけ方法をまとめています。",
@@ -44,8 +48,8 @@ const CATEGORY_META = {
   },
   "節約・家計": {
     icon: "💰",
-    color: "#e8590c",
-    soft: "#ffe8d9",
+    color: "#a94109",
+    soft: "#f7eae3",
     image: "/images/category/setsuyaku.webp",
     description:
       "食費・光熱費・固定費の見直しなど、無理なく続けられる節約と家計管理の方法を紹介します。",
@@ -53,8 +57,8 @@ const CATEGORY_META = {
   },
   "食・料理": {
     icon: "🍳",
-    color: "#d6336c",
-    soft: "#ffe3ec",
+    color: "#b92559",
+    soft: "#f7e3ea",
     image: "/images/category/ryori.webp",
     description:
       "作り置き・時短レシピ・食材の保存方法など、毎日のごはんづくりを助ける情報をまとめています。",
@@ -62,8 +66,8 @@ const CATEGORY_META = {
   },
   "住まい・インテリア": {
     icon: "🛋️",
-    color: "#f08c00",
-    soft: "#fff3d6",
+    color: "#8f5300",
+    soft: "#f7efe3",
     image: "/images/category/sumai.webp",
     description:
       "模様替え・レイアウト・住環境の整え方など、暮らしやすい部屋づくりのヒントを紹介します。",
@@ -71,8 +75,8 @@ const CATEGORY_META = {
   },
   "生活家電": {
     icon: "🔌",
-    color: "#087f5b",
-    soft: "#d8f5e9",
+    color: "#4a5568",
+    soft: "#eaecf0",
     image: "/images/category/kaden.webp",
     description:
       "洗濯機・掃除機・調理家電など、生活家電のタイプ別の違いと選び方・使い方をまとめています。",
@@ -80,8 +84,8 @@ const CATEGORY_META = {
   },
   "暮らしの知恵": {
     icon: "💡",
-    color: "#5c7cfa",
-    soft: "#e5ebff",
+    color: "#33429e",
+    soft: "#e4e7f6",
     image: "/images/category/chie.webp",
     description:
       "手続き・防災・日用品の選び方など、知っておくと暮らしがラクになる基礎知識を紹介します。",
@@ -89,8 +93,8 @@ const CATEGORY_META = {
   },
   "睡眠・休息": {
     icon: "🌙",
-    color: "#7048e8",
-    soft: "#ede6fd",
+    color: "#693fe7",
+    soft: "#e8e3f7",
     image: "/images/category/suimin.webp",
     description:
       "寝具や寝室の環境づくり、休息の取り方など、毎日のコンディションを整える情報をまとめています。",

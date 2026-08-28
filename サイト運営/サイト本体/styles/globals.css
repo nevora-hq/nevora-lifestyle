@@ -1,6 +1,6 @@
 :root {
-  --color-primary: #2a6244;
-  --color-primary-dark: #1e4e36;
+  --color-primary: #25573c;
+  --color-primary-dark: #1a4530;
   --color-primary-light: #e4efe4;
   --color-primary-surface: #f2f8f3;
   /* 汎用4type(steps/checklist/summaryCard/compareCards)+セクション交互化の既定色。
@@ -14,8 +14,11 @@
   --color-surface: #fff;
   --color-border: #ececec;
   --color-text: #24242b;
-  --color-text-muted: #6b7280;
-  --color-text-faint: #9ca3af;
+  /* 補助テキストの2色。淡いティント背景(ヘッダー/フッター/帯)の上でも6:1以上を
+     保てる値まで暗くしてある(2026-08-28、実ピクセル方式の実測で是正)。
+     色の濃さでの階層づけは限界があるため、強弱は文字サイズ・太さでつける。 */
+  --color-text-muted: #3f434c;
+  --color-text-faint: #4a4e58;
   /* 断面/構造図型・深さ比較型(chart type: crossSection/depthComparison)の
      既定色。記事側でpart.fill等を明示指定すればここを上書きできる(2026-08-13追加)。 */
   --diagram-skin: #f4e4d0;
@@ -30,7 +33,7 @@
   --radius-lg: 16px;
   --shadow-sm: 0 1px 2px rgba(20, 20, 30, 0.05);
   --shadow-md: 0 6px 20px rgba(20, 20, 30, 0.07);
-  --shadow-hover: 0 10px 28px rgba(42, 98, 68, 0.14);
+  --shadow-hover: 0 10px 28px rgba(37, 87, 60, 0.14);
   --transition: 180ms ease;
 }
 
@@ -108,7 +111,7 @@ img {
 /* ---- Header ----
    同系色の水色グラデーション+ごく薄い水玉模様を全ページ共通で敷く。 */
 .site-header {
-  background-image: radial-gradient(rgba(42, 98, 68, 0.12) 1px, transparent 1.6px),
+  background-image: radial-gradient(rgba(37, 87, 60, 0.12) 1px, transparent 1.6px),
     linear-gradient(120deg, rgba(232, 240, 229, 0.92), rgba(243, 249, 242, 0.92));
   background-size: 16px 16px, 100% 100%;
   background-repeat: repeat, no-repeat;
@@ -349,7 +352,7 @@ img {
   color: var(--color-text-faint);
   font-size: 0.85rem;
   border-top: 1px solid var(--color-border);
-  background-image: radial-gradient(rgba(42, 98, 68, 0.1) 1px, transparent 1.6px),
+  background-image: radial-gradient(rgba(37, 87, 60, 0.1) 1px, transparent 1.6px),
     linear-gradient(160deg, rgba(243, 249, 242, 1), rgba(232, 240, 229, 1));
   background-size: 18px 18px, 100% 100%;
   background-repeat: repeat, no-repeat;
@@ -644,6 +647,11 @@ img {
   font-size: 0.62rem;
   font-weight: 700;
   color: #fff;
+  /* 写真の明るい部分(木のテーブル等)の上でも6:1以上を保つため、
+     影だけに頼らず暗いピルを敷く(2026-08-28、実測5.3:1だったため是正)。 */
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.62);
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
@@ -716,7 +724,8 @@ img {
   line-height: 1.4;
   padding: 4px 16px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.35);
+  /* 写真の明るさに関係なく白文字が6:1以上になる濃さ(0.35だと明るい写真で4.9:1) */
+  background: rgba(0, 0, 0, 0.62);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
@@ -1079,7 +1088,9 @@ img {
   right: 12px;
   padding: 3px 10px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92);
+  /* 写真の上に乗るバッジ。半透明だと下の写真が透けて文字のコントラストが
+     カテゴリごとに変わるため、不透明の白で固定する。 */
+  background: #fff;
   color: var(--cat-color, var(--color-primary));
   font-size: 0.68rem;
   font-weight: 700;
@@ -2998,7 +3009,9 @@ h1.page-title {
 .not-found .not-found-code {
   font-size: 3rem;
   font-weight: bold;
-  color: var(--color-primary-light);
+  /* 装飾的な大きい数字だが、読み上げ・視認の対象なので淡色にはしない
+     (2026-08-28、実ピクセル方式の実測で1.18:1だったため是正)。 */
+  color: var(--color-primary-dark);
   margin: 0;
 }
 

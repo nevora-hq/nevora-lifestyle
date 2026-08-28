@@ -1,13 +1,12 @@
 <svg viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="マスコットキャラクター マナミンちゃん(まとめポーズ)">
-  <ellipse cx="120" cy="215" rx="55" ry="10" fill="#7039d0" opacity="0.08"/>
-  <path d="M120 30 C 165 85, 185 125, 185 150 C 185 188, 155 210, 120 210 C 85 210, 55 188, 55 150 C 55 125, 75 85, 120 30 Z" fill="#ede6f9" stroke="#7039d0" stroke-width="6" stroke-linejoin="round"/>
-  <circle cx="86" cy="150" r="10" fill="#7039d0" opacity="0.35"/>
-  <circle cx="154" cy="150" r="10" fill="#7039d0" opacity="0.35"/>
-  <path d="M91 132 Q98 124 105 132" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <path d="M135 132 Q142 124 149 132" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <path d="M104 156 Q120 174 136 156" stroke="#7039d0" stroke-width="4" fill="none" stroke-linecap="round"/>
-  <path d="M150 100 L172 94 L194 100 L194 122 L172 116 L150 122 Z" fill="#9de029"/><line x1="172" y1="94" x2="172" y2="116" stroke="#fff" stroke-width="2" opacity="0.6"/><path d="M184 94 L184 82 L190 88 L196 82 L196 98 Z" fill="#9de029"/><circle cx="70" cy="95" r="4" fill="#9de029"/>
-  <path d="M178 178 q22 -6 30 -30" stroke="#7039d0" stroke-width="6" fill="none" stroke-linecap="round"/>
-  <path d="M200 138 l5 12 12 5 -12 5 -5 12 -5 -12 -12 -5 12 -5 z" fill="#9de029"/>
-  <path d="M62 178 q-18 4 -22 20" stroke="#7039d0" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="120" cy="231" rx="52" ry="8" fill="#33429e" opacity="0.10"/>
+  <path d="M104 205 q-7 13 -3 22" stroke="#33429e" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M136 205 q7 13 3 22" stroke="#33429e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M120 26 C 165 82, 186 124, 186 150 C 186 189, 156 211, 120 211 C 84 211, 54 189, 54 150 C 54 124, 75 82, 120 26 Z" fill="#e4e7f6" stroke="#33429e" stroke-width="6" stroke-linejoin="round"/>
+  <rect x="150" y="72" width="11" height="11" rx="2" fill="#ffffff"/>
+  <ellipse cx="86" cy="157" rx="14" ry="9" fill="#abb3e3"/><ellipse cx="154" cy="157" rx="14" ry="9" fill="#abb3e3"/>
+  <path d="M90 143 Q98 134 106 143" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M134 143 Q142 134 150 143" stroke="#24242b" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M106 158 Q120 173 134 158" stroke="#24242b" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+  <path d="M66 180 q-20 18 -48 12" stroke="#33429e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M174 180 q20 18 48 12" stroke="#33429e" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <g transform="translate(182 146) scale(0.85)"><rect x="4" y="6" width="32" height="28" rx="4" fill="#e4e7f6" stroke="#33429e" stroke-width="4"/><path d="M12 15 H28 M12 21 H28 M12 27 H22" stroke="#33429e" stroke-width="3" stroke-linecap="round"/></g>
 </svg>

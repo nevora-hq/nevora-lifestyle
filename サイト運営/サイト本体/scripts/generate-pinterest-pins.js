@@ -54,13 +54,13 @@ const BOARD_BY_CATEGORY = {
 // カテゴリ → 担当マスコット。lib/categoryMascot.js の CATEGORY_MASCOTS と同じ対応。
 // (同ファイルはESMでNode CLIからそのままrequireできないため、画像パスと名前だけ持つ)
 const MASCOT_BY_CATEGORY = {
-  "家事・時短": { file: "karumin", name: "カルミン" },
-  "掃除": { file: "hikamin", name: "ヒカミン" },
-  "洗濯": { file: "saramin", name: "サラミン" },
-  "収納・片づけ": { file: "kurumin", name: "クルミン" },
-  "節約・家計": { file: "kiramin", name: "キラミン" },
-  "食・料理": { file: "mochimin", name: "モチミン" },
-  "住まい・インテリア": { file: "iromin", name: "イロミン" },
+  "家事・時短": { file: "tekimin", name: "テキミン" },
+  "掃除": { file: "pikamin", name: "ピカミン" },
+  "洗濯": { file: "fuwamin", name: "フワミン" },
+  "収納・片づけ": { file: "hakomin", name: "ハコミン" },
+  "節約・家計": { file: "yarikumin", name: "ヤリクミン" },
+  "食・料理": { file: "nabemin", name: "ナベミン" },
+  "住まい・インテリア": { file: "sumimin", name: "スミミン" },
   "生活家電": { file: "denmin", name: "デンミン" },
   "暮らしの知恵": { file: "manamin", name: "マナミン" },
   "睡眠・休息": { file: "nemumin", name: "ネムミン" },
