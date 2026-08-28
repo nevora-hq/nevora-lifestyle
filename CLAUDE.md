@@ -69,3 +69,24 @@ Next.js(React)+ GitHub + Vercel(無料ホスティング・自動デプロイ)�
 - 改行コードはLFとする
 - 定義を変更したら、必ずVS Codeを完全に再起動してから記事作業に入る
 - git worktree が残っていると同名衝突で定義が読まれなくなる。エージェントが呼べない場合はまず `git worktree list` を確認する
+
+## 再開時の残作業(2026-08-28クローズ時点)
+
+サイトの構築は完了し、公開待ちの状態でクローズした。記事は0件。再開時は次の4点を反映してから公開する。
+
+1. **GA4測定ID** … `NEXT_PUBLIC_GA_MEASUREMENT_ID` が未設定。美容サイトの測定IDが残っていたため無効化済み(放置すると生活サイトのアクセスが美容サイト側に計上される)
+2. **GSC所有権確認タグ** … `NEXT_PUBLIC_GSC_VERIFICATION` が未設定(`pages/_document.js` が参照)
+3. **問い合わせのメール直行化** … Formspreeは廃止する方針。`nevora01123@gmail.com` へのmailtoを主動線にするよう `pages/contact.js` を組み替える(未設定時にmailtoへフォールバックする実装は既にある)
+4. **公開切替** … Vercelに `NEXT_PUBLIC_ALLOW_INDEX=1` を設定して再デプロイ。手順は `docs/rollout-noindex-and-image-convention.md` A-6節
+
+**独自ドメインは当面取得しない。** `https://nevora-lifestyle.vercel.app` のまま公開する(`NEXT_PUBLIC_SITE_URL` 設定済み)。
+
+### 生成物の再作成コマンド
+
+| 対象 | コマンド | 定義元 |
+|---|---|---|
+| マスコットSVG(34枚) | `npm run mascots` | `scripts/generate-mascots.js` |
+| ロゴ・ファビコン一式 | `npm run brand` | 上のSVGから書き出し |
+| OGP画像 | `npm run ogp` | 同上 |
+| トップページの写真 | `node scripts/generate-site-images.js` | 画像ライブラリの`ホームページ用` |
+| コントラスト監査 | `npm run check:contrast` | 実ピクセル方式・基準6:1 |
