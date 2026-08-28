@@ -16,7 +16,7 @@ const OUT = path.join(__dirname, "..", "public", "images", "ogp.png");
 const MASCOT_DIR = path.join(__dirname, "..", "public", "images", "mascot");
 
 // 中央に大きく置くメイン + 左右に小さく置くサブ(存在するファイルだけ使う)
-const MASCOTS = { main: "nevomin-normal.svg", left: "karumin-normal.svg", right: "kiramin-normal.svg" };
+const MASCOTS = { main: "kuramin-normal.png", left: "karumin-normal.svg", right: "kiramin-normal.svg" };
 
 // styles/globals.css の :root と対応
 const COLOR = {
@@ -36,7 +36,8 @@ const LEAD = "家事・掃除・洗濯・収納・節約・料理の暮らし情
 function dataUri(file) {
   const p = path.join(MASCOT_DIR, file);
   if (!fs.existsSync(p)) return null;
-  return "data:image/svg+xml;base64," + fs.readFileSync(p).toString("base64");
+  const mime = file.endsWith(".svg") ? "image/svg+xml" : "image/png";
+  return `data:${mime};base64,` + fs.readFileSync(p).toString("base64");
 }
 
 function html() {
