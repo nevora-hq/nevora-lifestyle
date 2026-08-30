@@ -166,6 +166,32 @@ async function measurePage(page, slug) {
       }
       return false;
     }
+    // 描画されていない(=読者に見えない)テキストのスキップ(2026-08-30追加)。
+    // 見えない文字は視覚的に衝突しようがないため、衝突判定の候補から外す。
+    // 幾何計算はあくまで座標のみを見るため、fill: noneやopacity: 0のテキストを
+    // そのままにすると「画面上は何も見えないのにCOLLISIONが立つ」誤検知になる
+    // (2026-08-30、ピクセル差分方式との突き合わせ検証で判明した4クラスのうち3件)。
+    // visibilityは継承プロパティなのでcomputed値だけで祖先の指定も反映されるが、
+    // opacityは継承しないため祖先を遡って確認する。
+    // 不透明な図形に覆われて見えないケースは、text-shape-overlapや
+    // ancestor-clipが拾う領域のため、ここでは対象にしない。
+    function isInvisibleText(el) {
+      try {
+        const cs = getComputedStyle(el);
+        if (cs.visibility === "hidden" || cs.display === "none") return true;
+        if (cs.fill === "none") return true;
+        let node = el;
+        while (node && node.nodeType === 1) {
+          const o = parseFloat(getComputedStyle(node).opacity);
+          if (Number.isFinite(o) && o === 0) return true;
+          if (node.tagName && node.tagName.toLowerCase() === "svg") break;
+          node = node.parentElement;
+        }
+        return false;
+      } catch (e) {
+        return false;
+      }
+    }
     // 同一の<g>グループ内にある(=セットで配置されたラベルと図形)かどうか
     function sharesGroup(textEl, shapeEl) {
       const g = shapeEl.closest && shapeEl.closest("g");
@@ -290,6 +316,15 @@ async function measurePage(page, slug) {
     // ハードコードSVGは検査対象から漏れていた)。
     // テキスト×図形の候補(矩形近似で拾い、最後に実インク判定で確定させる)
     const textShapeCandidates = [];
+    // テキスト同士の衝突候補(2026-08-30、同じく実インク判定で確定させる方式へ変更)。
+    // 従来はここで即results.pushしていたが、<text>のgetBoundingClientRect()は
+    // 文字列全体を包む矩形であり、行末の余白や全角/半角混在時の字間まで含むため、
+    // 「矩形の余白同士がかすっているだけで、実際のグリフは重なっていない」ケースを
+    // 大量に誤検知していた。text-shape-overlap側と同じconfirmInkOverlap系の
+    // ヒットテスト(SVG<text>の既定pointer-events:visiblePaintedにより、
+    // グリフが実際に描画された箇所でのみelementsFromPointに現れる性質を利用)で
+    // 確定させる。data-allow-overlapによる除外もあわせて適用する。
+    const collisionCandidates = [];
     const svgs = document.querySelectorAll(".article-body svg, .worry-body svg");
     svgs.forEach((svg, svgIndex) => {
       const svgRect = svg.getBoundingClientRect();
@@ -340,9 +375,15 @@ async function measurePage(page, slug) {
       });
 
       for (let i = 0; i < boxes.length; i += 1) {
+        if (hasAllowOverlap(boxes[i].el) || isInvisibleText(boxes[i].el)) continue;
         for (let j = i + 1; j < boxes.length; j += 1) {
+          if (hasAllowOverlap(boxes[j].el) || isInvisibleText(boxes[j].el)) continue;
           if (rectsOverlap(boxes[i].rect, boxes[j].rect)) {
-            results.push({ type: "collision", svgIndex, textA: boxes[i].text, textB: boxes[j].text });
+            collisionCandidates.push({
+              textElA: boxes[i].el,
+              textElB: boxes[j].el,
+              finding: { type: "collision", svgIndex, textA: boxes[i].text, textB: boxes[j].text },
+            });
           }
         }
       }
@@ -493,6 +534,106 @@ async function measurePage(page, slug) {
     }
     textShapeCandidates.forEach((c) => {
       if (confirmInkOverlap(c.textEl, c.shapeEl)) results.push(c.finding);
+    });
+
+    // (B2) テキスト同士の実インク確認パス(2026-08-30追加)。
+    //
+    // text-shape-overlap側のconfirmInkOverlap(elementsFromPointによるヒットテスト)は
+    // テキスト同士には転用できない。Chromiumは<text>をレイアウトボックス全体で
+    // ヒットテストするため、グリフの無い末尾空白の座標でもその<text>がスタックに
+    // 現れ、getBoundingClientRectと同じ粒度にしかならない(2026-08-30に実測で確認)。
+    // path/circle等の図形はstrokeの描画形状でヒットテストされるため有効だが、
+    // テキストには効かない、という非対称性がある。
+    //
+    // 代わりに、文字単位の実インク矩形を組み立てて比較する:
+    //   横 … getExtentOfChar(i)の送り幅ボックス。空白文字は読み飛ばすため、
+    //        「末尾/先頭の空白や字間だけがかすっている」誤検知が落ちる
+    //   縦 … canvasのmeasureTextが返すactualBoundingBoxAscent/Descent。
+    //        <text>のbbox高さは行ボックス(font-size 14pxで21px)固定であり、
+    //        ascent/descentの余白まで含むため、隣接行が「重なっている」と
+    //        誤判定される。ベースライン(getStartPositionOfChar)を基準に
+    //        実際のグリフの上端/下端だけを取ることでこれを解消する
+    // 座標はいずれもユーザー空間の値なので、getScreenCTMで画面座標へ変換する。
+    //
+    // 測定に必要なAPIが揃わない場合(getScreenCTMがnull、文字数0、フォント計測が
+    // NaN等)はnullを返し、呼び出し側は従来どおりbbox判定の結果を採用する。
+    // 誤検知の削減が目的であり、新たな検出漏れを生むことは避ける。
+    let inkCtx = null;
+    function inkContext() {
+      if (!inkCtx) inkCtx = document.createElement("canvas").getContext("2d");
+      return inkCtx;
+    }
+    function textInkRects(el) {
+      try {
+        const n = el.getNumberOfChars();
+        if (!n) return null;
+        const ctm = el.getScreenCTM();
+        if (!ctm) return null;
+        const svg = el.ownerSVGElement;
+        if (!svg || !svg.createSVGPoint) return null;
+        const cs = getComputedStyle(el);
+        const ctx = inkContext();
+        if (!ctx) return null;
+        // SVG内のcomputed font-sizeはユーザー空間のpx値。measureTextの返す
+        // ascent/descentも同じ単位系になるため、CTM変換前の値として扱える。
+        ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+        const str = el.textContent || "";
+        const pt = svg.createSVGPoint();
+        const toScreen = (x, y) => {
+          pt.x = x;
+          pt.y = y;
+          return pt.matrixTransform(ctm);
+        };
+        const rects = [];
+        for (let i = 0; i < n; i += 1) {
+          const ch = str[i];
+          // 空白文字はインクを持たないので比較対象から外す
+          if (!ch || !ch.trim()) continue;
+          const ext = el.getExtentOfChar(i);
+          const base = el.getStartPositionOfChar(i);
+          const m = ctx.measureText(ch);
+          const asc = m.actualBoundingBoxAscent;
+          const desc = m.actualBoundingBoxDescent;
+          if (!Number.isFinite(asc) || !Number.isFinite(desc)) return null;
+          // 全角スペース等でインクが無い場合も比較対象から外す
+          if (asc + desc <= 0 || ext.width <= 0) continue;
+          const x0 = ext.x;
+          const x1 = ext.x + ext.width;
+          const y0 = base.y - asc;
+          const y1 = base.y + desc;
+          // 回転が掛かっている場合も破綻しないよう、4隅を変換してから外接矩形を取る
+          const corners = [toScreen(x0, y0), toScreen(x1, y0), toScreen(x0, y1), toScreen(x1, y1)].map((p) => ({
+            x: p.x,
+            y: p.y,
+          }));
+          const xs = corners.map((p) => p.x);
+          const ys = corners.map((p) => p.y);
+          rects.push({
+            left: Math.min.apply(null, xs),
+            right: Math.max.apply(null, xs),
+            top: Math.min.apply(null, ys),
+            bottom: Math.max.apply(null, ys),
+          });
+        }
+        return rects.length ? rects : null;
+      } catch (e) {
+        return null;
+      }
+    }
+    function confirmTextInkOverlap(aEl, bEl) {
+      const ra = textInkRects(aEl);
+      const rb = textInkRects(bEl);
+      // 計測できなければ従来どおりbbox判定を採用する(検出漏れを作らない)
+      if (!ra || !rb) return true;
+      for (let i = 0; i < ra.length; i += 1) {
+        for (let j = 0; j < rb.length; j += 1) {
+          if (rectsOverlap(ra[i], rb[j])) return true;
+        }
+      }
+      return false;
+    }
+    collisionCandidates.forEach((c) => {
+      if (confirmTextInkOverlap(c.textElA, c.textElB)) results.push(c.finding);
     });
 
     return results;
