@@ -64,12 +64,24 @@ jobs:
           TZ: Asia/Tokyo
         run: |
           set -o pipefail
-          # 確定稿・公開済みの全スラッグをLFで書き出す
+          # 確定稿の全スラッグをLFで書き出す
           # (CRLFのままだとURLに%0Dが付いて全記事404になる。2026-08-24に実際に踏んだ)
-          ls ../記事データ/確定稿 ../記事データ/公開済み \
-            | grep '\.md$' | sed 's/\.md$//' | tr -d '\r' | sort -u > /tmp/slugs.txt
+          # このリポジトリは公開後も記事を確定稿に置いたままにする運用のため、走査先はここだけ。
+          # 確定稿が無い・0件は「記事が消えた/フォルダ名が変わった」異常なので、
+          # 静かに成功させず失敗させる(週次CIが検査ゼロのままグリーンで通り続けるのを防ぐ)。
+          src=../記事データ/確定稿
+          if [ ! -d "$src" ]; then
+            echo "::error::${src} が存在しません" >&2
+            exit 1
+          fi
+          find "$src" -maxdepth 1 -type f -name '*.md' -printf '%f\n' \
+            | sed 's/\.md$//' | tr -d '\r' | sort -u > /tmp/slugs.txt
           total=$(wc -l < /tmp/slugs.txt)
           echo "対象 ${total} 記事"
+          if [ "$total" -eq 0 ]; then
+            echo "::error::${src} に対象記事がありません" >&2
+            exit 1
+          fi
           split -l 33 /tmp/slugs.txt /tmp/batch_
           fail=0
           : > /tmp/item35.log
