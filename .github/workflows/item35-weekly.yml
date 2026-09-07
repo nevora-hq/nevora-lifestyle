@@ -33,13 +33,15 @@ jobs:
       # ローカルでは .env.local から読まれるが、同ファイルはgit管理外のためCIには無い。
       NEXT_PUBLIC_SITE_URL: https://nevora-lifestyle.vercel.app
     steps:
-      # メンテ課題(2026-08-25): actions/checkout@v4・setup-node@v4 は Node.js 20 で動作し、
-      # 実行時に deprecation 警告が出る。失敗要因ではないため据え置き。将来 v5 系へ更新する。
-      - uses: actions/checkout@v4
+      # 各アクションは node24 ランタイムで動くメジャーへ更新済み(2026-09-07)。
+      # node20 ランタイムのメジャー(checkout@v4、setup-node@v4、
+      # upload-artifact@v4・v5、github-script@v7)は実行時に deprecation 警告が出る。
+      # upload-artifact は v5 もまだ node20 なので、v4→v5 では警告が消えない点に注意。
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
           cache-dependency-path: サイト運営/サイト本体/package-lock.json
 
@@ -115,7 +117,7 @@ jobs:
 
       - name: 検出ログを成果物として保存
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: item35-log
           path: /tmp/item35.log
@@ -123,7 +125,7 @@ jobs:
 
       - name: 失敗時にIssueを立てる
         if: failure()
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         env:
           SUMMARY: ${{ steps.verify.outputs.summary }}
         with:
