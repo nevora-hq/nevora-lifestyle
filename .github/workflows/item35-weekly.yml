@@ -49,7 +49,14 @@ jobs:
 
       - name: Chromiumのインストール
         working-directory: サイト運営/サイト本体
-        run: npx playwright install --with-deps chromium
+        # --no-install は「レジストリから取ってこず、node_modules のCLIだけを使う」意味。
+        # これを付けないと npx がレジストリの最新版playwrightを都度取得し、
+        # devDependenciesのplaywright-coreが期待するブラウザリビジョンとズレて
+        # 「Executable doesn't exist at .../chromium_headless_shell-XXXX/...」で落ちる。
+        # そのため playwright / playwright-core は同一バージョンで完全固定している。
+        run: |
+          npx --no-install playwright --version
+          npx --no-install playwright install --with-deps chromium
 
       - name: ビルド(prebuildでsync-contentが走る)
         working-directory: サイト運営/サイト本体
