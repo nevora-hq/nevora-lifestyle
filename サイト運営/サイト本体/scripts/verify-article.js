@@ -976,6 +976,40 @@ function checkItem16(ctx) {
   // サムネイル未設定のまま検証をすり抜けた事例を受けて機械検査に追加)。
   if (!fm.thumbnail || String(fm.thumbnail).trim() === "") {
     violations.push({ field: "thumbnail", issue: "空または未設定" });
+  } else {
+    // thumbnailの文字列が空でなくても、参照先のwebpファイルが
+    // public/images/articles/配下に実在するとは限らない(image-placerによる
+    // 実ファイル配置を伴わずfrontmatterにパスだけ書かれるケース)。
+    // 2026-09-09、「火事の原因は家の中と外で違う」記事でサムネイルパスが
+    // 存在しないファイルを指しており、公開後に画像リンク切れが判明した事例を
+    // 受けて追加(過去の項目16はパス文字列の有無しか見ておらず、
+    // 実ファイルの有無までは検証していなかった)。
+    const thumbPath = String(fm.thumbnail).trim();
+    if (thumbPath.startsWith("/images/")) {
+      const resolved = path.join(__dirname, "..", "public", thumbPath);
+      if (!fs.existsSync(resolved)) {
+        violations.push({
+          field: "thumbnail",
+          issue: `参照先ファイルが存在しない(public${thumbPath})`,
+        });
+      }
+    }
+  }
+
+  // 本文中の![alt](/images/articles/...)も同様に、パスが存在するかを確認する
+  // (thumbnailと同じ原因〔image-placerの実配置漏れ〕が本文画像でも起こり得るため)。
+  const bodyImageRe = /!\[[^\]]*\]\((\/images\/articles\/[^)\s]+)\)/g;
+  const rawBodyText = (ctx.bodyRawLines || ctx.bodyLines || []).join("\n");
+  let m;
+  while ((m = bodyImageRe.exec(rawBodyText)) !== null) {
+    const imgPath = m[1];
+    const resolved = path.join(__dirname, "..", "public", imgPath);
+    if (!fs.existsSync(resolved)) {
+      violations.push({
+        field: "body image",
+        issue: `参照先ファイルが存在しない(public${imgPath})`,
+      });
+    }
   }
 
   return {
