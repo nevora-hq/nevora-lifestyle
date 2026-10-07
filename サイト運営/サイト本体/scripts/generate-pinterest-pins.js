@@ -32,7 +32,7 @@ const BASE_URL = `http://127.0.0.1:${PORT}`;
 const SITE_URL = "https://nevora-lifestyle.vercel.app";
 const ARTICLES_DIR = path.join(__dirname, "..", "content", "articles");
 // リポジトリ直下(サイト運営/サイト本体 から2つ上)に出力する。
-const OUT_DIR = path.join(__dirname, "..", "..", "..", "pinterest-pins");
+const OUT_DIR = path.join(__dirname, "..", "..", "..", "pinterest-pins-生活");
 
 const PIN_WIDTH = 1000;
 const PIN_HEIGHT = 1500;
@@ -294,13 +294,13 @@ function buildPinInPage(opts) {
   // --- 1) 上部: タイトル帯(〜350px) ---
   const head = document.createElement("div");
   head.style.cssText =
-    "height:350px;flex:0 0 350px;background:#fff5f8;border-bottom:6px solid #d6336c;" +
+    "height:350px;flex:0 0 350px;background:#f2f8f3;border-bottom:6px solid #25573c;" +
     "box-sizing:border-box;padding:40px 60px;display:flex;flex-direction:column;" +
     "align-items:center;justify-content:center;gap:16px;";
   const cat = document.createElement("div");
   cat.textContent = category;
   cat.style.cssText =
-    "font-family:var(--font-sans);font-size:30px;font-weight:700;color:#fff;background:#d6336c;" +
+    "font-family:var(--font-sans);font-size:30px;font-weight:700;color:#fff;background:#25573c;" +
     "padding:6px 24px;border-radius:999px;letter-spacing:.04em;";
   const h = document.createElement("div");
   h.textContent = title;
@@ -325,7 +325,7 @@ function buildPinInPage(opts) {
   // --- 3) 下部: サイト名 + マスコット + ドメイン(〜250px) ---
   const foot = document.createElement("div");
   foot.style.cssText =
-    "height:250px;flex:0 0 250px;background:#d6336c;box-sizing:border-box;" +
+    "height:250px;flex:0 0 250px;background:#25573c;box-sizing:border-box;" +
     "padding:40px 60px;display:flex;align-items:center;justify-content:space-between;gap:32px;";
   const brand = document.createElement("div");
   brand.style.cssText = "display:flex;flex-direction:column;gap:10px;";
@@ -348,7 +348,7 @@ function buildPinInPage(opts) {
   const bdomain = document.createElement("div");
   bdomain.textContent = domain;
   bdomain.style.cssText =
-    "font-family:var(--font-sans);font-size:28px;font-weight:500;color:#ffe3ec;letter-spacing:.04em;white-space:nowrap;";
+    "font-family:var(--font-sans);font-size:28px;font-weight:500;color:#dcebe0;letter-spacing:.04em;white-space:nowrap;";
   brand.appendChild(bname);
   brand.appendChild(bdomain);
   const mascot = document.createElement("img");
