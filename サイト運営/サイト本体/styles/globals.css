@@ -3532,6 +3532,31 @@ table.admin-table td {
   padding-left: 1.2em;
 }
 
+/* 通常のチェックリスト(診断版以外)は黒丸をやめ、各項目の左にチェックボックスの四角を描く。 */
+.chart-checklist ul:not(.chart-checklist-list-diagnostic) {
+  list-style: none;
+  padding-left: 0;
+}
+
+.chart-checklist ul:not(.chart-checklist-list-diagnostic) > li {
+  position: relative;
+  padding-left: 1.9em;
+  margin: 0 0 6px;
+}
+
+.chart-checklist ul:not(.chart-checklist-list-diagnostic) > li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 1.1em;
+  height: 1.1em;
+  box-sizing: border-box;
+  border: 2px solid var(--chart-accent);
+  border-radius: 4px;
+  background: var(--color-surface);
+}
+
 .chart-checklist-note {
   font-size: 0.78rem;
   color: var(--color-text-muted);
@@ -3947,3 +3972,64 @@ table.admin-table td {
   margin-top: 0;
 }
 
+
+
+/* NEVORAポイント / 注意ボックス(lib/posts.jsが「> 💡 NEVORAポイント」「> ⚠️ 注意」の
+   引用ブロックから変換する)。本文と区別できる色付き背景+左の太線。
+   文字色はいずれも背景上で6:1以上。 */
+.nevora-point-box,
+.warning-box {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  margin: 1.6em 0;
+  padding: 16px 18px;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.nevora-point-box {
+  background: var(--color-primary-light);
+  border: 1px solid #b9d3bf;
+  border-left: 5px solid var(--color-primary);
+}
+
+.warning-box {
+  background: #fff3de;
+  border: 1px solid #e3b878;
+  border-left: 5px solid #b4691a;
+}
+
+.nevora-point-icon,
+.warning-box-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.nevora-point-label,
+.warning-box-label {
+  margin: 0 0 4px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  line-height: 1.6;
+}
+
+.nevora-point-label {
+  color: var(--color-primary-dark);
+}
+
+.warning-box-label {
+  color: #6e3d0c;
+}
+
+.nevora-point-body,
+.warning-box-body {
+  min-width: 0;
+}
+
+.nevora-point-body p:last-child,
+.warning-box-body p:last-child {
+  margin: 0;
+  line-height: 1.8;
+}
