@@ -33,14 +33,14 @@ jobs:
       # ローカルでは .env.local から読まれるが、同ファイルはgit管理外のためCIには無い。
       NEXT_PUBLIC_SITE_URL: https://nevora-lifestyle.vercel.app
     steps:
-      # 各アクションは node24 ランタイムで動くメジャーへ更新済み(2026-09-07)。
-      # node20 ランタイムのメジャー(checkout@v4、setup-node@v4、
-      # upload-artifact@v4・v5、github-script@v7)は実行時に deprecation 警告が出る。
-      # upload-artifact は v5 もまだ node20 なので、v4→v5 では警告が消えない点に注意。
+      # 2026-09-07: Node.js 20 ランタイムの deprecation 警告を解消するため、
+      # 各アクションを最新メジャー(node24 ランタイム)へ揃えた。
       - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v7
         with:
+          # Node.js 20 は 2026-04 にEOL。next(>=20.9) / sharp(>=20.9) /
+          # playwright-core(>=20)いずれも満たし、ローカル開発環境(v24系)とも揃うため24にする。
           node-version: "24"
           cache: npm
           cache-dependency-path: サイト運営/サイト本体/package-lock.json
@@ -51,11 +51,12 @@ jobs:
 
       - name: Chromiumのインストール
         working-directory: サイト運営/サイト本体
-        # --no-install は「レジストリから取ってこず、node_modules のCLIだけを使う」意味。
-        # これを付けないと npx がレジストリの最新版playwrightを都度取得し、
-        # devDependenciesのplaywright-coreが期待するブラウザリビジョンとズレて
-        # 「Executable doesn't exist at .../chromium_headless_shell-XXXX/...」で落ちる。
-        # そのため playwright / playwright-core は同一バージョンで完全固定している。
+        # --no-install を付け、必ずローカル(package.json/package-lock.json)の
+        # playwright を使う。付けないと npx がレジストリから最新版CLIを取得し、
+        # そのCLIが要求するリビジョンのChromiumだけが入る一方、実行側の
+        # playwright-core は別リビジョンを探すため
+        # 「Executable doesn't exist at .../chromium_headless_shell-<rev>/...」で落ちる
+        # (2026-09-07に実際に踏んだ)。ローカルに無ければここで明示的に失敗させる。
         run: |
           npx --no-install playwright --version
           npx --no-install playwright install --with-deps chromium
@@ -103,9 +104,15 @@ jobs:
           # 種別ごとの件数を出しておく(Issue本文に載せる)
           {
             echo "対象記事数: ${total}"
-            for k in TEXT_SHAPE_OVERLAP IMAGE_CROP_RISK OVERFLOW COLLISION OFFSCREEN; do
+            for k in TEXT_SHAPE_OVERLAP IMAGE_CROP_RISK OVERFLOW COLLISION OFFSCREEN CALLOUT_OVERFLOW ANCESTOR_CLIP ANCESTOR_CLIP_TEXT; do
               echo "${k}: $(grep -c "ITEM35_${k}" /tmp/item35.log || true) 件"
             done
+            # 検出0件でも起動失敗等で落ちるケース(例: next.config.jsのoutput変更で
+            # next start/serveが起動しない)をIssue本文で区別できるようにする。
+            # 「--strict指定のため検出N件をFailとして扱います」は検出があれば
+            # 毎回出る正常時のメッセージなので除外し、起動失敗・取得失敗・
+            # 想定外の例外だけを実行エラーとして数える。
+            echo "実行エラー: $(grep -cE '^\[item35\] (.*起動に失敗|ページ取得失敗|playwright-coreが見つかりません|対象slugを1件以上指定|実行中にエラーが発生)' /tmp/item35.log || true) 件"
           } > /tmp/summary.txt
           cat /tmp/summary.txt
           {
