@@ -299,57 +299,9 @@ function checkItem2(ctx) {
 // 項目3: chartsの数
 // ---------------------------------------------------------------------------
 
-function checkItem3(ctx) {
-  const charts = Array.isArray(ctx.frontmatter.charts) ? ctx.frontmatter.charts : [];
-  const rawBody = ctx.bodyRawLines.join("\n");
-  const commentMatch = rawBody.match(/<!--\s*charts:[\s\S]*?-->/);
-
-  return {
-    id: 3,
-    name: "chartsの数",
-    result: charts.length >= 2 ? "Yes" : "No",
-    count: charts.length,
-    exemptionComment: commentMatch ? commentMatch[0].trim() : null,
-    note: commentMatch
-      ? "コメントによる申し送りあり。妥当性の判断はこのスクリプト/検証エージェントでは行わず、編集長に委ねる。"
-      : undefined,
-  };
-}
-
 // ---------------------------------------------------------------------------
 // 項目4: 装飾要素の合計使用数
 // ---------------------------------------------------------------------------
-
-function checkItem4(ctx) {
-  const fullText = ctx.bodyLines.join("\n");
-
-  const highlightMatches = fullText.match(/==((?:(?!==)[^\n])+?)==/g) || [];
-  const emotionMarkMatches = fullText.match(/\^\^((?:(?!\^\^)[^\n])+?)\^\^/g) || [];
-
-  // 絵文字・「……」は「地の文」(見出し/リスト/表/ボックス/区切り線を除く行)のみを対象にする
-  const plainTextLines = ctx.bodyLines.filter((line) => !isStructuralType(classifyLine(line)));
-  const plainText = plainTextLines.join("\n");
-
-  const emojiPattern = new RegExp(EMOTION_EMOJI.join("|"), "g");
-  const emojiMatches = plainText.match(emojiPattern) || [];
-  const ellipsisMatches = plainText.match(/…+/g) || []; // U+2026(…)の1回以上連続を1件とカウント
-
-  const breakdown = {
-    highlight: highlightMatches.length,
-    emotion: emotionMarkMatches.length,
-    emoji: emojiMatches.length,
-    ellipsis: ellipsisMatches.length,
-  };
-  const total = breakdown.highlight + breakdown.emotion + breakdown.emoji + breakdown.ellipsis;
-
-  return {
-    id: 4,
-    name: "装飾要素の合計使用数",
-    result: total >= DECORATION_TOTAL_MIN ? "Yes" : "No",
-    count: total,
-    breakdown,
-  };
-}
 
 // ---------------------------------------------------------------------------
 // NEVORAポイントブロック抽出(項目5・6で共用)
@@ -420,31 +372,6 @@ function checkItem5(ctx) {
 // 項目6: NEVORAポイント内のハイライト
 // ---------------------------------------------------------------------------
 
-function checkItem6(ctx) {
-  const blocks = findNevoraPointBlocks(ctx.bodyLines);
-  if (blocks.length === 0) {
-    return { id: 6, name: "NEVORAポイント内のハイライト", result: "Yes", violations: [], note: "NEVORAポイントなし(該当なし)" };
-  }
-
-  const violations = [];
-  for (const b of blocks) {
-    const hasHighlight = /==((?:(?!==)[^\n])+?)==/.test(b.rawContent);
-    if (!hasHighlight) {
-      violations.push({
-        startLine: toAbsoluteLine(ctx.bodyStartLine, b.startLine),
-        endLine: toAbsoluteLine(ctx.bodyStartLine, b.endLine),
-      });
-    }
-  }
-
-  return {
-    id: 6,
-    name: "NEVORAポイント内のハイライト",
-    result: violations.length === 0 ? "Yes" : "No",
-    violations,
-  };
-}
-
 // ---------------------------------------------------------------------------
 // 項目7: 連続プレーンテキストの上限(200字[全角換算]) — 廃止済み・永久欠番
 //
@@ -468,6 +395,11 @@ function checkItem6(ctx) {
 //   含めない: %%注記%%(地の文の一部としてそのまま加算する)
 // ---------------------------------------------------------------------------
 
+// 項目3・4・6・8・22・24: 廃止・永久欠番(項目7と同じく常にYesのスタブ。判定に影響しない)
+function retiredItem(id) {
+  return { id, name: "廃止・永久欠番", result: "Yes", violations: [] };
+}
+
 function checkItem7() {
   return {
     id: 7,
@@ -480,67 +412,6 @@ function checkItem7() {
 // ---------------------------------------------------------------------------
 // 項目8: H2セクションごとの視覚要素
 // ---------------------------------------------------------------------------
-
-function checkItem8(ctx) {
-  const headings = extractHeadings(ctx.bodyLines);
-  const h2s = headings.filter((h) => h.level === 2);
-
-  const charts = Array.isArray(ctx.frontmatter.charts) ? ctx.frontmatter.charts : [];
-  const accordions = Array.isArray(ctx.frontmatter.accordions) ? ctx.frontmatter.accordions : [];
-  const afterHeadingTargets = new Set(
-    [...charts, ...accordions].map((x) => (x.afterHeading || "").trim()).filter(Boolean)
-  );
-
-  // frontmatterにsummaryPointsがある記事は、pages/posts/[slug].jsが本文の直前
-  // (最初のH2より前)に「この記事で分かること」ボックスを自動描画する
-  // (summaryPoints由来、bodyLinesの範囲外)。このボックスは実質的にリード文
-  // セクションの視覚要素として機能するため、文書内で最初のH2セクションに限り、
-  // summaryPointsの存在をもって視覚要素ありとみなす。本文側で同内容の要約ボックスを
-  // 重ねて作る必要がないようにするための調整(2026-08-11、SPF・PA記事のテスト生成で
-  // 要約の二重化が指摘されたことに基づく)。
-  const hasSummaryPointsBox =
-    Array.isArray(ctx.frontmatter.summaryPoints) && ctx.frontmatter.summaryPoints.length > 0;
-
-  const violations = [];
-  h2s.forEach((h2, i) => {
-    const rangeStart = h2.line + 1;
-    const rangeEnd = i + 1 < h2s.length ? h2s[i + 1].line - 1 : ctx.bodyLines.length;
-    // H2見出し自身の直後にchart/accordionが挿入されるケース(見出しテキスト自体が
-    // afterHeadingの対象になっている場合)も視覚要素ありとして扱う
-    let hasVisual = afterHeadingTargets.has(h2.text) || (i === 0 && hasSummaryPointsBox);
-
-    for (let ln = rangeStart; ln <= rangeEnd && !hasVisual; ln++) {
-      const line = ctx.bodyLines[ln - 1];
-      if (line === undefined) continue;
-      const type = classifyLine(line);
-      if (type === "image" || type === "table" || type === "list" || type === "blockquote") {
-        hasVisual = true;
-        break;
-      }
-      if (type === "heading") {
-        const headingText = line.match(RE_HEADING)[2].trim();
-        if (afterHeadingTargets.has(headingText)) {
-          hasVisual = true;
-          break;
-        }
-      }
-    }
-
-    if (!hasVisual) {
-      violations.push({
-        heading: h2.text,
-        startLine: toAbsoluteLine(ctx.bodyStartLine, h2.line),
-      });
-    }
-  });
-
-  return {
-    id: 8,
-    name: "H2セクションごとの視覚要素",
-    result: violations.length === 0 ? "Yes" : "No",
-    violations,
-  };
-}
 
 // ---------------------------------------------------------------------------
 // 項目9: 未変換の装飾記号
@@ -1380,28 +1251,6 @@ function checkItem21(ctx) {
 // 公開されていたことが発覚したため新設)。
 // ---------------------------------------------------------------------------
 
-function checkItem22(ctx) {
-  const sources = Array.isArray(ctx.frontmatter.sources) ? ctx.frontmatter.sources : [];
-  if (sources.length === 0) {
-    return {
-      id: 22,
-      name: "検証済み出典(要人手確認でないもの)1件以上",
-      result: "N/A",
-      note: "sourcesフィールド自体を持たない記事(旧形式の出典一覧セクションのみ)は対象外。",
-    };
-  }
-  const verifiedCount = sources.filter(
-    (s) => !/要人手確認/.test(String(s.label || ""))
-  ).length;
-  return {
-    id: 22,
-    name: "検証済み出典(要人手確認でないもの)1件以上",
-    result: verifiedCount >= 1 ? "Yes" : "No",
-    verifiedCount,
-    totalCount: sources.length,
-  };
-}
-
 // ---------------------------------------------------------------------------
 // 項目23〜25: 可読性・視覚品質基準(2026-08-13、ビジョン4の検査可能化)
 //
@@ -1413,7 +1262,7 @@ function checkItem22(ctx) {
 // という2つの抜け道を検出できないため、これを補う3項目を追加する。
 // ---------------------------------------------------------------------------
 
-const CONTINUOUS_TEXT_MAX_CHARS = 300; // 2026-08-13、400字でも詰まりが体感で解消されないとの実機判定によりユーザー指示で300字へ再改訂
+const CONTINUOUS_TEXT_MAX_CHARS = 400; // 2026-10-07、ルール最新版の400字ルールに合わせる(導入は対象外・出典の印は数えない)
 
 // lib/posts.jsのEND_OF_SECTION_CHART_TYPES(embedChartsでセクション末尾に描画する
 // chart type)と同じ値を、verify-article.js側でも保持する(このスクリプトは
@@ -1515,6 +1364,10 @@ function classifyChartValue(chart) {
 // カウント対象から除外し、表示テキストのみを地の文としてカウントする
 // (2026-08-15、L1決裁)。内部リンクのスラッグ(日本語含む)がそのまま
 // カウントされ、300字ルール違反の一因になっていたため修正した。
+function stripSourceMarks(line) {
+  return line.replace(/%%出典:.*?%%/g, "");
+}
+
 function stripMarkdownLinkSyntax(line) {
   return line.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1");
 }
@@ -1557,6 +1410,7 @@ function checkItem23(ctx) {
   let flaggedForCurrentRun = false;
   let currentHeadingText = null;
   let pendingEndOfSectionReset = false;
+  let seenHeading = false; // 導入(最初の見出しより前)は数えない
 
   function reset() {
     runChars = 0;
@@ -1570,6 +1424,7 @@ function checkItem23(ctx) {
     const type = classifyLine(line);
 
     if (type === "heading") {
+      seenHeading = true;
       const m = line.match(RE_HEADING);
       const level = m ? m[1].length : 0;
       const headingText = m ? m[2].trim() : "";
@@ -1588,14 +1443,14 @@ function checkItem23(ctx) {
       reset();
       return;
     }
-    if (type === "blank" || type === "hr") return;
+    if (type === "blank" || type === "hr" || !seenHeading) return;
 
     // type === "text" または "list"(箇条書きも地の文としてカウントする)
     if (runStartLine === null) {
       runStartLine = lineNo;
       runStartHeading = currentHeadingText;
     }
-    runChars += zenkakuLength(stripMarkdownLinkSyntax(line));
+    runChars += zenkakuLength(stripMarkdownLinkSyntax(stripSourceMarks(line)));
     if (runChars >= CONTINUOUS_TEXT_MAX_CHARS && !flaggedForCurrentRun) {
       violations.push({
         heading: runStartHeading,
@@ -1613,24 +1468,7 @@ function checkItem23(ctx) {
     name: "地の文の連続文字数(400字ルール)",
     result: violations.length === 0 ? "Yes" : "No",
     violations,
-    note: `画像・チャート(図解含む)/アコーディオン・表・コールアウトボックスのいずれにも当たらないまま、地の文(箇条書き含む)が${CONTINUOUS_TEXT_MAX_CHARS}字以上連続する箇所を検出する。見出し自体(図解等が紐づいていない場合)・箇条書き自体・区切り線(hr)はリセット条件に含めない。Markdownリンク[表示テキスト](URL)はURL・角括弧・丸括弧を除いた表示テキストのみをカウントする(2026-08-15、L1決裁)。解消手段は説明内容の図解化を優先する(docs/CONTRIBUTING.md 24〜25節参照)。`,
-  };
-}
-
-function checkItem24(ctx) {
-  const charts = Array.isArray(ctx.frontmatter.charts) ? ctx.frontmatter.charts : [];
-  const classified = charts.map((c, i) => ({
-    index: i,
-    type: c.type || "(bar)",
-    afterHeading: c.afterHeading,
-    value: classifyChartValue(c),
-  }));
-  const hasHigh = classified.some((c) => c.value === "high");
-  return {
-    id: 24,
-    name: "視覚要素の質スコア(記事全体でHIGH型1つ以上)",
-    result: hasHigh ? "Yes" : "No",
-    charts: classified,
+    note: `画像・チャート(図解含む)/アコーディオン・表・コールアウトボックスのいずれにも当たらないまま、地の文(箇条書き含む)が${CONTINUOUS_TEXT_MAX_CHARS}字以上連続する箇所を検出する。見出し自体(図解等が紐づいていない場合)・箇条書き自体・区切り線(hr)はリセット条件に含めない。導入(最初の見出しより前)は対象外、出典の印%%出典:…%%は字数に数えない(2026-10-07)。Markdownリンク[表示テキスト](URL)はURL・角括弧・丸括弧を除いた表示テキストのみをカウントする(2026-08-15、L1決裁)。解消手段は説明内容の図解化を優先する(docs/CONTRIBUTING.md 24〜25節参照)。`,
   };
 }
 
@@ -2374,12 +2212,12 @@ function main() {
   const items = [
     checkItem1(ctx),
     checkItem2(ctx),
-    checkItem3(ctx),
-    checkItem4(ctx),
+    retiredItem(3),
+    retiredItem(4),
     checkItem5(ctx),
-    checkItem6(ctx),
+    retiredItem(6),
     checkItem7(), // 2026-08-14廃止・永久欠番(ユーザー決裁)。常にresult: "Yes"を返すスタブで、ブロッキング・非ブロッキングいずれの集計にも実質影響しない。地の文連続の基準は項目23〔300字ルール〕に一本化
-    checkItem8(ctx),
+    retiredItem(8),
     checkItem9(ctx),
     checkItem10(ctx),
     checkItem11(ctx),
@@ -2393,9 +2231,9 @@ function main() {
     checkItem19(ctx), // result: "N/A"、非ブロッキング(overall判定には含めない)
     checkItem20(ctx), // result: "N/A"、非ブロッキング(overall判定には含めない)
     checkItem21(ctx),
-    checkItem22(ctx),
+    retiredItem(22),
     checkItem23(ctx), // 2026-08-13、400字ルールへ改訂しブロッキング化
-    checkItem24(ctx),
+    retiredItem(24),
     checkItem25(ctx), // result: "N/A"、非ブロッキング(overall判定には含めない)
     checkItem26(ctx),
     checkItem27(ctx), // result: "N/A"、非ブロッキング(2026-08-13再改訂、候補提示のみ・overall判定には含めない)

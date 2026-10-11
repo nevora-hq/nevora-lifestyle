@@ -63,8 +63,20 @@ function normalizeAffiliateLinks(links) {
 // 区切り記号と同じ文字が内容中に1つでも現れた時点でそこで打ち切られてしまい、
 // 対応する閉じ記号まで届かず変換自体が失敗し、==や%%が生テキストとして
 // 読者に表示される不具合があった)。
+// 本文中の出典の印 %%出典:…%% は画面に出さない(出典は記事末の欄に出す)。
+// 印だけが入っていた括弧と、印の前後で重なる句読点を整える。
+const SOURCE_MARK = "%%出典[:：](?:(?!%%)[^\\n])+?%%";
+function removeSourceMarks(text) {
+  return text
+    .replace(new RegExp("[（(][ \\t　]*(?:" + SOURCE_MARK + "[ \\t　]*)+[）)]", "g"), "")
+    .replace(
+      new RegExp("([。、！？])?(?:[ \\t　]*" + SOURCE_MARK + ")+([。、]?)", "g"),
+      (_m, prev, next) => prev || next || ""
+    );
+}
+
 function applyInlineMarkup(html) {
-  return html
+  return removeSourceMarks(html)
     .replace(/==((?:(?!==)[^\n])+?)==/g, '<mark class="hl">$1</mark>')
     // (?<!\+)\+\+(?!\+) ... (?<!\+)\+\+(?!\+): "++"区切りが3つ以上連続する"+"の一部として
     // 出現している場合(例: 本文中の"PA++++"という4連続プラス表記)は区切りとして扱わない。
@@ -74,7 +86,10 @@ function applyInlineMarkup(html) {
     // (2026-08-12、SPF・PA記事のPA++++表記で発見)。
     .replace(/(?<!\+)\+\+(?!\+)([^\n]+?)(?<!\+)\+\+(?!\+)/g, '<u class="u-accent">$1</u>')
     .replace(/\^\^((?:(?!\^\^)[^\n])+?)\^\^/g, '<span class="emotion-emphasis">$1</span>')
-    .replace(/%%((?:(?!%%)[^\n])+?)%%/g, '<span class="article-note">$1</span>');
+    .replace(/%%((?:(?!%%)[^\n])+?)%%/g, '<span class="article-note">$1</span>')
+    // 印を外して空になった段落・箇条書きと、段落末に残った改行を取り除く
+    .replace(/<(p|li)>\s*(?:<br\s*\/?>\s*)*<\/\1>\n?/g, "")
+    .replace(/(?:<br\s*\/?>\s*)+(?=<\/(?:p|li|td|th)>)/g, "");
 }
 
 // 本文中の「> 💡 NEVORAポイント」「> ⚠️ 注意」形式のblockquoteを、
@@ -2264,7 +2279,7 @@ function estimateReadTimeMinutes(html) {
 // Markdown記法(リンク・見出し記号等)を取り除いたプレーンテキストを作る。
 // 一覧用の抜粋(excerpt)・検索用の全文インデックス(searchText)の両方で使う共通処理。
 function buildPlainText(content) {
-  return stripTags(stripHtmlComments(content))
+  return removeSourceMarks(stripTags(stripHtmlComments(content)))
     .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1")
     .replace(/[#*`>\-\[\]!]/g, "")
     .trim();
