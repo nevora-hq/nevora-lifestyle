@@ -1695,6 +1695,8 @@ function renderGenericChecklistHtml(chart, toc) {
 //   時点で一致数計算を待たずそのoutcomeに確定する(医療系トリアージ記事等、
 //   「懸念サインが1つでもあれば安全側の判定に倒す」必要がある場合に使う)。
 //   複数のforceOutcomeが同時に発火した場合もoutcomes配列の定義順で先勝ち。
+// 全outcome一覧(診断結果タイプ一覧)は、最初は閉じた折りたたみ(details/summary、既存の
+// article-accordion部品。内容は閉じていてもHTMLに残る。2026-10-12、縦に長すぎるため)。
 // 質問・選択肢・全outcome一覧をすべて静的HTMLとして出力するため、JS無効時でも
 // 質問文・結果文はそのまま読める。JS有効時のみ components/diagnosisWidget.js が
 // この静的HTMLを1問ずつ進めるウィザードUIにプログレッシブエンハンスメントする
@@ -1756,7 +1758,7 @@ function renderDiagnosisHtml(chart) {
 
   return `<div class="chart-diagnosis" data-diagnosis="${dataPayload}"><p class="chart-title">${escapeHtmlText(
     title || ""
-  )}</p><div class="chart-diagnosis-questions">${questionsHtml}</div><div class="chart-diagnosis-outcomes"><p class="chart-diagnosis-outcomes-title">診断結果タイプ一覧</p><ul class="chart-diagnosis-outcomes-list">${outcomesHtml}</ul></div>${noteHtml}</div>`;
+  )}</p><div class="chart-diagnosis-questions">${questionsHtml}</div><details class="article-accordion chart-diagnosis-outcomes"><summary class="article-accordion-summary chart-diagnosis-outcomes-title">診断結果タイプ一覧(全${outcomes.length}タイプ)を見る</summary><div class="article-accordion-body"><ul class="chart-diagnosis-outcomes-list">${outcomesHtml}</ul></div></details>${noteHtml}</div>`;
 }
 
 // 記事末の「まとめカード」(chart type: "summaryCard")。

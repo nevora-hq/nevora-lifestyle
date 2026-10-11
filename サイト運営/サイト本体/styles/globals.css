@@ -3814,6 +3814,11 @@ table.admin-table td {
   padding: 4px 14px;
   border-radius: 999px;
   margin: 4px 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .chart-diagnosis-result-desc {
@@ -3834,18 +3839,16 @@ table.admin-table td {
   cursor: pointer;
 }
 
+/* 診断結果タイプ一覧: 既存の折りたたみ(.article-accordion)に合わせた閉じた状態の折りたたみ(2026-10-12) */
 .chart-diagnosis-outcomes {
-  margin-top: 20px;
-  padding-top: 16px;
-  border-top: 1px solid var(--chart-card-border);
+  margin: 20px 0 0;
   text-align: left;
 }
 
 .chart-diagnosis-outcomes-title {
-  font-weight: 700;
-  font-size: 0.85rem;
-  color: var(--color-text-muted);
-  margin: 0 0 8px;
+  min-height: 44px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
 }
 
 .chart-diagnosis-outcomes-list {
@@ -3873,6 +3876,11 @@ table.admin-table td {
   padding: 3px 10px;
   border-radius: 999px;
   flex-shrink: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  line-height: 1.5;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .chart-diagnosis-outcome-desc {
