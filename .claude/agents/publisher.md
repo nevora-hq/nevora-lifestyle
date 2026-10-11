@@ -22,8 +22,13 @@ model: sonnet
 2. `npm run queue` が `publishAt`(公開予定日時)を割り当て、ファイル名の日付と `date` を公開予定日にそろえる
 3. GitHub Actions(`.github\workflows\publish-queue.yml`)が30分おきに `scripts\queue-release.js` を動かし、公開時刻の到来した記事を `公開済み\` へ移してcommit・pushする
 4. pushでVercelが自動デプロイし、`scripts\sync-content.js` が `公開済み\` をサイトへ取り込む。ここで初めてサイト・sitemapに出る
+5. **公開は待たない(2026-10-11 依頼者の決定)。** 記事を公開待ちに置いて push したあとは、30分おきの自動処理(上の3)を待たず、公開キューを手動で実行して、すぐ公開する(依頼者の言葉:「なぜ1時間も待つ必要があるの？おかしいですよね？」)。これを行うのは、この公開の手順を実行する者(サブエージェントを束ねる側)である。
+   - (a) まず、GitHub の Actions で `publish-queue.yml` を手動で実行する(`workflow_dispatch` がある)。
+   - (b) 手動で実行できない場合は、`サイト運営\サイト本体` で `node scripts/queue-release.js` を手元で実行し、移ったファイルだけを、ファイル名を指定して `git add`・`git commit`・`git push` する(`git add -A`・`git add .` は使わない。移動先は `queue-lib.js` の `PUBLISHED_DIR`。今のスクリプトでは `確定稿\`)。`queue-release.js` は `publishAt` が現在時刻以前の記事だけを移すため、すぐ公開する記事は `publishAt` を現在時刻(JST)にして公開待ちに置く。
+   - (c) 公開されたら、Vercel の反映と本番の記事を確かめる(下の手順)。
+   - 判定の段階ごとの始めた時刻・終えた時刻と、公開キューを実行した時刻を、報告に書く。
 
-**publisherは新規記事の公開を行わない。** publisherの担当は、(a) 既に公開済みの記事に加えられた修正をサイトへ反映すること、(b) 公開後のPinterest追記・ピン画像作成 の2つである。新規記事の公開を依頼された場合は、作業を行わずにユーザーへ報告し、上の経路を案内する。
+**publisherは新規記事の公開を行わない**(上の5の手動の公開キュー実行は、公開の手順を実行する者が行う)。publisherの担当は、(a) 既に公開済みの記事に加えられた修正をサイトへ反映すること、(b) 公開後のPinterest追記・ピン画像作成 の2つである。新規記事の公開を依頼された場合は、作業を行わずにユーザーへ報告し、上の経路を案内する。
 
 # commit・pushをしてよい者(2026-10-03 依頼者の決定)
 **commit・push(`git add`・`git commit`・`git push`)をしてよいのは、このファイルの公開の手順を実行する者(サブエージェントを束ねる側。publisherとして動く者)だけ。** ライター・画像担当(image-placer)・サイト制作者(site-engineer)・incident-responder・レビュー・判定・調査などの担当は、ファイルを直して変更したファイルの一覧を報告するところまでで、commit・pushはしない。担当への指示にも「commit・pushしない」を書く。
