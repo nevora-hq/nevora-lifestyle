@@ -20,7 +20,7 @@
 - `components/Footer.js`: `/about`・`/privacy-policy`・`/terms`・`/contact` がすべて実在するか。
 - `components/AdminLayout.js`: 管理画面メニュー(`/admin` と `pages/admin/` 配下の各ページ)が各ファイルと一致するか。管理画面は`noindex, nofollow`設定になっているか。
 - `components/Sidebar.js`・`PostCard.js`・`ImageSlider.js` など、動的リンクを出す部品: `/posts/[slug]`・`/category/[name]`・`/worry`・`/worry/[slug]`への動的リンクに対応する動的ルートファイルが存在するか。
-- 記事専用の本文差し替え部品(`components/articles/` 等)があれば、本文中の記事間の直リンクのスラッグが`確定稿`/`公開済み`フォルダに実在するか。
+- 記事専用の本文差し替え部品(`components/` 等)があれば、本文中の記事間の直リンクのスラッグが`確定稿`/`公開済み`フォルダに実在するか。
 - 外部リンク:
   - `ArticleSources.js`の`source.url`(記事ごとの出典URL、動的・記事データ側で管理)
   - `ArticleToc.js`のアンカーリンク(`#id`、内部ページ内リンクのため対象外)
@@ -38,7 +38,7 @@
 
 独自ドメインへ移行したあとに行う確認。このサイトは今は独自ドメインを持たず `https://nevora-lifestyle.vercel.app/` で公開しているので、移行するときに行う(移行の手順は`docs/domain-migration-plan.md`)。
 
-Grep範囲: `pages/`・`components/`・`lib/`・`記事データ/確定稿`・`記事データ/公開済み`・`next.config.js`・`public/robots.txt`・`sitemap.xml.js`・`scripts/`・環境変数ファイル(キー名のみ)。
+Grep範囲: `pages/`・`components/`・`lib/`・`記事データ/確定稿`・`記事データ/公開済み`・`next.config.js`・`pages/robots.txt.js`・`sitemap.xml.js`・`scripts/`・環境変数ファイル(キー名のみ)。
 
 確認観点と判定の目安:
 

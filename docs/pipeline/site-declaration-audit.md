@@ -1,6 +1,6 @@
 # サイト宣言文 vs 実態 監査
 
-対象: `pages/about.js` `pages/privacy-policy.js` `pages/terms.js` `pages/contact.js`、記事frontmatter(`description`/`disclaimer`)、`docs/CONTRIBUTING.md`、`docs/project-state.md`
+対象: `pages/about.js` `pages/privacy-policy.js` `pages/terms.js` `pages/contact.js`、記事frontmatter(`description`/`disclaimer`)、`docs/CONTRIBUTING.md`、`docs/project-state.md`(このサイトには無い。読まずに進める)
 
 **本監査は検出・一覧化のみ。コード・コンテンツの編集は行わない。**
 

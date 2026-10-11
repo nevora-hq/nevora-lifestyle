@@ -1,8 +1,8 @@
 # 視覚要素の二層設計 正式仕様
 
-フェーズ2(2026-08-10)で、既存の `renderBarChartHtml`(`サイト運営\サイト本体\lib\postRenderer.js`)パターンを正式仕様として文書化したもの。NEVORAのビジョン4「文字を補助とし、視覚情報をメインにする」を実現しつつ、検索エンジン・アクセシビリティのために**すべての視覚要素はテキストで等価な情報を持つこと**という制約(マスタープロンプトの「ビジョン4の実装原則」)を満たすための最低基準を定める。
+フェーズ2(2026-08-10)で、既存の `renderBarChartHtml`(`サイト運営\サイト本体\lib\posts.js`)パターンを正式仕様として文書化したもの。NEVORAのビジョン4「文字を補助とし、視覚情報をメインにする」を実現しつつ、検索エンジン・アクセシビリティのために**すべての視覚要素はテキストで等価な情報を持つこと**という制約(マスタープロンプトの「ビジョン4の実装原則」)を満たすための最低基準を定める。
 
-**このドキュメントの対象**: `lib/postRenderer.js` の `renderChartHtml` から呼ばれる各chart type(bar/donut/lineChart/prosCons/compareCards等)、および記事専用モジュール(`lib\*Widgets.js`/`*Extras.js`、CONTRIBUTING.mdルール2により新規追加は禁止だが既存分は対象)の図解・グラフ描画関数。
+**このドキュメントの対象**: `lib/posts.js` の `renderChartHtml` から呼ばれる各chart type(bar/donut/lineChart/prosCons/compareCards等)、および記事専用モジュール(`lib\*Widgets.js`/`*Extras.js`、CONTRIBUTING.mdルール2により新規追加は禁止だが既存分は対象)の図解・グラフ描画関数。
 
 ## 二層設計の3要素(すべて必須)
 
@@ -66,8 +66,8 @@ SVGを描画する要素には必ず `role="img"` と、グラフ全体の内容
 3. `<details><table>` によるデータ表フォールバックがあるか
 4. 数値を伴う場合、`source`(必要なら`sourceUrl`)を設定したか。編集部調査の場合は`docs/citation-format.md`の`editorial`形式に沿っているか
 5. 色だけに意味を持たせていないか(テキストの併記があるか)
-6. (CONTRIBUTING.mdルール2)新しい記事専用モジュール(`lib\*Widgets.js`)を追加していないか。既存の`type`で表現できないか、`lib\postRenderer.js`側の汎用レンダラーへの追加で対応できないかを先に検討したか
+6. (CONTRIBUTING.mdルール2)新しい記事専用モジュール(`lib\*Widgets.js`)を追加していないか。既存の`type`で表現できないか、`lib\posts.js`側の汎用レンダラーへの追加で対応できないかを先に検討したか
 
 ## 既知の限定的な例外
 
-フェーズ0監査で、ある記事専用モジュール(`lib/*Extras.js`)のように`aria-label`が0件のファイルが確認されているが、これはチャートではなくセクション装飾用のSVGであり実害は小さいと判断されている(`docs/audit-report.md` 観点5)。将来的な機械的な洗い出し(`lib/*.js`内の`aria-label`未設定箇所)はフェーズ7以降のバックログとする。
+フェーズ0監査で、ある記事専用モジュール(`lib/*Extras.js`)のように`aria-label`が0件のファイルが確認されているが、これはチャートではなくセクション装飾用のSVGであり実害は小さいと判断されている(`docs/audit-report.md`(このサイトには無い。読まずに進める) 観点5)。将来的な機械的な洗い出し(`lib/*.js`内の`aria-label`未設定箇所)はフェーズ7以降のバックログとする。

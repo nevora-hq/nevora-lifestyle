@@ -69,14 +69,14 @@ push の前に、公開する記事の `thumbnail` と本文の画像のパス�
    場合はその結果を再利用してよい。対象ファイルが検証後に変更されていれば必ず再実行する)
 3. `overall`が`"No"`だった場合は、commit・pushしない。Noだった項目番号・項目名をすべて列挙し(1件でも省略しない)、直す担当(束ねる側が決める)に依頼する。直したあとで、1から実行し直し、overallがYesになってから公開する。公開結果の報告には、Noだった項目と、直したあとの結果を書く(無言で通さない)。
 
-4. **`lib/postRenderer.js`のレンダリングロジック(embedCharts・embedAccordions・
+4. **`lib/posts.js`のレンダリングロジック(embedCharts・embedAccordions・
    splitHtmlBlocks・各chart/accordionレンダラー等)に変更が含まれる回のみ**、
    `サイト運営\サイト本体`で`npm run verify:rendered`(項目33、`docs/CONTRIBUTING.md`
    28節参照)を実行し、UNMATCHED 0件であることを確認する。`verify-article.js`
    の項目群とは別の独立スクリプトであり実行され忘れやすいため(項目31の
-   教訓と同種のリスク)、対象コミットの差分に`lib/postRenderer.js`が含まれるかを
+   教訓と同種のリスク)、対象コミットの差分に`lib/posts.js`が含まれるかを
    `git diff --stat`等で機械的に確認したうえで要否を判断すること。記事
-   Markdownの追加・修正のみ(`lib/postRenderer.js`に変更なし)の場合は不要
+   Markdownの追加・修正のみ(`lib/posts.js`に変更なし)の場合は不要
 
 5. **対象記事の`charts`(図解)を新規作成・変更した場合、またはfrontmatter(`heroImage`・`thumbnail`等)を書き換えた場合は、push前に必ず`node scripts/verify-rendered-layout.js --strict <対象記事のslug>`を実行し、検出0件であることを確認する。0件でなければpushしない(記事側を直すか、依頼者に報告して指示を仰ぐ)。** 全面書き直し(全記事見直し)を経た記事の反映も対象。この確認が無いままpushすると、item35の検出が週次実行まで気づかれない(詳細`docs/CONTRIBUTING.md`40節・`docs/pipeline/autonomy/FULL-REWRITE-PROCEDURE.md`)
 

@@ -24,8 +24,8 @@ model: sonnet
     admin/                     … 記事管理/広告管理/アクセス解析/SEO管理/AI自動更新
   content/articles/          … 記事Markdown(.gitignore対象・ビルド時に記事データから配置される)
   lib/posts.js                … 記事の一覧・カテゴリ・次の記事
-  lib/postRenderer.js         … 記事ページの描画(getPostBySlug・図表・折りたたみ)
-  lib/articleMeta.js          … frontmatter の正規化
+  lib/posts.js         … 記事ページの描画(getPostBySlug・図表・折りたたみ)
+  lib/articleMeta.js(このサイトには無い。読まずに進める)          … frontmatter の正規化
 ```
 
 # 技術スタック
@@ -53,10 +53,10 @@ model: sonnet
     - **実際の写真として不自然でないか。** フレームの大部分(目安として半分以上)が単色・no-detailな空白になっていないか確認する。「テキストオーバーレイ用に余白を確保したい」等の意図がある場合も、生成指示に背景の物・家具・植物・小物等を描き込んだ自然な構図を保つよう明記し、実際の写真としてありえない不自然な空白を作らない
     - **人物が写る生成画像は、上記2点をクリアしたものであっても配置前に一度ユーザーへ提示し、確認を取ってから確定・反映する**
   - **画像を配置・差し替える際は、必ずReadツールで画像の中身を目視確認し、記事テーマ・alt属性と一致しているか確認すること。** alt属性が正しい記述でも、別記事向けの写真が無関係な記事のサムネイル・本文画像として誤って設定されることがある(画像ファイルの中身だけが異なる)。ファイル名やalt属性のテキストだけで「合っているはず」と判断せず、画像そのものを確認する
-  - 統計・グラフ表示: frontmatterの`charts`配列。`lib/postRenderer.js`の`embedCharts`/`renderBarChartHtml`/`renderStatTileHtml`が、指定した見出し(`afterHeading`)の直後に静的HTML/SVGとして挿入する(クライアントJS不要)。単一の数値は`type: "stat"`(stat tile)、複数カテゴリ比較は棒グラフ、2軸の位置づけ比較(例: 除湿機の方式ごとの除湿量×消費電力)は`type: "quadrant"`(`renderQuadrantChartHtml`、SVG散布図)になる
-  - 折りたたみ(アコーディオン): frontmatterの`accordions`配列(`{afterHeading, summary, content}`)。`embedAccordions`/`renderAccordionHtml`が、指定した見出しの直後に`<details><summary>`を静的HTMLとして挿入する。**記事本文に`<details>`等の生HTMLを直書きしても表示されない**(`lib/postRenderer.js`の`getPostBySlug`で`remark-html`の`sanitize`をデフォルト(true)のまま使っており、生HTMLノードは`allowDangerousHtml: false`で除去される仕様のため)。折りたたみ機能が必要な場合は、サニタイズ設定を緩める(`sanitize: false`。記事は信頼できる社内エージェントのみが書くとはいえサイト全体のHTML許可範囲が広がるため要検討)のではなく、`accordions`のようにサイト側でHTML文字列を生成する方式を踏襲すること
-  - 本文装飾記法: `==text==`→ハイライト、`++text++`→下線、GFM(表・打ち消し線・`~~text~~`)は`remark-gfm`で対応。`lib/postRenderer.js`の`applyInlineMarkup`参照
-  - **マスコットキャラクター**: `lib/categoryMascot.js`でカテゴリ名→マスコットのマッピングを管理(現在は10カテゴリにマスコットを割り当て済み〔家事・時短=テキミンちゃん、掃除=ピカミンちゃん、洗濯=フワミンちゃん、収納・片づけ=ハコミンちゃん、節約・家計=ヤリクミンちゃん、食・料理=ナベミンちゃん、住まい・インテリア=スミミンちゃん、生活家電=デンミンちゃん、暮らしの知恵=マナミンちゃん、睡眠・休息=ネムミンちゃん〕。ほかにサイト全体のメインマスコット「クラミンちゃん」〔`KURAMIN`〕がある。一覧は docs\pipeline\SPEC-EXTRACT.md §5)。ホームの「カテゴリで探す」カードには`components/Mascot.js`(キャラクター画像+名前のみのコンパクト表示)を該当カテゴリのカードにのみ表示。記事ページでは`lib/postRenderer.js`の`insertMascotComment`/`renderMascotCommentHtml`が、frontmatterの`mascotComment`(ライターが記事内容に即して設定)を吹き出し形式で本文中盤に自動挿入する。カテゴリを追加するときは`categoryMascot.js`にエントリを足すだけでよい。記事側の`mascotComment`の必須・書き方は writer.md の mascotComment の規則が正(コンポーネント・挿入ロジックの変更は不要)
+  - 統計・グラフ表示: frontmatterの`charts`配列。`lib/posts.js`の`embedCharts`/`renderBarChartHtml`/`renderStatTileHtml`が、指定した見出し(`afterHeading`)の直後に静的HTML/SVGとして挿入する(クライアントJS不要)。単一の数値は`type: "stat"`(stat tile)、複数カテゴリ比較は棒グラフ、2軸の位置づけ比較(例: 除湿機の方式ごとの除湿量×消費電力)は`type: "quadrant"`(`renderQuadrantChartHtml`、SVG散布図)になる
+  - 折りたたみ(アコーディオン): frontmatterの`accordions`配列(`{afterHeading, summary, content}`)。`embedAccordions`/`renderAccordionHtml`が、指定した見出しの直後に`<details><summary>`を静的HTMLとして挿入する。**記事本文に`<details>`等の生HTMLを直書きしても表示されない**(`lib/posts.js`の`getPostBySlug`で`remark-html`の`sanitize`をデフォルト(true)のまま使っており、生HTMLノードは`allowDangerousHtml: false`で除去される仕様のため)。折りたたみ機能が必要な場合は、サニタイズ設定を緩める(`sanitize: false`。記事は信頼できる社内エージェントのみが書くとはいえサイト全体のHTML許可範囲が広がるため要検討)のではなく、`accordions`のようにサイト側でHTML文字列を生成する方式を踏襲すること
+  - 本文装飾記法: `==text==`→ハイライト、`++text++`→下線、GFM(表・打ち消し線・`~~text~~`)は`remark-gfm`で対応。`lib/posts.js`の`applyInlineMarkup`参照
+  - **マスコットキャラクター**: `lib/categoryMascot.js`でカテゴリ名→マスコットのマッピングを管理(現在は10カテゴリにマスコットを割り当て済み〔家事・時短=テキミンちゃん、掃除=ピカミンちゃん、洗濯=フワミンちゃん、収納・片づけ=ハコミンちゃん、節約・家計=ヤリクミンちゃん、食・料理=ナベミンちゃん、住まい・インテリア=スミミンちゃん、生活家電=デンミンちゃん、暮らしの知恵=マナミンちゃん、睡眠・休息=ネムミンちゃん〕。ほかにサイト全体のメインマスコット「クラミンちゃん」〔`KURAMIN`〕がある。一覧は docs\pipeline\SPEC-EXTRACT.md §5)。ホームの「カテゴリで探す」カードには`components/Mascot.js`(キャラクター画像+名前のみのコンパクト表示)を該当カテゴリのカードにのみ表示。記事ページでは`lib/posts.js`の`insertMascotComment`/`renderMascotCommentHtml`が、frontmatterの`mascotComment`(ライターが記事内容に即して設定)を吹き出し形式で本文中盤に自動挿入する。カテゴリを追加するときは`categoryMascot.js`にエントリを足すだけでよい。記事側の`mascotComment`の必須・書き方は writer.md の mascotComment の規則が正(コンポーネント・挿入ロジックの変更は不要)
 - **アドセンス審査必須ページ(最低条件)**: プライバシーポリシー・運営者情報(お問い合わせ)ページを、サイト立ち上げの早い段階(記事コンテンツが揃うより前でよい)で実装し、全ページ共通のフッター等から常にアクセスできるようにする。これらのページが未実装の場合、他の機能実装より優先して着手をユーザーに提案する
 - 実装内容をユーザーにわかりやすく説明する(専門用語を使う場合は簡単に補足する)
 - ローカルでの動作確認手順、Vercelへのデプロイ手順を都度案内する
@@ -77,11 +77,11 @@ model: sonnet
 - 大きな機能追加やアーキテクチャ判断(DB選定、認証方式など)は、実装前にユーザーに選択肢とおすすめを提示し、承認を得てから進める
 - ユーザーの知識レベルに合わせ、破壊的な操作(DB移行、環境変数の削除等)を行う前は必ず確認を取る
 - 記事データの読み込み・カテゴリ分けのロジックは、`ライター`・`編集長`が保存するfrontmatter形式(`サイト運営\記事データ\`配下)と整合させる
-- `lib/articleMeta.js`等でfrontmatterの配列項目(`affiliateLinks`の`label`/`url`等)を`getStaticProps`に渡す際は、記事によってキー名が揺れていても`undefined`にならないよう正規化処理(フォールバック・空文字化)を必ず入れる。`undefined`を含む値をprops経由で返すとNext.jsのJSONシリアライズでビルドエラー(prerender error)になるため、frontmatterに依存するページ(`/compare`等)を実装・変更した際は`npm run build`を実行して該当ページの静的生成が通ることを確認する
+- `lib/articleMeta.js`(このサイトには無い。読まずに進める)等でfrontmatterの配列項目(`affiliateLinks`の`label`/`url`等)を`getStaticProps`に渡す際は、記事によってキー名が揺れていても`undefined`にならないよう正規化処理(フォールバック・空文字化)を必ず入れる。`undefined`を含む値をprops経由で返すとNext.jsのJSONシリアライズでビルドエラー(prerender error)になるため、frontmatterに依存するページ(`/compare`等)を実装・変更した際は`npm run build`を実行して該当ページの静的生成が通ることを確認する
 - コードは必要最小限の依存で実装し、将来の拡張(DB化、広告配信の高度化等)がしやすい構成を意識するが、過剰な抽象化はしない
 - **remark(remark-html)が生成する本文HTMLは、ブロック要素(`</p>`, `</ul>`, `</h2>`等)の閉じタグの直後に改行が入る。「本文をブロック単位に分割してその直後に要素を挿入する」ような処理を正規表現で書く場合、閉じタグ直後に改行を挟まず直接次のタグが続くことを前提にすると分割が一切効かず、本文全体が1ブロックとして扱われてしまう(挿入したい要素が意図した段落直後ではなく記事の一番最後にまとめて出てしまうバグになる)。閉じタグと次の開始タグの間の空白・改行(`\s*`や`\n*`)を許容する形で分割条件を書き、`npm run build`後に生成HTMLを実際に確認して意図した位置に挿入されているかを検証すること**
 - **本文中への要素の自動挿入(バナー埋め込み等)を実装した場合、`npm run build`でエラーが出ないことの確認だけでは不十分。生成された`.next`のHTML出力やローカルの`getPostBySlug`等の関数を直接実行し、挿入位置が意図通り(対象の段落・見出し直後)になっているか、記事末尾に意図せず集約されていないかを目視確認してから完了報告する**
-- **`splitHtmlBlocks`(段落・リスト等を`</p></ul></ol>`等の直後で区切る分割方式)は、メリット/デメリット比較ブロック(`renderProsConsHtml`が出力する`<figure class="pros-cons-block">`)のように内部に`</p>`や`</ul>`を含む独自レイアウトのHTMLも無差別に分割してしまう。「本文の中間あたりに新しい要素を挿入する」機能をこの方式で作ると、比較ブロックの途中にその要素が挟まる不具合になる(マスコットのひとことコメントがデメリット欄の中に表示される、など)。本文中への新規要素挿入は`splitHtmlBlocks`を使わず、`<h2`のような記事の`##`見出し由来のタグ開始位置(chart等のfigcaptionには出現しないため安全な境界)を基準に挿入位置を決めること(実装例: `lib/postRenderer.js`の`insertMascotComment`)**
+- **`splitHtmlBlocks`(段落・リスト等を`</p></ul></ol>`等の直後で区切る分割方式)は、メリット/デメリット比較ブロック(`renderProsConsHtml`が出力する`<figure class="pros-cons-block">`)のように内部に`</p>`や`</ul>`を含む独自レイアウトのHTMLも無差別に分割してしまう。「本文の中間あたりに新しい要素を挿入する」機能をこの方式で作ると、比較ブロックの途中にその要素が挟まる不具合になる(マスコットのひとことコメントがデメリット欄の中に表示される、など)。本文中への新規要素挿入は`splitHtmlBlocks`を使わず、`<h2`のような記事の`##`見出し由来のタグ開始位置(chart等のfigcaptionには出現しないため安全な境界)を基準に挿入位置を決めること(実装例: `lib/posts.js`の`insertMascotComment`)**
 - **`splitHtmlBlocks`の境界タグ一覧に`<hr>`(Markdownの`---`区切り線)が含まれていなかったため、`---`の直後に見出しを置く記事で、見出しとその直前の`<hr>`が1つのブロックとして扱われ、`embedCharts`/`embedAccordions`の見出しマッチング(`^<h[23]`から始まるかの判定)が失敗し、chart/accordionが挿入されない不具合になる。区切り線の直後に別のブロック境界要素を追加する際は、同様に`splitHtmlBlocks`の正規表現(`(?<=<\/(?:p|ul|ol|blockquote|h1-h6|pre|table)>|<hr ?\/?>)`)に含まれているか確認すること**
 - **実装から言語化した要点(箇条書き3〜7点程度。採用した設計判断・ハマった箇所・次の実装に活かせる知見など、結論部分のみ)を `サイト運営\実務\サイト制作者\メモ\YYYY-MM-DD_要点メモ.md` に保存する。過去のメモを上書きせず、実装のたびに新しいファイルを追加して知見を蓄積する形にする**
 - 出力は日本語で行う

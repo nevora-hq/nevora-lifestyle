@@ -10,7 +10,7 @@ summaryPoints/targetReader)+ほぼ必須のdateを「事実上の必須項目」
 このテンプレートに含めていないもの(意図的):
 - accordions / charts: 工程1では書かない。プレースホルダー([[ACC:...]] [[VIS:...]])を
   本文に置くのみで、frontmatterへの反映は工程2/3の仕事(docs/pipeline/README.md 決定事項#5)。
-- affiliateLinks: ASP提携が確定している場合のみ追加する(SPEC-EXTRACT.md §0.2、14/90記事のみ)。現在は全カット方針で、アフィリエイトリンクは置かないので書かない(docs/project-state.md 2節-10)。
+- affiliateLinks: ASP提携が確定している場合のみ追加する(SPEC-EXTRACT.md §0.2、14/90記事のみ)。現在は全カット方針で、アフィリエイトリンクは置かないので書かない(docs/project-state.md(このサイトには無い。読まずに進める) 2節-10)。
   無い場合はキー自体を書かない(空配列やプレースホルダー文言を残さない)。
 - sectionAlternate: false を書く(使わない決まり。見出しごとの背景の切り替えをしない。writer.md の frontmatter の項が正)。
 - mascotComment: 必須・字数・口調・中身は writer.md の mascotComment の規則〔frontmatter の項〕が正。
