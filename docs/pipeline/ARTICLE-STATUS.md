@@ -1,6 +1,6 @@
 # NEVORA 公開済み記事ステータス一覧
 
-`サイト運営/記事データ/確定稿`・`公開済み` → (`npm run sync-content`) → `サイト運営/サイト本体/content/articles`
+`サイト運営/記事データ/公開済み` → (`npm run sync-content`) → `サイト運営/サイト本体/content/articles`
 に存在する全記事について、専用実装(lib)・使用中のchart type・画像枚数・
 `scripts/verify-article.js`による9項目検証の結果をまとめる。
 
@@ -63,6 +63,6 @@
 - 既知の欠陥を「修正しない・記録のみ」と決めた記事(例: `date`欠落)は、本表でも未修正のまま
   記録する(`date`欠落なら`(dateなし)`と表記する)。
 - 本表作成時は`npm run sync-content`を実行して`content/articles/`を
-  `記事データ/確定稿`・`公開済み`と同期させたうえで集計する。`content/articles/`は
+  `記事データ/公開済み`と同期させたうえで集計する。`content/articles/`は
   生成物であり直接編集しないこと(`scripts/sync-content.js`のコメント参照)。
 - 前回版がある場合は、前回版との差分(検証項目の変更・Yes/Noが変わった記事とその理由)を書く。
