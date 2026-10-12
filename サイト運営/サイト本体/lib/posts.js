@@ -608,6 +608,22 @@ function renderProsConsHtml(chart) {
   return `<figure class="pros-cons-block">${titleHtml}<div class="pros-cons-grid"><div class="pros-cons-col pros-cons-pros"><p class="pros-cons-head">◎ メリット</p><ul>${prosItems}</ul></div><div class="pros-cons-col pros-cons-cons"><p class="pros-cons-head">△ デメリット</p><ul>${consItems}</ul></div></div></figure>`;
 }
 
+// frontmatterのcharts(type: "versus")から、2つのものを並べる2列の比較ブロックを
+// 組み立てる。prosCons(1つの対象の良い点・悪い点)と違い、列の見出しを記事ごとに
+// 書ける(leftLabel/rightLabel)。違い・使い分け・向く場合を見せるための枠で、
+// どちらの列も同じ調子(優劣を示す記号や色は付けない)。中身は prosCons と同じく
+// 文字列の配列(left/right)。
+function renderVersusHtml(chart) {
+  const { title, leftLabel, rightLabel, left, right } = chart;
+  const toItems = (arr) =>
+    (Array.isArray(arr) ? arr : []).map((t) => `<li>${escapeHtmlText(t)}</li>`).join("");
+  const titleHtml = title
+    ? `<figcaption class="chart-title">${escapeHtmlText(title)}</figcaption>`
+    : "";
+
+  return `<figure class="versus-block">${titleHtml}<div class="versus-grid"><div class="versus-col"><p class="versus-head">${escapeHtmlText(leftLabel || "")}</p><ul>${toItems(left)}</ul></div><div class="versus-col"><p class="versus-head">${escapeHtmlText(rightLabel || "")}</p><ul>${toItems(right)}</ul></div></div></figure>`;
+}
+
 // frontmatterのcharts(type: "quadrant")から、2軸(縦軸・横軸)上に複数の項目を
 // 位置づける散布図(ポジショニングマップ)をSVGで組み立てる。数値の大小比較ではなく
 // 「洗浄力は高いが摩擦は起きやすい」のような2つの性質の組み合わせを一目で見せたい
@@ -1851,6 +1867,7 @@ function renderChartHtml(chart, toc, debugSlug) {
   if (chart.type === "pie" || chart.type === "donut")
     return renderDonutChartHtml(chart);
   if (chart.type === "prosCons") return renderProsConsHtml(chart);
+  if (chart.type === "versus") return renderVersusHtml(chart);
   if (chart.type === "quadrant") return renderQuadrantChartHtml(chart);
   if (chart.type === "crossSection") return renderCrossSectionDiagramHtml(chart, debugSlug);
   if (chart.type === "depthComparison") return renderDepthComparisonHtml(chart);

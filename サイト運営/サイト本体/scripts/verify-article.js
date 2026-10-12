@@ -500,6 +500,10 @@ function extractStructuredTextBlocks(fm) {
     push(`charts[${i}].note`, c.note);
     (Array.isArray(c.pros) ? c.pros : []).forEach((t, j) => push(`charts[${i}].pros[${j}]`, t));
     (Array.isArray(c.cons) ? c.cons : []).forEach((t, j) => push(`charts[${i}].cons[${j}]`, t));
+    push(`charts[${i}].leftLabel`, c.leftLabel);
+    push(`charts[${i}].rightLabel`, c.rightLabel);
+    (Array.isArray(c.left) ? c.left : []).forEach((t, j) => push(`charts[${i}].left[${j}]`, t));
+    (Array.isArray(c.right) ? c.right : []).forEach((t, j) => push(`charts[${i}].right[${j}]`, t));
     (Array.isArray(c.items) ? c.items : []).forEach((it, j) => {
       if (typeof it === "string") {
         push(`charts[${i}].items[${j}]`, it);
@@ -1322,7 +1326,7 @@ const HIGH_VALUE_CHART_TYPES = new Set([
 ]);
 const HIGH_VALUE_NAME_PATTERN = /CrossSection|DiagnosisFlow|Silhouette|FlowDiagram/i;
 const NEUTRAL_CHART_TYPES = new Set(["stat", "compareCards", "compareScroll", "pie", "donut", "flowchart", "diagnosis"]);
-const LOW_CHART_TYPES = new Set(["prosCons", "tip", "warning", "memo", "summaryCard", "checklist", "steps"]);
+const LOW_CHART_TYPES = new Set(["prosCons", "versus", "tip", "warning", "memo", "summaryCard", "checklist", "steps"]);
 
 function classifyChartValue(chart) {
   const type = chart.type; // undefined = 棒グラフ(bar)

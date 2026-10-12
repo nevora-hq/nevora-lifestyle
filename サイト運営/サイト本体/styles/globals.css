@@ -2125,6 +2125,46 @@ h1.page-title {
   font-size: 0.85rem;
 }
 
+/* ---- 2つを並べる比較ブロック(versus。列の見出しは記事ごとに書く。どちらの列も同じ調子) ---- */
+.versus-block {
+  margin: 2em 0;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.versus-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.versus-col {
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  background: #f3f6fa;
+  border: 1px solid #cfd8e3;
+}
+
+.versus-head {
+  margin: 0 0 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #1f3a5f;
+}
+
+.versus-col ul {
+  margin: 0;
+  padding-left: 1.1em;
+  font-size: 0.9rem;
+}
+
+.versus-col li {
+  margin-bottom: 6px;
+}
+
 /* ---- メリット/デメリット比較ブロック ---- */
 .pros-cons-block {
   margin: 2em 0;
@@ -3425,6 +3465,7 @@ table.admin-table td {
 
   .article-chart,
   .pros-cons-block,
+  .versus-block,
   .affiliate-box {
     padding: 14px;
   }
@@ -3433,12 +3474,14 @@ table.admin-table td {
     padding: 20px 14px;
   }
 
-  .pros-cons-grid {
+  .pros-cons-grid,
+  .versus-grid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
-  .pros-cons-col {
+  .pros-cons-col,
+  .versus-col {
     padding: 12px 14px;
   }
 
@@ -3478,7 +3521,8 @@ table.admin-table td {
     height: 64px;
   }
 
-  .pros-cons-grid {
+  .pros-cons-grid,
+  .versus-grid {
     grid-template-columns: 1fr;
   }
 
