@@ -23,3 +23,7 @@ Thumbs.db
 .env*
 !.env.example
 !.env.local.example
+
+# ビルド時に scripts/generate-seo-files.mjs が生成する(正は生成スクリプト)
+/public/robots.txt
+/public/sitemap.xml
