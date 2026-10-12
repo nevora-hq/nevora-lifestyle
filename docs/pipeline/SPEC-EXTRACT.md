@@ -158,7 +158,6 @@ remarkは未知の記法をプレーンテキストとして通すため、`rema
 | `Sidebar` | `components/Sidebar.js:3` | `popularPosts=[],categories=[]` | サイドバー |
 | `ScrollProgressBar` | `components/ScrollProgressBar.js:7` | なし | 記事ページのスクロール進捗バー |
 | `ImageSlider` | `components/ImageSlider.js:4` | `slides=[]` | 画像スライダー |
-| `AdminLayout` | `components/AdminLayout.js:14` | `children,title` | 管理ダッシュボード用外枠 |
 
 題材に固有の部品(診断ページ用のクイズ、題材別の関連記事一覧・カルーセル、1記事専用のインタラクティブ診断・本文まるごと差し替えの部品)も、記事本文からは呼べない。1記事専用の部品は`pages/posts/[slug].js`側のハードコード(見出しテキストでの前後分割や`CUSTOM_LAYOUT_SLUGS`)で差し込む作りになっている。
 

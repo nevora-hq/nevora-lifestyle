@@ -18,7 +18,6 @@
 確認観点:
 - `components/Header.js`: `/`・`/category/[name]`(動的)・`/ranking`・`/compare`・`/search` などが、すべて`pages/`配下に実在するか。
 - `components/Footer.js`: `/about`・`/privacy-policy`・`/terms`・`/contact` がすべて実在するか。
-- `components/AdminLayout.js`: 管理画面メニュー(`/admin` と `pages/admin/` 配下の各ページ)が各ファイルと一致するか。管理画面は`noindex, nofollow`設定になっているか。
 - `components/Sidebar.js`・`PostCard.js`・`ImageSlider.js` など、動的リンクを出す部品: `/posts/[slug]`・`/category/[name]`・`/worry`・`/worry/[slug]`への動的リンクに対応する動的ルートファイルが存在するか。
 - 記事専用の本文差し替え部品(`components/` 等)があれば、本文中の記事間の直リンクのスラッグが`公開済み`フォルダに実在するか。
 - 外部リンク:
