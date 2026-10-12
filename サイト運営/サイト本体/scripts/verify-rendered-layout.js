@@ -93,8 +93,24 @@ function killPort(port) {
 const VIEWPORT_WIDTHS = process.env.NEVORA_ITEM35_WIDTHS
   ? process.env.NEVORA_ITEM35_WIDTHS.split(",").map((n) => Number(n.trim())).filter(Boolean)
   : [320, 375, 768];
-const PORT = 4319;
-const BASE_URL = `http://127.0.0.1:${PORT}`;
+// ポートは起動のたびに空いているものを自動で選ぶ(2026-10-12)。
+// 以前は4319固定で、起動前にそのポートの使用者を強制終了していたため、同じPCで
+// ほかのサイトの検査が同時に動くと、互いのサーバーを終了させたり、他サイトの
+// サーバーに繋がって404や無応答になったりしていた。NEVORA_ITEM35_PORT で固定も可能。
+let PORT = 0;
+let BASE_URL = "";
+
+function findFreePort() {
+  return new Promise((resolve, reject) => {
+    const srv = require("net").createServer();
+    srv.unref();
+    srv.on("error", reject);
+    srv.listen(0, "127.0.0.1", () => {
+      const { port } = srv.address();
+      srv.close(() => resolve(port));
+    });
+  });
+}
 
 function waitForServer(url, timeoutMs) {
   const start = Date.now();
@@ -658,7 +674,8 @@ async function main() {
     process.exit(1);
   }
 
-  killPort(PORT);
+  PORT = process.env.NEVORA_ITEM35_PORT ? Number(process.env.NEVORA_ITEM35_PORT) : await findFreePort();
+  BASE_URL = `http://127.0.0.1:${PORT}`;
   console.log(`[item35] next start をポート${PORT}で起動します(事前に npm run build 済みであること)...`);
   const server = spawn("npx", ["next", "start", "-p", String(PORT)], {
     cwd: process.cwd(),
@@ -680,6 +697,7 @@ async function main() {
 
   const browser = await playwright.chromium.launch();
   const allFindings = [];
+  const fetchFailures = [];
 
   try {
     for (const slug of slugs) {
@@ -689,6 +707,7 @@ async function main() {
         const resp = await page.goto(url, { waitUntil: "networkidle", timeout: 20000 }).catch((e) => null);
         if (!resp || !resp.ok()) {
           console.error(`[item35] ページ取得失敗: ${url} (status=${resp ? resp.status() : "no response"})`);
+          fetchFailures.push({ slug, width, status: resp ? resp.status() : "no response" });
           await page.close();
           continue;
         }
@@ -700,6 +719,12 @@ async function main() {
   } finally {
     await browser.close();
     killPort(PORT);
+  }
+
+  // 開けなかったページが1つでもあれば、検査していない記事があるため「検出0件」とは言えない。失敗で終わる。
+  if (fetchFailures.length > 0) {
+    console.error(`[item35] ページを開けなかった記事・幅が${fetchFailures.length}件あります。検査できていないため失敗として終わります: ${JSON.stringify(fetchFailures)}`);
+    process.exit(1);
   }
 
   const overflow = allFindings.filter((f) => f.type === "overflow");
