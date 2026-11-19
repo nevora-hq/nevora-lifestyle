@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
+import PageHero from "../components/PageHero";
 import { getAllPostsMeta } from "../lib/posts";
 
 export async function getStaticProps() {
@@ -90,8 +91,8 @@ export default function ComparePage({ items, categories, worries }) {
       // items.length > 0 に戻れば自動的にindex対象に戻る(sitemap.xml.js側の除外もitems有無と連動)。
       noindex={items.length === 0}
       panel
+      hero={<PageHero eyebrow="Compare" title="商品・サービス比較" lead="紹介している商品・サービスを一覧で見比べられます。" variant={2} />}
     >
-      <h1 className="page-title">商品・サービス比較</h1>
       {items.length > 0 && (
         <p className="page-note">
           ※本ページにはアフィリエイト広告(PR)を含みます。当サイトを経由して商品・サービスに申込みがあった場合、売上の一部が当サイトの収益となることがあります。比較項目(価格・特徴等)は今後の記事追加に合わせて拡充予定です。

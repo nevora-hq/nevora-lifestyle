@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import Head from "next/head";
 import Layout from "../components/Layout";
 import PostCard from "../components/PostCard";
@@ -12,6 +12,10 @@ import { getAllPostsMeta, getAllMajorCategories } from "../lib/posts";
 import { getCategoryMeta } from "../lib/categoryMeta";
 import { getCategoryMascot, KURAMIN } from "../lib/categoryMascot";
 import Link from "next/link";
+import CategoryGenreNav from "../components/CategoryGenreNav";
+import { CATEGORY_GENRES } from "../lib/categoryGenres";
+
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 // 「人気カテゴリー」として常時表示する3カテゴリ(残りはアコーディオンで展開)。
 const PINNED_CATEGORY_NAMES = ["家事・時短", "掃除", "節約・家計"];
@@ -86,6 +90,38 @@ export default function Home({
   categorySummaries,
   sliderPosts,
 }) {
+  // 帯の背景に敷く英単語(data-bg-word)を、スクロールの半分の速さで縦に流す。
+  // 装飾なのでHTMLの本文には出さない(CSSの::beforeで描く)。reduced-motion時は動かさない。
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const els = [...document.querySelectorAll(".home-stripe[data-bg-word]")];
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const vh = window.innerHeight;
+      els.forEach((el) => {
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        const wordH = parseFloat(getComputedStyle(el, "::before").fontSize) || 120;
+        const screenY = vh / 2 + 0.5 * (r.top + r.height / 2 - vh / 2);
+        const y = screenY - r.top - wordH / 2;
+        const clamped = Math.min(Math.max(0, r.height - wordH), Math.max(0, y));
+        el.style.setProperty("--bg-y", `${clamped.toFixed(1)}px`);
+      });
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
   return (
     <Layout
       title="生活を豊かにする総合ガイド｜NEVORA｜家事・掃除・節約・暮らしの情報"
@@ -161,7 +197,7 @@ export default function Home({
           </p>
         </SectionBand>
 
-        <section className="home-stripe home-stripe--cream">
+        <section className="home-stripe home-stripe--cream" data-bg-word="Category">
           <div className="container container--wide">
             {categorySummaries.length > 0 && (
               <CategorySummarySection categorySummaries={categorySummaries} />
@@ -182,7 +218,7 @@ export default function Home({
           objectPosition="50% 45%"
         />
 
-        <section className="home-stripe home-stripe--tint">
+        <section className="home-stripe home-stripe--tint" data-bg-word="Featured">
           <div className="container container--wide">
             <div className="home-layout">
               <div className="home-main">
@@ -225,9 +261,52 @@ export default function Home({
 // HTMLは常に全カテゴリ分を出力するためクロール性は維持する。
 function CategorySummarySection({ categorySummaries }) {
   const [expanded, setExpanded] = useState(false);
+  const [genreId, setGenreId] = useState(null); // null=すべて
+  const [animated, setAnimated] = useState(false); // 初回表示ではアニメーションさせない
+  const swapRef = useRef(null);
+  const prevHeight = useRef(null);
 
   const pinned = categorySummaries.filter((c) => PINNED_CATEGORY_NAMES.includes(c.name));
   const rest = categorySummaries.filter((c) => !PINNED_CATEGORY_NAMES.includes(c.name));
+
+  const genre = CATEGORY_GENRES.find((g) => g.id === genreId) || null;
+  // ジャンル定義にあっても実在しないカテゴリ名は落とす
+  const filtered = genre
+    ? genre.categories.map((n) => categorySummaries.find((c) => c.name === n)).filter(Boolean)
+    : [];
+
+  // 絞り込みの切り替え前の高さを控え、切り替え後に旧→新の高さを0.3秒でなめらかに変える
+  const handleSelect = (id) => {
+    if (id === genreId) return;
+    if (swapRef.current) prevHeight.current = swapRef.current.offsetHeight;
+    setAnimated(true);
+    setGenreId(id);
+  };
+
+  useIsoLayoutEffect(() => {
+    const el = swapRef.current;
+    const from = prevHeight.current;
+    prevHeight.current = null;
+    if (!el || from == null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const to = el.offsetHeight;
+    if (from === to) return;
+    el.style.height = `${from}px`;
+    el.style.overflow = "hidden";
+    el.getBoundingClientRect();
+    el.style.transition = "height 300ms ease";
+    el.style.height = `${to}px`;
+    const done = () => {
+      el.style.height = "";
+      el.style.overflow = "";
+      el.style.transition = "";
+    };
+    const t = setTimeout(done, 320);
+    return () => {
+      clearTimeout(t);
+      done();
+    };
+  }, [genreId]);
 
   // 「すべて見る」はJS無効環境では/categoryへの通常リンクとして機能させ、
   // JS有効時はpreventDefaultしてページ内展開に切り替える(no-JSフォールバック)。
@@ -243,39 +322,64 @@ function CategorySummarySection({ categorySummaries }) {
         気になるテーマから、関連記事をまとめてチェックできます。
       </p>
 
-      {/* 1024px以上では .category-summary-grids が唯一のグリッドになり、
-          中の2つのグリッドとアコーディオンは display:contents で透過して
-          12枚が同一グリッドの要素になる(=行ごとに高さが揃う)。
-          1024px未満では従来どおり「人気3件+アコーディオン9件」として機能する。 */}
-      <p className="category-summary-pinned-label">人気カテゴリー</p>
-      <div className="category-summary-grids">
-        <div className="category-summary-grid">
-          {pinned.map((cat, i) => (
-            <CategorySummaryCard key={cat.name} cat={cat} index={i} popular />
-          ))}
-        </div>
+      {/* ジャンルで絞り込む円形ナビ。初期表示(=すべて)のHTMLには全カテゴリが出る */}
+      <CategoryGenreNav selected={genreId} onSelect={handleSelect} />
 
-        <div
-          id="category-summary-more-list"
-          className={`category-summary-collapsible${expanded ? " is-expanded" : ""}`}
-        >
-          <div className="category-summary-grid category-summary-grid--more">
-            {rest.map((cat, i) => (
-              <CategorySummaryCard key={cat.name} cat={cat} index={i} />
-            ))}
+      <div ref={swapRef} className="category-summary-swap-wrap">
+        {genre ? (
+          <div
+            key={genre.id}
+            className={`category-summary-swap${animated ? " is-animated" : ""}`}
+          >
+            <div className="category-summary-filtered">
+              {filtered.map((cat, i) => (
+                <CategorySummaryCard
+                  key={cat.name}
+                  cat={cat}
+                  index={i}
+                  popular={PINNED_CATEGORY_NAMES.includes(cat.name)}
+                />
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+        ) : (
+          <div className={`category-summary-swap${animated ? " is-animated" : ""}`}>
+            {/* 1024px以上では .category-summary-grids が唯一のグリッドになり、
+                中の2つのグリッドとアコーディオンは display:contents で透過して
+                全カードが同一グリッドの要素になる(=行ごとに高さが揃う)。
+                1024px未満では従来どおり「人気3件+アコーディオン」として機能する。 */}
+            <p className="category-summary-pinned-label">人気カテゴリー</p>
+            <div className="category-summary-grids">
+              <div className="category-summary-grid">
+                {pinned.map((cat, i) => (
+                  <CategorySummaryCard key={cat.name} cat={cat} index={i} popular />
+                ))}
+              </div>
 
-      <Link
-        href="/category"
-        className="category-summary-toggle"
-        aria-expanded={expanded}
-        aria-controls="category-summary-more-list"
-        onClick={handleToggleClick}
-      >
-        {expanded ? "− カテゴリーを閉じる" : "＋ すべてのカテゴリーを見る"}
-      </Link>
+              <div
+                id="category-summary-more-list"
+                className={`category-summary-collapsible${expanded ? " is-expanded" : ""}`}
+              >
+                <div className="category-summary-grid category-summary-grid--more">
+                  {rest.map((cat, i) => (
+                    <CategorySummaryCard key={cat.name} cat={cat} index={i} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/category"
+              className="category-summary-toggle"
+              aria-expanded={expanded}
+              aria-controls="category-summary-more-list"
+              onClick={handleToggleClick}
+            >
+              {expanded ? "− カテゴリーを閉じる" : "＋ すべてのカテゴリーを見る"}
+            </Link>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

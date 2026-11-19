@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import Layout from "../components/Layout";
+import PageHero from "../components/PageHero";
 import PostCard from "../components/PostCard";
 import { getAllPostsForSearch } from "../lib/posts";
 
@@ -74,8 +75,8 @@ export default function SearchPage({ posts }) {
       description="生活を豊かにする総合ガイド｜NEVORAの記事をキーワードで検索できます。"
       canonicalPath="/search"
       panel
+      hero={<PageHero eyebrow="Search" title="記事を検索" lead="キーワードから読みたい記事を探せます。" />}
     >
-      <h1 className="page-title">記事を検索</h1>
       <div className="search-box">
         <input
           type="text"

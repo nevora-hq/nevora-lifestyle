@@ -1,4 +1,5 @@
 import Layout from "../components/Layout";
+import PageHero from "../components/PageHero";
 import { getAllPostsMeta } from "../lib/posts";
 
 export async function getStaticProps() {
@@ -17,8 +18,8 @@ export default function RankingPage({ posts }) {
       description="生活を豊かにする総合ガイド｜NEVORAの新着記事一覧を公開日順にご紹介します。"
       canonicalPath="/ranking"
       panel
+      hero={<PageHero eyebrow="New Posts" title="新着記事一覧" lead="公開日の新しい順に並べています。" />}
     >
-      <h1 className="page-title">新着記事一覧</h1>
       <p className="page-note">
         ※公開日順に並んでいます。
       </p>

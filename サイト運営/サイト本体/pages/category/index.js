@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Layout from "../../components/Layout";
+import PageHero from "../../components/PageHero";
 import { MAJOR_CATEGORIES, getCategoryMeta } from "../../lib/categoryMeta";
 import { buildBreadcrumbJsonLd, buildItemListJsonLd } from "../../lib/structuredData";
 
@@ -37,9 +38,9 @@ export default function CategoryIndexPage({ categories }) {
       description="生活を豊かにする総合ガイド｜NEVORAの記事カテゴリ一覧です。気になるテーマから記事をまとめてチェックできます。"
       canonicalPath="/category"
       jsonLd={buildCategoryIndexJsonLd(categories, siteUrl)}
+      panel
+      hero={<PageHero eyebrow="Category" title="カテゴリ一覧" lead="気になるテーマから、関連記事をまとめてチェックできます。" variant={2} />}
     >
-      <h1 className="page-title">カテゴリ一覧</h1>
-      <p className="home-section-lead">気になるテーマから、関連記事をまとめてチェックできます。</p>
       <ul className="category-index-list">
         {categories.map((cat) => (
           <li key={cat.name} className="category-index-item">
