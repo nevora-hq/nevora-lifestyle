@@ -95,8 +95,8 @@ export default function PostPage({ post, related, nextPost }) {
           <a href="/">トップ</a>
           <span className="sep">/</span>
           <a href={`/category/${encodeURIComponent(post.category)}`}>{post.category}</a>
-          <span className="sep">/</span>
-          <span className="current">{post.title}</span>
+          {/* 記事の題名は直下のh1に出るため、パンくずの末尾には出さない(2026-11-21)。
+              検索向けのBreadcrumbList(JSON-LD)には記事名を含めたまま残している。 */}
         </nav>
 
         <div className="article-header">
