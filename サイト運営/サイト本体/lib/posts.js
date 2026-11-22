@@ -7,6 +7,23 @@ import remarkBreaks from "remark-breaks";
 import remarkHtml from "remark-html";
 import { getCategoryMascot, getMascotIntroComment, getMascotOutroComment } from "./categoryMascot";
 import { MAJOR_CATEGORIES } from "./categoryMeta";
+import { permalinkOf } from "./permalinkMap";
+
+// 記事本文の内部リンク /posts/<旧slug>(#見出し付きも)を、描画時に台帳(lib/permalinkMap.js)の
+// 新URL /posts/<大>/<中>/<小>-NN へ置き換える。記事ファイル側は書き換えない。
+// 台帳に無いslugは置き換えない(scripts/verify-permalinks.js が不合格にする)。
+function rewriteInternalPostLinks(html) {
+  return html.replace(/(href=")\/posts\/([^"#?\/]+)([#?][^"]*)?(")/g, (m, a, slug, rest, z) => {
+    let decoded = slug;
+    try {
+      decoded = decodeURIComponent(slug);
+    } catch (e) {
+      /* そのまま */
+    }
+    const p = permalinkOf(decoded);
+    return p !== decoded ? `${a}/posts/${p}${rest || ""}${z}` : m;
+  });
+}
 
 // npm run sync-content (predev/prebuild) によって
 // サイト運営/記事データ/公開済み から自動コピーされるディレクトリ
@@ -2410,7 +2427,7 @@ export async function getPostBySlug(slug) {
   );
 
   const mascot = getCategoryMascot(meta.category, slug, meta.mascotComment);
-  let contentHtml = insertMascotComment(htmlWithAffiliateBanners, mascot, slug);
+  let contentHtml = rewriteInternalPostLinks(insertMascotComment(htmlWithAffiliateBanners, mascot, slug));
 
   // 新規記事はfrontmatterに sectionAlternate: true を指定するだけで、H2見出し単位の
   // セクション背景交互化(汎用CSSクラス.article-section-*)を適用できる

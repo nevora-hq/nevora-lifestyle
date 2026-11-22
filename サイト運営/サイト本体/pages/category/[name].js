@@ -5,6 +5,7 @@ import { getAllCategories, getPostsByCategory } from "../../lib/posts";
 import { getCategoryMeta } from "../../lib/categoryMeta";
 import { getCategoryMascot, getMascotIntroComment } from "../../lib/categoryMascot";
 import { buildBreadcrumbJsonLd, buildItemListJsonLd } from "../../lib/structuredData";
+import { postPath } from "../../lib/permalinkMap";
 
 export async function getStaticPaths() {
   const categories = getAllCategories();
@@ -32,7 +33,7 @@ function buildCategoryJsonLd(category, posts, siteUrl) {
     posts.map((p) => ({
       name: p.title,
       // canonical・sitemap.xmlと同じpercent-encodedのURLで揃える。
-      url: `${siteUrl}/posts/${encodeURIComponent(p.slug)}`,
+      url: `${siteUrl}${postPath(p.slug)}`,
     }))
   );
   return [breadcrumb, itemList].filter(Boolean);

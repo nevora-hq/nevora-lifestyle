@@ -1,6 +1,7 @@
 import Layout from "../components/Layout";
 import Link from "next/link";
 import { getAllCategories, getAllPostsMeta } from "../lib/posts";
+import { postPath } from "../lib/permalinkMap";
 
 export async function getStaticProps() {
   const categories = getAllCategories();
@@ -44,7 +45,7 @@ export default function NotFound({ categories = [], popularPosts = [] }) {
             <ul className="not-found-link-list">
               {popularPosts.map((p) => (
                 <li key={p.slug}>
-                  <Link href={`/posts/${p.slug}`}>{p.title}</Link>
+                  <Link href={postPath(p.slug)}>{p.title}</Link>
                 </li>
               ))}
             </ul>

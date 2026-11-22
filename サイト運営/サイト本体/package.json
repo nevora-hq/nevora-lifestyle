@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "next lint",
     "verify:all": "node scripts/verify-all-articles.js",
+    "verify:permalinks": "node scripts/verify-permalinks.js",
     "verify:rendered": "node scripts/verify-declared-vs-rendered.js",
     "verify:layout": "node scripts/verify-rendered-layout.js",
     "queue": "node scripts/queue.js",

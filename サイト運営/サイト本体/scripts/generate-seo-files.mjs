@@ -15,6 +15,9 @@ import path from "node:path";
 import { register } from "node:module";
 import { pathToFileURL } from "node:url";
 import nextEnv from "@next/env";
+import permalinkMap from "../lib/permalinkMap.js";
+
+const { postPath } = permalinkMap;
 
 nextEnv.loadEnvConfig(process.cwd());
 
@@ -143,7 +146,7 @@ const entries = [
   }),
   ...posts.map((p) =>
     urlEntry(
-      `${siteUrl}/posts/${encodeURIComponent(p.slug)}`,
+      `${siteUrl}${postPath(p.slug)}`,
       p.updatedDate || p.date || undefined
     )
   ),
