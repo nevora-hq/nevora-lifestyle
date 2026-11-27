@@ -31,7 +31,7 @@ jobs:
       # 未設定だと components/Layout.js が canonical/OGP を出力しなくなる。
       # 公開URLであり秘密情報ではないので直書きしてよい。
       # ローカルでは .env.local から読まれるが、同ファイルはgit管理外のためCIには無い。
-      NEXT_PUBLIC_SITE_URL: https://nevora-lifestyle.vercel.app
+      NEXT_PUBLIC_SITE_URL: https://lifestyle.nevora.jp
     steps:
       # 2026-09-07: Node.js 20 ランタイムの deprecation 警告を解消するため、
       # 各アクションを最新メジャー(node24 ランタイム)へ揃えた。

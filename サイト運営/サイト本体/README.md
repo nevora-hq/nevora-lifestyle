@@ -7,7 +7,7 @@
 - フレームワーク: Next.js(React)
 - コード管理: GitHub
 - ホスティング: Vercel(無料枠でデプロイ。Gitへのpushで自動デプロイされる)
-- ドメイン: 当面はVercelが発行する `*.vercel.app` を使用し、後日独自ドメインを購入してVercelに接続する
+- ドメイン: 独自ドメイン `lifestyle.nevora.jp`(Vercel接続済み)。旧 `*.vercel.app` のURLは使わない
 - 記事データ: 当面はMarkdownファイル(frontmatterに `title` / `category` / `tags` / `affiliateLinks` 等を持たせる)で管理し、`サイト運営\記事データ\公開済み\` から本サイトのcontentディレクトリへ配置する(記事の状態は 作成中 → 公開待ち → 公開済み の3種類。流れは `.claude/skills/run-article-production/SKILL.md` の「記事の状態と置き場」)
 - データベース: 記事数・機能が増え、Markdown管理では厳しくなった段階で導入(例: Vercel Postgres等)。導入時期・方式は`site-engineer`が提案する
 

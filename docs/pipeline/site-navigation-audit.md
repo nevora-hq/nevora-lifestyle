@@ -35,7 +35,7 @@
 
 ## 4. 旧ドメイン表記(vercel.app)の残存確認
 
-独自ドメインへ移行したあとに行う確認。このサイトは今は独自ドメインを持たず `https://nevora-lifestyle.vercel.app/` で公開しているので、移行するときに行う(移行の手順は`docs/domain-migration-plan.md`)。
+独自ドメインへ移行したあとに行う確認。このサイトは今は独自ドメインを持たず `https://lifestyle.nevora.jp/` で公開しているので、移行するときに行う(移行の手順は`docs/domain-migration-plan.md`)。
 
 Grep範囲: `pages/`・`components/`・`lib/`・`記事データ/公開済み`・`記事データ/公開待ち`・`next.config.js`・`pages/robots.txt.js`・`sitemap.xml.js`・`scripts/`・環境変数ファイル(キー名のみ)。
 

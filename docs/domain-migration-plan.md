@@ -7,7 +7,7 @@
 - 新ドメイン: 未確定(未取得。以下 `<新ドメイン>` と書く)
 - レジストラ: 未確定(以下の「お名前.com」の記述は、レジストラがお名前.comの場合の例。別のレジストラなら、その管理画面の同じ機能に読み替える)
 - ホスティング: **Vercel**(現行のまま)。レンタルサーバーは契約していない
-- 現行の公開URL: `NEXT_PUBLIC_SITE_URL`環境変数(Vercelダッシュボードで設定、`.env.example`参照)で管理されている `https://nevora-lifestyle.vercel.app`
+- 現行の公開URL: `NEXT_PUBLIC_SITE_URL`環境変数(Vercelダッシュボードで設定、`.env.example`参照)で管理されている `https://lifestyle.nevora.jp`
 
 ---
 
@@ -51,7 +51,7 @@
 
 - [ ] Vercelダッシュボード → 対象プロジェクト → Settings → Environment Variables で `NEXT_PUBLIC_SITE_URL` を `https://<新ドメイン>`(末尾スラッシュなし)に更新する(Production環境向けの値)
 - [ ] 変更後、再デプロイ(Redeploy)を行わないと反映されない点に注意(Vercelの環境変数はビルド時に埋め込まれるため)
-- [ ] **例外がないかの最終確認**: `NEXT_PUBLIC_SITE_URL`はcanonical・OGP・構造化データの絶対URL生成に使われ、コード上は`components/Layout.js`が参照元として一元化されている。移行の前にコードベース内を検索し、`NEXT_PUBLIC_SITE_URL`を参照するファイルがすべてこの環境変数経由の一元管理になっていること、ハードコードされた`vercel.app`等のドメイン文字列がサイト本体側コードに無いことを確かめる(このサイトでの確認は未実施。なお、このサイトの `lib/siteLinks.js` には自サイトの `https://nevora-lifestyle.vercel.app/` も入っており、`pages/about.js` のサイト概要表と `scripts/generate-pinterest-pins.js` にも同じURLが直書きされている。移行するときはこれらも書き換える。`lib/siteLinks.js` の姉妹サイトのURLは当サイトの移行とは無関係)。**一元管理になっていれば、移行時に個別ファイルを書き換える必要はなく、環境変数の変更のみでよい**(このサイトでは上の直書きがあるため、それだけでは足りない)
+- [ ] **例外がないかの最終確認**: `NEXT_PUBLIC_SITE_URL`はcanonical・OGP・構造化データの絶対URL生成に使われ、コード上は`components/Layout.js`が参照元として一元化されている。移行の前にコードベース内を検索し、`NEXT_PUBLIC_SITE_URL`を参照するファイルがすべてこの環境変数経由の一元管理になっていること、ハードコードされた`vercel.app`等のドメイン文字列がサイト本体側コードに無いことを確かめる(このサイトでの確認は未実施。なお、このサイトの `lib/siteLinks.js` には自サイトの `https://lifestyle.nevora.jp/` も入っており、`pages/about.js` のサイト概要表と `scripts/generate-pinterest-pins.js` にも同じURLが直書きされている。移行するときはこれらも書き換える。`lib/siteLinks.js` の姉妹サイトのURLは当サイトの移行とは無関係)。**一元管理になっていれば、移行時に個別ファイルを書き換える必要はなく、環境変数の変更のみでよい**(このサイトでは上の直書きがあるため、それだけでは足りない)
 - [ ] `next.config.js`は`NEXT_PUBLIC_SITE_URL`が未設定だと本番ビルド(`next build`)自体をエラーで止める仕様になっている(canonical/OGP出力漏れを検知しにくい問題への対策)。**環境変数の設定を忘れた場合はビルドが失敗するため、移行時に気づきやすい設計になっている**
 - [ ] 一方、`pages/sitemap.xml.js`は`NEXT_PUBLIC_SITE_URL`が未設定でもリクエストのホスト名から自動的にURLを補う設計のため、**この項目だけは環境変数を変更し忘れても壊れて見えない**。sitemapのURLが新ドメインになっているか個別に確認すること(6節参照)
 

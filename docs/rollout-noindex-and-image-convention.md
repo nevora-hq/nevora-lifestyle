@@ -8,7 +8,7 @@ NEVORAの各サイト(美容・AI・お金・副業・生活)で共通化する2
 |---|---|---|
 | `{サイト名}` | 画像フォルダ・作業フォルダのサイト名 | `生活サイト` |
 | `{プロジェクトID}` | Vercelのプロジェクト名 | `nevora-lifestyle` |
-| `{本番URL}` | 現時点の公開URL | `https://nevora-lifestyle.vercel.app` |
+| `{本番URL}` | 現時点の公開URL | `https://lifestyle.nevora.jp` |
 | ルート | プロジェクト直下(`CLAUDE.md` がある階層) | |
 | サイト本体 | `サイト運営\サイト本体`(Next.jsプロジェクト) | |
 
